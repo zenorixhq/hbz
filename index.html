@@ -936,13 +936,15 @@ header.site-header.nav-theme-light .btn-talk:hover {
   width: 100%;
   max-width: 100%;
   font-family: var(--font-sans);
-  font-size: clamp(28px, 3.2vw, 45px);
+  font-size: clamp(34px, 4.4vw, 56px);
   font-weight: 600;
-  line-height: 1.25;
+  line-height: 1.15;
   letter-spacing: -0.035em;
   color: #121110;
   word-spacing: 0.04em;
-  text-wrap: balance;
+}
+.manifesto-reveal-text .manifesto-line {
+  display: block;
 }
 .manifesto-reveal-text .reveal-word {
   display: inline-block;
@@ -959,8 +961,11 @@ header.site-header.nav-theme-light .btn-talk:hover {
     margin-bottom: 32px;
   }
   .manifesto-reveal-text {
-    font-size: clamp(24px, 5.2vw, 34px);
+    font-size: clamp(26px, 5.8vw, 36px);
     line-height: 1.25;
+  }
+  .manifesto-reveal-text .manifesto-line {
+    display: inline;
   }
 }
 
@@ -4883,7 +4888,9 @@ async function renderHome(){
 
         <div class="manifesto-statement-box">
           <h2 class="manifesto-reveal-text" id="manifestoRevealText">
-            <span class="reveal-word">We</span> <span class="reveal-word">build</span> <span class="reveal-word">presence,</span> <span class="reveal-word">not</span> <span class="reveal-word">just</span> <span class="reveal-word">places—</span><span class="reveal-word">dwelling</span> <span class="reveal-word">in</span> <span class="reveal-word">restraint</span> <span class="reveal-word">and</span> <span class="reveal-word">stillness.</span> <span class="reveal-word">Every</span> <span class="reveal-word">project</span> <span class="reveal-word">is</span> <span class="reveal-word">a</span> <span class="reveal-word">quiet</span> <span class="reveal-word">study</span> <span class="reveal-word">of</span> <span class="reveal-word">light,</span> <span class="reveal-word">material,</span> <span class="reveal-word">and</span> <span class="reveal-word">time.</span> <span class="reveal-word">Rooted</span> <span class="reveal-word">in</span> <span class="reveal-word">permanence.</span> <span class="reveal-word">We</span> <span class="reveal-word">are</span> <span class="reveal-word">Oboro.</span>
+            <span class="manifesto-line"><span class="reveal-word">We</span> <span class="reveal-word">build</span> <span class="reveal-word">presence,</span> <span class="reveal-word">not</span> <span class="reveal-word">just</span> <span class="reveal-word">places—dwelling</span> <span class="reveal-word">in</span> <span class="reveal-word">restraint</span> <span class="reveal-word">and</span> <span class="reveal-word">stillness.</span></span>
+            <span class="manifesto-line"><span class="reveal-word">Every</span> <span class="reveal-word">project</span> <span class="reveal-word">is</span> <span class="reveal-word">a</span> <span class="reveal-word">quiet</span> <span class="reveal-word">study</span> <span class="reveal-word">of</span> <span class="reveal-word">light,</span> <span class="reveal-word">material,</span> <span class="reveal-word">and</span> <span class="reveal-word">time.</span></span>
+            <span class="manifesto-line"><span class="reveal-word">Rooted</span> <span class="reveal-word">in</span> <span class="reveal-word">permanence.</span> <span class="reveal-word">We</span> <span class="reveal-word">are</span> <span class="reveal-word">Oboro.</span></span>
           </h2>
         </div>
 
@@ -6942,8 +6949,8 @@ function getSectionStops() {
   const stops = [0];
   const windowH = window.innerHeight;
 
+  // Notice: 'sec-manifesto' is excluded so Section [02] has NO locking stops and can scrub naturally!
   const secIds = [
-    'sec-manifesto',
     'sec-lead-in',
     'sec-projects-wipe',
     'sec-impact',
@@ -6988,8 +6995,13 @@ function getSectionStops() {
 }
 
 function scrollToNextSection() {
-  const stops = getSectionStops();
   const currentY = window.scrollY || window.pageYOffset;
+  const secManifesto = document.getElementById('sec-manifesto');
+  if (secManifesto && currentY < secManifesto.offsetTop - 40) {
+    smoothScrollTo(secManifesto.offsetTop, 750);
+    return;
+  }
+  const stops = getSectionStops();
   for (let i = 0; i < stops.length; i++) {
     if (stops[i] > currentY + 30) {
       smoothScrollTo(stops[i], 750);
@@ -7013,6 +7025,17 @@ function handleSectionWheel(e) {
       return;
     }
     p = p.parentElement;
+  }
+
+  // ── REMOVE SECTION SCROLL LOCK IN MANIFESTO SECTION ──
+  // When Manifesto is in view, bypass locking entirely to allow natural scroll scrub reveal!
+  const secManifesto = document.getElementById('sec-manifesto');
+  if (secManifesto) {
+    const rect = secManifesto.getBoundingClientRect();
+    const windowH = window.innerHeight;
+    if (rect.top <= windowH && rect.bottom >= 0) {
+      return; // Natural, free browser scroll for word-by-word reveal!
+    }
   }
 
   const now = performance.now();
@@ -7066,6 +7089,15 @@ function handleSectionKeyDown(e) {
 
   if (['input', 'textarea', 'select'].includes((document.activeElement?.tagName || '').toLowerCase())) return;
 
+  const secManifesto = document.getElementById('sec-manifesto');
+  if (secManifesto) {
+    const rect = secManifesto.getBoundingClientRect();
+    const windowH = window.innerHeight;
+    if (rect.top <= windowH && rect.bottom >= 0) {
+      return; // Allow native arrow key scrolling in Manifesto
+    }
+  }
+
   let direction = 0;
   if (e.key === 'ArrowDown' || e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) {
     direction = 1;
@@ -7115,6 +7147,15 @@ function handleSectionTouchEnd(e) {
   const hash = location.hash.slice(1) || '/';
   if (hash !== '/' && hash !== '' && hash !== '#/') return;
   if (isScrollAnimating) return;
+
+  const secManifesto = document.getElementById('sec-manifesto');
+  if (secManifesto) {
+    const rect = secManifesto.getBoundingClientRect();
+    const windowH = window.innerHeight;
+    if (rect.top <= windowH && rect.bottom >= 0) {
+      return; // Allow native touch scrolling in Manifesto
+    }
+  }
 
   if (e.changedTouches && e.changedTouches[0]) {
     const deltaY = touchStartY - e.changedTouches[0].clientY;
