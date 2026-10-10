@@ -3773,7 +3773,7 @@ dialog#journalUnlockModal::backdrop {
           <a href="#/projects">Cat A / Cat B Fit-Out</a>
           <a href="#/projects">Civic &amp; Residential</a>
           <a href="#/projects">Bespoke FF&amp;E</a>
-          <a href="#/calculator">Flooring Estimator</a>
+          <a href="#/calculator">Spatial &amp; Material Estimators</a>
         </div>
         <div class="footer-col">
           <h4>London Studio</h4>
@@ -4782,6 +4782,13 @@ function updateJournalPassUI() {
 // ════════════════════════════════════════════════════════════════════
 // ── FLOORING CALCULATOR STATE & LOGIC ──
 // ════════════════════════════════════════════════════════════════════
+let activeCalcTab = 'flooring'; // 'flooring' | 'wall'
+
+function switchCalcTab(tab) {
+  activeCalcTab = tab;
+  renderCalculator();
+}
+
 let calcState = {
   shape: 'rectangle', // 'rectangle' | 'lshape' | 'multi'
   unit: 'ft',        // 'ft' | 'm' | 'in'
@@ -4824,6 +4831,93 @@ const MATERIAL_PRESETS = {
   custom:   { name: 'Custom Specification',      defaultTileL: 2, defaultTileW: 2, tileUnit: 'ft', price: 180, install: 45 }
 };
 
+// ════════════════════════════════════════════════════════════════════
+// ── WALL PANELING & ACOUSTIC CLADDING CALCULATOR STATE & LOGIC ──
+// ════════════════════════════════════════════════════════════════════
+let wallCalcState = {
+  mode: 'perimeter', // 'perimeter' | 'single'
+  unit: 'ft',        // 'ft' | 'm'
+  currency: '₹',     // '₹' | '$' | '£' | '€'
+  // Dimensions
+  roomL: 18,
+  roomW: 14,
+  wallHeight: 10,
+  singleWallL: 24,
+  // Openings deductions
+  doorCount: 2,
+  doorWidth: 3,
+  doorHeight: 7,
+  windowCount: 2,
+  windowWidth: 4,
+  windowHeight: 5,
+  // Material Specification
+  material: 'acoustic_slats', // 'acoustic_slats' | 'porcelain_slab' | 'microcement' | 'drywall_partition' | 'mineral_paint' | 'custom'
+  panelW: 2,
+  panelH: 10,
+  panelUnit: 'ft',
+  wastagePercent: 10,
+  // Pricing
+  pricePerSqFt: 380,
+  installPerSqFt: 95
+};
+
+const WALL_MATERIAL_PRESETS = {
+  acoustic_slats: {
+    name: 'Acoustic Slatted Timber (Fluted Oak / Walnut)',
+    desc: 'NRC 0.85 sound absorbing PET felt with genuine wood fluted slats.',
+    defaultPanelW: 2,
+    defaultPanelH: 10,
+    panelUnit: 'ft',
+    price: 380,
+    install: 95
+  },
+  porcelain_slab: {
+    name: 'Large-Format Porcelain / Sintered Stone Slabs',
+    desc: '1200×2800mm slim architectural sintered cladding for monolithic presence.',
+    defaultPanelW: 4,
+    defaultPanelH: 9.2,
+    panelUnit: 'ft',
+    price: 450,
+    install: 120
+  },
+  microcement: {
+    name: 'Venetian Plaster / Seamless Microcement',
+    desc: '3-coat hand-burnished mineral finish with protective matte polyurethane.',
+    defaultPanelW: 0,
+    defaultPanelH: 0,
+    panelUnit: 'ft',
+    price: 240,
+    install: 70
+  },
+  drywall_partition: {
+    name: 'Acoustic Stud Partition & Rockwool Insulation',
+    desc: '70mm C-stud steel frame, 50mm acoustic insulation, acoustic plasterboard.',
+    defaultPanelW: 4,
+    defaultPanelH: 8,
+    panelUnit: 'ft',
+    price: 190,
+    install: 65
+  },
+  mineral_paint: {
+    name: 'Architectural Mineral / Lime Wash Paint',
+    desc: 'Breathable, ultra-matte mineral silicate coating (2 coats + primer).',
+    defaultPanelW: 0,
+    defaultPanelH: 0,
+    panelUnit: 'ft',
+    price: 85,
+    install: 35
+  },
+  custom: {
+    name: 'Custom Wall Specification',
+    desc: 'Bespoke architectural wall cladding or partition system.',
+    defaultPanelW: 2,
+    defaultPanelH: 10,
+    panelUnit: 'ft',
+    price: 300,
+    install: 80
+  }
+};
+
 function selectMaterial(matKey) {
   calcState.material = matKey;
   const p = MATERIAL_PRESETS[matKey];
@@ -4833,6 +4927,19 @@ function selectMaterial(matKey) {
     calcState.tileUnit = p.tileUnit;
     calcState.pricePerSqFt = p.price;
     calcState.installPerSqFt = p.install;
+  }
+  renderCalculator();
+}
+
+function selectWallMaterial(matKey) {
+  wallCalcState.material = matKey;
+  const p = WALL_MATERIAL_PRESETS[matKey];
+  if (p && matKey !== 'custom') {
+    wallCalcState.panelW = p.defaultPanelW;
+    wallCalcState.panelH = p.defaultPanelH;
+    wallCalcState.panelUnit = p.panelUnit;
+    wallCalcState.pricePerSqFt = p.price;
+    wallCalcState.installPerSqFt = p.install;
   }
   renderCalculator();
 }
@@ -5063,6 +5170,241 @@ function drawTileLayout(calcResult) {
   const ctEl = document.getElementById('canvasCutTiles');
   if (ftEl) ftEl.textContent = fullTilesCount > 0 ? fullTilesCount : Math.round(calcResult.tilesRequired * 0.75);
   if (ctEl) ctEl.textContent = cutTilesCount > 0 ? cutTilesCount : Math.round(calcResult.tilesRequired * 0.25);
+}
+
+// ════════════════════════════════════════════════════════════════════
+// ── WALL PANELING & ACOUSTIC CLADDING CALCULATION & CANVAS ENGINE ──
+// ════════════════════════════════════════════════════════════════════
+function calculateWallCladding() {
+  const u = wallCalcState.unit;
+  let wallLengthFt = 0;
+  let wallHeightFt = convertToFeet(wallCalcState.wallHeight, u);
+  if (wallHeightFt <= 0) wallHeightFt = 10;
+
+  if (wallCalcState.mode === 'perimeter') {
+    const lFt = convertToFeet(wallCalcState.roomL, u);
+    const wFt = convertToFeet(wallCalcState.roomW, u);
+    wallLengthFt = 2 * (lFt + wFt);
+  } else {
+    wallLengthFt = convertToFeet(wallCalcState.singleWallL, u);
+  }
+
+  const grossAreaSqFt = wallLengthFt * wallHeightFt;
+
+  // Deductions
+  const doorWFt = convertToFeet(wallCalcState.doorWidth, u);
+  const doorHFt = convertToFeet(wallCalcState.doorHeight, u);
+  const doorsAreaSqFt = (wallCalcState.doorCount || 0) * (doorWFt * doorHFt);
+
+  const winWFt = convertToFeet(wallCalcState.windowWidth, u);
+  const winHFt = convertToFeet(wallCalcState.windowHeight, u);
+  const windowsAreaSqFt = (wallCalcState.windowCount || 0) * (winWFt * winHFt);
+
+  const totalDeductionsSqFt = doorsAreaSqFt + windowsAreaSqFt;
+  const netAreaSqFt = Math.max(0, grossAreaSqFt - totalDeductionsSqFt);
+
+  // Wastage
+  const wastageMultiplier = 1 + ((wallCalcState.wastagePercent || 0) / 100);
+  const areaWithWastage = netAreaSqFt * wastageMultiplier;
+
+  // Units required
+  const isContinuous = (wallCalcState.material === 'microcement' || wallCalcState.material === 'mineral_paint');
+  let panelAreaSqFt = 0;
+  let panelsRequired = 0;
+  let paintLiters = 0;
+
+  if (isContinuous) {
+    paintLiters = Math.ceil(areaWithWastage / 90);
+  } else {
+    const pW = convertToFeet(wallCalcState.panelW, wallCalcState.panelUnit);
+    const pH = convertToFeet(wallCalcState.panelH, wallCalcState.panelUnit);
+    panelAreaSqFt = (pW * pH) > 0 ? (pW * pH) : 20;
+    panelsRequired = Math.ceil(areaWithWastage / panelAreaSqFt);
+  }
+
+  const materialCost = areaWithWastage * wallCalcState.pricePerSqFt;
+  const installCost = areaWithWastage * wallCalcState.installPerSqFt;
+  const totalCost = materialCost + installCost;
+
+  return {
+    wallLengthFt: wallLengthFt,
+    wallHeightFt: wallHeightFt,
+    grossArea: grossAreaSqFt,
+    grossAreaSqm: grossAreaSqFt * 0.092903,
+    doorsArea: doorsAreaSqFt,
+    windowsArea: windowsAreaSqFt,
+    totalDeductions: totalDeductionsSqFt,
+    totalDeductionsSqm: totalDeductionsSqFt * 0.092903,
+    netArea: netAreaSqFt,
+    netAreaSqm: netAreaSqFt * 0.092903,
+    areaWithWastage: areaWithWastage,
+    areaWithWastageSqm: areaWithWastage * 0.092903,
+    isContinuous: isContinuous,
+    panelAreaSqFt: panelAreaSqFt,
+    panelsRequired: panelsRequired,
+    paintLiters: paintLiters,
+    materialCost: materialCost,
+    installCost: installCost,
+    totalCost: totalCost
+  };
+}
+
+// 2D Visual Wall Elevation Canvas Engine
+function drawWallLayout(calcResult) {
+  const canvas = document.getElementById('wallCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+
+  const w = rect.width;
+  const h = rect.height;
+  ctx.clearRect(0, 0, w, h);
+
+  // CAD drafting paper grid background
+  ctx.fillStyle = '#fcfbf8';
+  ctx.fillRect(0, 0, w, h);
+  ctx.strokeStyle = 'rgba(21, 20, 19, 0.04)';
+  ctx.lineWidth = 1;
+  const gridStep = 18;
+  for (let x = 0; x < w; x += gridStep) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+  for (let y = 0; y < h; y += gridStep) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+
+  const padX = 54;
+  const padY = 48;
+
+  const visualWallL = wallCalcState.mode === 'perimeter' 
+    ? (convertToFeet(wallCalcState.roomL, wallCalcState.unit) || 18) 
+    : (calcResult.wallLengthFt || 24);
+  const visualWallH = calcResult.wallHeightFt || 10;
+
+  const scale = Math.min((w - padX * 2) / visualWallL, (h - padY * 2) / visualWallH);
+  const wallPixelW = visualWallL * scale;
+  const wallPixelH = visualWallH * scale;
+  const originX = (w - wallPixelW) / 2;
+  const originY = (h - wallPixelH) / 2;
+
+  // 1. Base Wall Cladding Material Texture / Grid
+  ctx.save();
+  ctx.fillStyle = '#f4f2ec';
+  ctx.fillRect(originX, originY, wallPixelW, wallPixelH);
+
+  if (wallCalcState.material === 'acoustic_slats') {
+    // Elegant slatted timber battens
+    const battenStep = Math.max(8, Math.min(22, 14 * (scale / 12)));
+    ctx.strokeStyle = 'rgba(168, 128, 86, 0.45)';
+    ctx.lineWidth = Math.max(1.5, battenStep * 0.32);
+    for (let x = originX + battenStep; x < originX + wallPixelW; x += battenStep) {
+      ctx.beginPath();
+      ctx.moveTo(x, originY);
+      ctx.lineTo(x, originY + wallPixelH);
+      ctx.stroke();
+    }
+  } else if (!calcResult.isContinuous && calcResult.panelAreaSqFt > 0) {
+    // Large format vertical joints
+    const pW_ft = convertToFeet(wallCalcState.panelW, wallCalcState.panelUnit) || 4;
+    const panelPixelW = pW_ft * scale;
+    if (panelPixelW > 8) {
+      ctx.strokeStyle = 'rgba(21, 20, 19, 0.22)';
+      ctx.lineWidth = 1.2;
+      for (let x = originX + panelPixelW; x < originX + wallPixelW; x += panelPixelW) {
+        ctx.beginPath();
+        ctx.moveTo(x, originY);
+        ctx.lineTo(x, originY + wallPixelH);
+        ctx.stroke();
+      }
+    }
+  } else if (calcResult.isContinuous) {
+    // Venetian trowel texture wash
+    ctx.fillStyle = 'rgba(195, 190, 180, 0.28)';
+    ctx.fillRect(originX, originY, wallPixelW, wallPixelH);
+  }
+
+  // 2. Doors Cutout & Architectural Representation
+  const doorCount = Math.min(3, wallCalcState.doorCount || 0);
+  const doorWFt = convertToFeet(wallCalcState.doorWidth, wallCalcState.unit) || 3;
+  const doorHFt = convertToFeet(wallCalcState.doorHeight, wallCalcState.unit) || 7;
+  const doorPixelW = doorWFt * scale;
+  const doorPixelH = doorHFt * scale;
+
+  if (doorCount > 0 && doorPixelW > 0 && doorPixelH > 0) {
+    const doorSpacing = wallPixelW / (doorCount + 1);
+    for (let d = 1; d <= doorCount; d++) {
+      const dx = originX + doorSpacing * d - doorPixelW / 2;
+      const dy = originY + wallPixelH - doorPixelH;
+      ctx.fillStyle = '#24211e';
+      ctx.fillRect(dx, dy, doorPixelW, doorPixelH);
+      ctx.strokeStyle = '#151413';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(dx, dy, doorPixelW, doorPixelH);
+      // Brass / Bronze handle
+      ctx.fillStyle = '#c3924e';
+      ctx.beginPath();
+      ctx.arc(dx + doorPixelW * 0.85, dy + doorPixelH * 0.52, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+      // Label
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '600 8.5px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('DOOR', dx + doorPixelW / 2, dy + doorPixelH * 0.4);
+    }
+  }
+
+  // 3. Windows Cutout & Architectural Glazing
+  const windowCount = Math.min(3, wallCalcState.windowCount || 0);
+  const winWFt = convertToFeet(wallCalcState.windowWidth, wallCalcState.unit) || 4;
+  const winHFt = convertToFeet(wallCalcState.windowHeight, wallCalcState.unit) || 5;
+  const winPixelW = winWFt * scale;
+  const winPixelH = winHFt * scale;
+
+  if (windowCount > 0 && winPixelW > 0 && winPixelH > 0) {
+    const winSpacing = wallPixelW / (windowCount + 1);
+    for (let wn = 1; wn <= windowCount; wn++) {
+      const wx = originX + winSpacing * wn - winPixelW / 2;
+      const wy = originY + (wallPixelH - winPixelH) * 0.35;
+      ctx.fillStyle = 'rgba(215, 230, 240, 0.8)';
+      ctx.fillRect(wx, wy, winPixelW, winPixelH);
+      ctx.strokeStyle = '#3e4f61';
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(wx, wy, winPixelW, winPixelH);
+      // Mullions
+      ctx.beginPath();
+      ctx.moveTo(wx + winPixelW / 2, wy);
+      ctx.lineTo(wx + winPixelW / 2, wy + winPixelH);
+      ctx.moveTo(wx, wy + winPixelH / 2);
+      ctx.lineTo(wx + winPixelW, wy + winPixelH / 2);
+      ctx.stroke();
+      // Label
+      ctx.fillStyle = '#1c2d3d';
+      ctx.font = '600 8px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('WINDOW', wx + winPixelW / 2, wy + winPixelH * 0.45);
+    }
+  }
+
+  // Perimeter Border
+  ctx.strokeStyle = '#151413';
+  ctx.lineWidth = 2.5;
+  ctx.strokeRect(originX, originY, wallPixelW, wallPixelH);
+  ctx.restore();
+
+  // Dimension annotations
+  ctx.fillStyle = '#151413';
+  ctx.font = '500 11px Inter, sans-serif';
+  ctx.textAlign = 'center';
+  const lenTitle = wallCalcState.mode === 'perimeter'
+    ? `↔ Primary Elevation: ${wallCalcState.roomL} ${wallCalcState.unit} (Perimeter Total: ${Math.round(calcResult.wallLengthFt)} ft)`
+    : `↔ Accent Wall Length: ${wallCalcState.singleWallL} ${wallCalcState.unit}`;
+  ctx.fillText(lenTitle, originX + wallPixelW / 2, originY - 14);
+
+  ctx.save();
+  ctx.translate(originX - 16, originY + wallPixelH / 2);
+  ctx.rotate(-Math.PI / 2);
+  ctx.fillText(`↕ Ceiling Height: ${wallCalcState.wallHeight} ${wallCalcState.unit}`, 0, 0);
+  ctx.restore();
 }
 
 // ── Views ──
@@ -5348,240 +5690,486 @@ async function renderHome(){
   updateJournalPassUI();
 }
 
-// 2. Flooring Calculator View
+// 2. Spatial Calculators View (Flooring & Tile + Wall Paneling & Acoustic Cladding)
 async function renderCalculator() {
   updateActiveNav('nav-calc');
-  const res = calculateFlooring();
+  cleanUpVvdListeners();
+
+  const fRes = calculateFlooring();
+  const wRes = calculateWallCladding();
 
   app.innerHTML = `
     <div class="calc-container">
-      <div style="margin-bottom:32px;">
-        <div class="section-tag">Architectural Estimation Tool</div>
-        <h1 class="serif" style="margin-bottom:12px;">Flooring &amp; Tile Calculator</h1>
-        <p class="lead">Precision area calculation, cut-tile wastage estimation, material cost breakdowns, and live 2D pattern visualizer.</p>
+      <div style="margin-bottom:28px;">
+        <div class="section-tag">Architectural Estimation Suite</div>
+        <h1 class="serif" style="margin-bottom:12px;">Spatial Estimation Tools</h1>
+        <p class="lead">Interactive calculators designed for architects, estimators, and occupiers to plan material quantities, labor costs, and spatial specifications with CAD accuracy.</p>
       </div>
 
-      <div class="calc-grid">
-        <!-- Left: Inputs & Parameters -->
-        <div class="calc-card">
-          <!-- 1. Room Geometry & Shape -->
-          <div class="calc-section-title">1. Room Geometry</div>
-          <div class="pill-selector">
-            <button class="pill-btn ${calcState.shape==='rectangle'?'active':''}" onclick="calcState.shape='rectangle';renderCalculator();">Rectangle</button>
-            <button class="pill-btn ${calcState.shape==='lshape'?'active':''}" onclick="calcState.shape='lshape';renderCalculator();">L-Shape</button>
-            <button class="pill-btn ${calcState.shape==='multi'?'active':''}" onclick="calcState.shape='multi';renderCalculator();">Multiple Rooms</button>
-          </div>
+      <!-- Tab Navigation Switcher -->
+      <div class="calc-tab-nav" style="display:flex;gap:10px;margin-bottom:32px;flex-wrap:wrap;border-bottom:1px solid rgba(21,20,19,0.08);padding-bottom:18px;">
+        <button class="pill-btn ${activeCalcTab==='flooring'?'active':''}" onclick="switchCalcTab('flooring')" style="padding:10px 22px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:8px;">
+          <span>📐</span> <span>01 / Flooring &amp; Tile Estimator</span>
+        </button>
+        <button class="pill-btn ${activeCalcTab==='wall'?'active':''}" onclick="switchCalcTab('wall')" style="padding:10px 22px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:8px;">
+          <span>🏛️</span> <span>02 / Wall Paneling &amp; Acoustic Cladding Estimator</span>
+        </button>
+      </div>
 
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-            <label style="margin:0;">Measurement Unit</label>
-            <div class="pill-selector" style="margin:0;">
-              <button class="pill-btn ${calcState.unit==='ft'?'active':''}" onclick="calcState.unit='ft';renderCalculator();">Feet (ft)</button>
-              <button class="pill-btn ${calcState.unit==='m'?'active':''}" onclick="calcState.unit='m';renderCalculator();">Meters (m)</button>
-              <button class="pill-btn ${calcState.unit==='in'?'active':''}" onclick="calcState.unit='in';renderCalculator();">Inches (in)</button>
+      ${activeCalcTab === 'flooring' ? `
+        <!-- ── TAB 1: FLOORING & TILE ESTIMATOR ── -->
+        <div class="calc-grid">
+          <!-- Left: Inputs & Parameters -->
+          <div class="calc-card">
+            <!-- 1. Room Geometry & Shape -->
+            <div class="calc-section-title">1. Room Geometry</div>
+            <div class="pill-selector">
+              <button class="pill-btn ${calcState.shape==='rectangle'?'active':''}" onclick="calcState.shape='rectangle';renderCalculator();">Rectangle</button>
+              <button class="pill-btn ${calcState.shape==='lshape'?'active':''}" onclick="calcState.shape='lshape';renderCalculator();">L-Shape</button>
+              <button class="pill-btn ${calcState.shape==='multi'?'active':''}" onclick="calcState.shape='multi';renderCalculator();">Multiple Rooms</button>
             </div>
-          </div>
 
-          ${calcState.shape === 'rectangle' ? `
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <label style="margin:0;">Measurement Unit</label>
+              <div class="pill-selector" style="margin:0;">
+                <button class="pill-btn ${calcState.unit==='ft'?'active':''}" onclick="calcState.unit='ft';renderCalculator();">Feet (ft)</button>
+                <button class="pill-btn ${calcState.unit==='m'?'active':''}" onclick="calcState.unit='m';renderCalculator();">Meters (m)</button>
+                <button class="pill-btn ${calcState.unit==='in'?'active':''}" onclick="calcState.unit='in';renderCalculator();">Inches (in)</button>
+              </div>
+            </div>
+
+            ${calcState.shape === 'rectangle' ? `
+              <div class="input-row">
+                <div class="input-group">
+                  <label for="rLength">Length (${calcState.unit})</label>
+                  <input id="rLength" type="number" step="0.1" value="${calcState.rectL}" oninput="calcState.rectL=parseFloat(this.value)||0;refreshCalcOutputs();">
+                </div>
+                <div class="input-group">
+                  <label for="rWidth">Width (${calcState.unit})</label>
+                  <input id="rWidth" type="number" step="0.1" value="${calcState.rectW}" oninput="calcState.rectW=parseFloat(this.value)||0;refreshCalcOutputs();">
+                </div>
+              </div>
+            ` : calcState.shape === 'lshape' ? `
+              <div style="background:var(--bg);padding:14px;border-radius:var(--radius-sm);margin-bottom:12px;">
+                <div style="font-size:11px;font-weight:700;margin-bottom:8px;">Section A (Main Area)</div>
+                <div class="input-row">
+                  <div class="input-group">
+                    <label>Length A (${calcState.unit})</label>
+                    <input type="number" value="${calcState.lA_L}" oninput="calcState.lA_L=parseFloat(this.value)||0;refreshCalcOutputs();">
+                  </div>
+                  <div class="input-group">
+                    <label>Width A (${calcState.unit})</label>
+                    <input type="number" value="${calcState.lA_W}" oninput="calcState.lA_W=parseFloat(this.value)||0;refreshCalcOutputs();">
+                  </div>
+                </div>
+              </div>
+              <div style="background:var(--bg);padding:14px;border-radius:var(--radius-sm);margin-bottom:12px;">
+                <div style="font-size:11px;font-weight:700;margin-bottom:8px;">Section B (Extension / Alcove)</div>
+                <div class="input-row">
+                  <div class="input-group">
+                    <label>Length B (${calcState.unit})</label>
+                    <input type="number" value="${calcState.lB_L}" oninput="calcState.lB_L=parseFloat(this.value)||0;refreshCalcOutputs();">
+                  </div>
+                  <div class="input-group">
+                    <label>Width B (${calcState.unit})</label>
+                    <input type="number" value="${calcState.lB_W}" oninput="calcState.lB_W=parseFloat(this.value)||0;refreshCalcOutputs();">
+                  </div>
+                </div>
+              </div>
+            ` : `
+              <div style="margin-bottom:14px;">
+                ${calcState.rooms.map((rm, idx) => `
+                  <div style="display:flex;gap:10px;align-items:center;background:var(--bg);padding:10px;border-radius:var(--radius-sm);margin-bottom:8px;">
+                    <input style="margin:0;flex:1.5;" value="${escapeHtml(rm.name)}" oninput="calcState.rooms[${idx}].name=this.value;">
+                    <input style="margin:0;flex:1;" type="number" value="${rm.l}" placeholder="L" oninput="calcState.rooms[${idx}].l=parseFloat(this.value)||0;refreshCalcOutputs();">
+                    <input style="margin:0;flex:1;" type="number" value="${rm.w}" placeholder="W" oninput="calcState.rooms[${idx}].w=parseFloat(this.value)||0;refreshCalcOutputs();">
+                    <button class="btn-secondary" style="padding:6px 10px;font-size:11px;" onclick="removeRoom(${idx})">&times;</button>
+                  </div>
+                `).join('')}
+                <button class="btn-secondary" style="width:100%;margin-top:6px;" onclick="addRoom()">+ Add Another Room</button>
+              </div>
+            `}
+
+            <!-- 2. Flooring Material & Tile Dimensions -->
+            <div class="calc-section-title">2. Material &amp; Tile Specifications</div>
+            <div class="pill-selector">
+              <button class="pill-btn ${calcState.material==='tiles'?'active':''}" onclick="selectMaterial('tiles')">Tiles</button>
+              <button class="pill-btn ${calcState.material==='marble'?'active':''}" onclick="selectMaterial('marble')">Marble</button>
+              <button class="pill-btn ${calcState.material==='granite'?'active':''}" onclick="selectMaterial('granite')">Granite</button>
+              <button class="pill-btn ${calcState.material==='wood'?'active':''}" onclick="selectMaterial('wood')">Hardwood</button>
+              <button class="pill-btn ${calcState.material==='vinyl'?'active':''}" onclick="selectMaterial('vinyl')">Vinyl / LVT</button>
+              <button class="pill-btn ${calcState.material==='laminate'?'active':''}" onclick="selectMaterial('laminate')">Laminate</button>
+              <button class="pill-btn ${calcState.material==='custom'?'active':''}" onclick="selectMaterial('custom')">Custom</button>
+            </div>
+
             <div class="input-row">
               <div class="input-group">
-                <label for="rLength">Length (${calcState.unit})</label>
-                <input id="rLength" type="number" step="0.1" value="${calcState.rectL}" oninput="calcState.rectL=parseFloat(this.value)||0;refreshCalcOutputs();">
+                <label for="tLen">Tile/Plank Length (${calcState.tileUnit})</label>
+                <input id="tLen" type="number" step="0.1" value="${calcState.tileL}" oninput="calcState.tileL=parseFloat(this.value)||0;refreshCalcOutputs();">
               </div>
               <div class="input-group">
-                <label for="rWidth">Width (${calcState.unit})</label>
-                <input id="rWidth" type="number" step="0.1" value="${calcState.rectW}" oninput="calcState.rectW=parseFloat(this.value)||0;refreshCalcOutputs();">
+                <label for="tWid">Tile/Plank Width (${calcState.tileUnit})</label>
+                <input id="tWid" type="number" step="0.1" value="${calcState.tileW}" oninput="calcState.tileW=parseFloat(this.value)||0;refreshCalcOutputs();">
               </div>
             </div>
-          ` : calcState.shape === 'lshape' ? `
-            <div style="background:var(--bg);padding:14px;border-radius:var(--radius-sm);margin-bottom:12px;">
-              <div style="font-size:11px;font-weight:700;margin-bottom:8px;">Section A (Main Area)</div>
-              <div class="input-row">
-                <div class="input-group">
-                  <label>Length A (${calcState.unit})</label>
-                  <input type="number" value="${calcState.lA_L}" oninput="calcState.lA_L=parseFloat(this.value)||0;refreshCalcOutputs();">
-                </div>
-                <div class="input-group">
-                  <label>Width A (${calcState.unit})</label>
-                  <input type="number" value="${calcState.lA_W}" oninput="calcState.lA_W=parseFloat(this.value)||0;refreshCalcOutputs();">
-                </div>
-              </div>
-            </div>
-            <div style="background:var(--bg);padding:14px;border-radius:var(--radius-sm);margin-bottom:12px;">
-              <div style="font-size:11px;font-weight:700;margin-bottom:8px;">Section B (Extension / Alcove)</div>
-              <div class="input-row">
-                <div class="input-group">
-                  <label>Length B (${calcState.unit})</label>
-                  <input type="number" value="${calcState.lB_L}" oninput="calcState.lB_L=parseFloat(this.value)||0;refreshCalcOutputs();">
-                </div>
-                <div class="input-group">
-                  <label>Width B (${calcState.unit})</label>
-                  <input type="number" value="${calcState.lB_W}" oninput="calcState.lB_W=parseFloat(this.value)||0;refreshCalcOutputs();">
-                </div>
-              </div>
-            </div>
-          ` : `
-            <div style="margin-bottom:14px;">
-              ${calcState.rooms.map((rm, idx) => `
-                <div style="display:flex;gap:10px;align-items:center;background:var(--bg);padding:10px;border-radius:var(--radius-sm);margin-bottom:8px;">
-                  <input style="margin:0;flex:1.5;" value="${escapeHtml(rm.name)}" oninput="calcState.rooms[${idx}].name=this.value;">
-                  <input style="margin:0;flex:1;" type="number" value="${rm.l}" placeholder="L" oninput="calcState.rooms[${idx}].l=parseFloat(this.value)||0;refreshCalcOutputs();">
-                  <input style="margin:0;flex:1;" type="number" value="${rm.w}" placeholder="W" oninput="calcState.rooms[${idx}].w=parseFloat(this.value)||0;refreshCalcOutputs();">
-                  <button class="btn-secondary" style="padding:6px 10px;font-size:11px;" onclick="removeRoom(${idx})">&times;</button>
-                </div>
-              `).join('')}
-              <button class="btn-secondary" style="width:100%;margin-top:6px;" onclick="addRoom()">+ Add Another Room</button>
-            </div>
-          `}
 
-          <!-- 2. Flooring Material & Tile Dimensions -->
-          <div class="calc-section-title">2. Material &amp; Tile Specifications</div>
-          <div class="pill-selector">
-            <button class="pill-btn ${calcState.material==='tiles'?'active':''}" onclick="selectMaterial('tiles')">Tiles</button>
-            <button class="pill-btn ${calcState.material==='marble'?'active':''}" onclick="selectMaterial('marble')">Marble</button>
-            <button class="pill-btn ${calcState.material==='granite'?'active':''}" onclick="selectMaterial('granite')">Granite</button>
-            <button class="pill-btn ${calcState.material==='wood'?'active':''}" onclick="selectMaterial('wood')">Hardwood</button>
-            <button class="pill-btn ${calcState.material==='vinyl'?'active':''}" onclick="selectMaterial('vinyl')">Vinyl / LVT</button>
-            <button class="pill-btn ${calcState.material==='laminate'?'active':''}" onclick="selectMaterial('laminate')">Laminate</button>
-            <button class="pill-btn ${calcState.material==='custom'?'active':''}" onclick="selectMaterial('custom')">Custom</button>
-          </div>
+            <!-- 3. Wastage Allowance -->
+            <div class="calc-section-title">3. Wastage Allowance</div>
+            <div class="pill-selector">
+              <button class="pill-btn ${calcState.wastagePercent===5?'active':''}" onclick="calcState.wastagePercent=5;renderCalculator();">5% (Straight Grid)</button>
+              <button class="pill-btn ${calcState.wastagePercent===10?'active':''}" onclick="calcState.wastagePercent=10;renderCalculator();">10% (Standard)</button>
+              <button class="pill-btn ${calcState.wastagePercent===15?'active':''}" onclick="calcState.wastagePercent=15;renderCalculator();">15% (Diagonal / Cuts)</button>
+            </div>
 
-          <div class="input-row">
-            <div class="input-group">
-              <label for="tLen">Tile/Plank Length (${calcState.tileUnit})</label>
-              <input id="tLen" type="number" step="0.1" value="${calcState.tileL}" oninput="calcState.tileL=parseFloat(this.value)||0;refreshCalcOutputs();">
-            </div>
-            <div class="input-group">
-              <label for="tWid">Tile/Plank Width (${calcState.tileUnit})</label>
-              <input id="tWid" type="number" step="0.1" value="${calcState.tileW}" oninput="calcState.tileW=parseFloat(this.value)||0;refreshCalcOutputs();">
-            </div>
-          </div>
-
-          <!-- 3. Wastage Allowance -->
-          <div class="calc-section-title">3. Wastage Allowance</div>
-          <div class="pill-selector">
-            <button class="pill-btn ${calcState.wastagePercent===5?'active':''}" onclick="calcState.wastagePercent=5;renderCalculator();">5% (Straight Grid)</button>
-            <button class="pill-btn ${calcState.wastagePercent===10?'active':''}" onclick="calcState.wastagePercent=10;renderCalculator();">10% (Standard)</button>
-            <button class="pill-btn ${calcState.wastagePercent===15?'active':''}" onclick="calcState.wastagePercent=15;renderCalculator();">15% (Diagonal / Cuts)</button>
-          </div>
-
-          <!-- 4. Pricing & Installation -->
-          <div class="calc-section-title">4. Pricing &amp; Currency</div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-            <label style="margin:0;">Currency Symbol</label>
-            <div class="pill-selector" style="margin:0;">
-              <button class="pill-btn ${calcState.currency==='₹'?'active':''}" onclick="calcState.currency='₹';renderCalculator();">₹ INR</button>
-              <button class="pill-btn ${calcState.currency==='$'?'active':''}" onclick="calcState.currency='$';renderCalculator();">$ USD</button>
-              <button class="pill-btn ${calcState.currency==='£'?'active':''}" onclick="calcState.currency='£';renderCalculator();">£ GBP</button>
-              <button class="pill-btn ${calcState.currency==='€'?'active':''}" onclick="calcState.currency='€';renderCalculator();">€ EUR</button>
-            </div>
-          </div>
-
-          <div class="input-row">
-            <div class="input-group">
-              <label>Material Price per sq.ft (${calcState.currency})</label>
-              <input type="number" value="${calcState.pricePerSqFt}" oninput="calcState.pricePerSqFt=parseFloat(this.value)||0;refreshCalcOutputs();">
-            </div>
-            <div class="input-group">
-              <label>Installation per sq.ft (${calcState.currency})</label>
-              <input type="number" value="${calcState.installPerSqFt}" oninput="calcState.installPerSqFt=parseFloat(this.value)||0;refreshCalcOutputs();">
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: Results & 2D Pattern Canvas -->
-        <div>
-          <!-- Summary Results Strip -->
-          <div class="results-grid">
-            <div class="result-stat-box">
-              <div class="result-stat-label">Floor Area</div>
-              <div class="result-stat-val" id="outNetArea">${Math.round(res.netArea)} sq.ft</div>
-              <div class="result-stat-sub" id="outNetAreaSqm">${res.netAreaSqm.toFixed(1)} m²</div>
-            </div>
-            <div class="result-stat-box">
-              <div class="result-stat-label">With ${calcState.wastagePercent}% Wastage</div>
-              <div class="result-stat-val" id="outAreaWaste">${Math.round(res.areaWithWastage)} sq.ft</div>
-              <div class="result-stat-sub" id="outAreaWasteSqm">${res.areaWithWastageSqm.toFixed(1)} m²</div>
-            </div>
-            <div class="result-stat-box" style="background:#f4efe6;">
-              <div class="result-stat-label">Tiles Required</div>
-              <div class="result-stat-val" style="color:var(--panel-forest);" id="outTiles">${res.tilesRequired} tiles</div>
-              <div class="result-stat-sub">(${calcState.tileL}×${calcState.tileW} ${calcState.tileUnit})</div>
-            </div>
-          </div>
-
-          <!-- Total Cost Banner -->
-          <div class="total-cost-box">
-            <div>
-              <div class="cost-label">Total Estimated Investment</div>
-              <div style="font-size:12px;opacity:0.8;margin-top:2px;">Material supply + professional installation</div>
-            </div>
-            <div class="cost-val" id="outTotalCost">${calcState.currency}${Math.round(res.totalCost).toLocaleString()}</div>
-          </div>
-
-          <!-- Detailed Item Breakdown -->
-          <div class="calc-card" style="margin-bottom:24px;">
-            <div class="cost-breakdown">
-              <span>Estimated Material Cost (${Math.round(res.areaWithWastage)} sq.ft @ ${calcState.currency}${calcState.pricePerSqFt})</span>
-              <strong id="outMatCost">${calcState.currency}${Math.round(res.materialCost).toLocaleString()}</strong>
-            </div>
-            <div class="cost-breakdown">
-              <span>Estimated Installation Labor (${Math.round(res.areaWithWastage)} sq.ft @ ${calcState.currency}${calcState.installPerSqFt})</span>
-              <strong id="outInstallCost">${calcState.currency}${Math.round(res.installCost).toLocaleString()}</strong>
-            </div>
-            <div class="cost-breakdown" style="border-bottom:none;padding-top:12px;font-weight:600;color:var(--text);">
-              <span>Combined Total (with ${calcState.wastagePercent}% wastage allowance)</span>
-              <span id="outCombinedTotal" style="color:var(--panel-forest);">${calcState.currency}${Math.round(res.totalCost).toLocaleString()}</span>
-            </div>
-          </div>
-
-          <!-- 2D Visual Tile Layout Engine (Architectural CAD View) -->
-          <div class="canvas-wrapper">
-            <div class="canvas-header">
-              <div>
-                <span class="section-tag" style="margin:0;">Architectural Visualizer</span>
-                <h4 style="margin:2px 0 0;font-size:16px;">Live 2D Tile Pattern Preview</h4>
-              </div>
+            <!-- 4. Pricing & Installation -->
+            <div class="calc-section-title">4. Pricing &amp; Currency</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <label style="margin:0;">Currency Symbol</label>
               <div class="pill-selector" style="margin:0;">
-                <button class="pill-btn ${calcState.pattern==='straight'?'active':''}" onclick="calcState.pattern='straight';refreshCalcOutputs();">Straight Stack</button>
-                <button class="pill-btn ${calcState.pattern==='staggered'?'active':''}" onclick="calcState.pattern='staggered';refreshCalcOutputs();">50% Staggered</button>
+                <button class="pill-btn ${calcState.currency==='₹'?'active':''}" onclick="calcState.currency='₹';renderCalculator();">₹ INR</button>
+                <button class="pill-btn ${calcState.currency==='$'?'active':''}" onclick="calcState.currency='$';renderCalculator();">$ USD</button>
+                <button class="pill-btn ${calcState.currency==='£'?'active':''}" onclick="calcState.currency='£';renderCalculator();">£ GBP</button>
+                <button class="pill-btn ${calcState.currency==='€'?'active':''}" onclick="calcState.currency='€';renderCalculator();">€ EUR</button>
               </div>
             </div>
 
-            <canvas id="tileCanvas" style="width:100%;height:320px;border-radius:4px;display:block;"></canvas>
-
-            <div class="canvas-legend">
-              <div class="legend-item">
-                <span class="legend-box legend-full"></span>
-                <span>Full Uncut Tiles: <strong id="canvasFullTiles">0</strong></span>
+            <div class="input-row">
+              <div class="input-group">
+                <label>Material Price per sq.ft (${calcState.currency})</label>
+                <input type="number" value="${calcState.pricePerSqFt}" oninput="calcState.pricePerSqFt=parseFloat(this.value)||0;refreshCalcOutputs();">
               </div>
-              <div class="legend-item">
-                <span class="legend-box legend-cut"></span>
-                <span>Perimeter Cut Tiles: <strong id="canvasCutTiles">0</strong></span>
-              </div>
-              <div class="legend-item" style="margin-left:auto;">
-                <span style="color:var(--accent-gold);font-weight:600;">CAD Grid Ratio 1:1 Scale</span>
+              <div class="input-group">
+                <label>Installation per sq.ft (${calcState.currency})</label>
+                <input type="number" value="${calcState.installPerSqFt}" oninput="calcState.installPerSqFt=parseFloat(this.value)||0;refreshCalcOutputs();">
               </div>
             </div>
           </div>
 
-          <!-- Save Estimate / Request Consultation CTA -->
-          <div style="margin-top:24px;text-align:right;">
-            <button class="btn-talk" onclick="saveFlooringEstimate()" style="padding:12px 20px;font-size:14px;width:100%;justify-content:center;">
-              <span>Save Estimate &amp; Request On-Site Survey</span>
-              <span class="arrow-circle">
-                <svg viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M11 4.007 6.887 8H4.545l3.482-3.2H0V3.215h8.027L4.529 0h2.342z" fill="currentColor"/>
-                </svg>
-              </span>
-            </button>
+          <!-- Right: Results & 2D Pattern Canvas -->
+          <div>
+            <!-- Summary Results Strip -->
+            <div class="results-grid">
+              <div class="result-stat-box">
+                <div class="result-stat-label">Floor Area</div>
+                <div class="result-stat-val" id="outNetArea">${Math.round(fRes.netArea)} sq.ft</div>
+                <div class="result-stat-sub" id="outNetAreaSqm">${fRes.netAreaSqm.toFixed(1)} m²</div>
+              </div>
+              <div class="result-stat-box">
+                <div class="result-stat-label">With ${calcState.wastagePercent}% Wastage</div>
+                <div class="result-stat-val" id="outAreaWaste">${Math.round(fRes.areaWithWastage)} sq.ft</div>
+                <div class="result-stat-sub" id="outAreaWasteSqm">${fRes.areaWithWastageSqm.toFixed(1)} m²</div>
+              </div>
+              <div class="result-stat-box" style="background:#f4efe6;">
+                <div class="result-stat-label">Tiles Required</div>
+                <div class="result-stat-val" style="color:var(--panel-forest);" id="outTiles">${fRes.tilesRequired} tiles</div>
+                <div class="result-stat-sub">(${calcState.tileL}×${calcState.tileW} ${calcState.tileUnit})</div>
+              </div>
+            </div>
+
+            <!-- Total Cost Banner -->
+            <div class="total-cost-box">
+              <div>
+                <div class="cost-label">Total Estimated Investment</div>
+                <div style="font-size:12px;opacity:0.8;margin-top:2px;">Material supply + professional installation</div>
+              </div>
+              <div class="cost-val" id="outTotalCost">${calcState.currency}${Math.round(fRes.totalCost).toLocaleString()}</div>
+            </div>
+
+            <!-- Detailed Item Breakdown -->
+            <div class="calc-card" style="margin-bottom:24px;">
+              <div class="cost-breakdown">
+                <span>Estimated Material Cost (${Math.round(fRes.areaWithWastage)} sq.ft @ ${calcState.currency}${calcState.pricePerSqFt})</span>
+                <strong id="outMatCost">${calcState.currency}${Math.round(fRes.materialCost).toLocaleString()}</strong>
+              </div>
+              <div class="cost-breakdown">
+                <span>Estimated Installation Labor (${Math.round(fRes.areaWithWastage)} sq.ft @ ${calcState.currency}${calcState.installPerSqFt})</span>
+                <strong id="outInstallCost">${calcState.currency}${Math.round(fRes.installCost).toLocaleString()}</strong>
+              </div>
+              <div class="cost-breakdown" style="border-bottom:none;padding-top:12px;font-weight:600;color:var(--text);">
+                <span>Combined Total (with ${calcState.wastagePercent}% wastage allowance)</span>
+                <span id="outCombinedTotal" style="color:var(--panel-forest);">${calcState.currency}${Math.round(fRes.totalCost).toLocaleString()}</span>
+              </div>
+            </div>
+
+            <!-- 2D Visual Tile Layout Engine (Architectural CAD View) -->
+            <div class="canvas-wrapper">
+              <div class="canvas-header">
+                <div>
+                  <span class="section-tag" style="margin:0;">Architectural Visualizer</span>
+                  <h4 style="margin:2px 0 0;font-size:16px;">Live 2D Tile Pattern Preview</h4>
+                </div>
+                <div class="pill-selector" style="margin:0;">
+                  <button class="pill-btn ${calcState.pattern==='straight'?'active':''}" onclick="calcState.pattern='straight';refreshCalcOutputs();">Straight Stack</button>
+                  <button class="pill-btn ${calcState.pattern==='staggered'?'active':''}" onclick="calcState.pattern='staggered';refreshCalcOutputs();">50% Staggered</button>
+                </div>
+              </div>
+
+              <canvas id="tileCanvas" style="width:100%;height:320px;border-radius:4px;display:block;"></canvas>
+
+              <div class="canvas-legend">
+                <div class="legend-item">
+                  <span class="legend-box legend-full"></span>
+                  <span>Full Uncut Tiles: <strong id="canvasFullTiles">0</strong></span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-box legend-cut"></span>
+                  <span>Perimeter Cut Tiles: <strong id="canvasCutTiles">0</strong></span>
+                </div>
+                <div class="legend-item" style="margin-left:auto;">
+                  <span style="color:var(--accent-gold);font-weight:600;">CAD Grid Ratio 1:1 Scale</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Save Estimate / Request Consultation CTA -->
+            <div style="margin-top:24px;text-align:right;">
+              <button class="btn-talk" onclick="saveFlooringEstimate()" style="padding:12px 20px;font-size:14px;width:100%;justify-content:center;">
+                <span>Save Estimate &amp; Request On-Site Survey</span>
+                <span class="arrow-circle">
+                  <svg viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11 4.007 6.887 8H4.545l3.482-3.2H0V3.215h8.027L4.529 0h2.342z" fill="currentColor"/>
+                  </svg>
+                </span>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      ` : `
+        <!-- ── TAB 2: WALL PANELING & ACOUSTIC CLADDING ESTIMATOR ── -->
+        <div class="calc-grid">
+          <!-- Left: Inputs & Parameters -->
+          <div class="calc-card">
+            <!-- 1. Wall Configuration & Geometry -->
+            <div class="calc-section-title">1. Wall Configuration</div>
+            <div class="pill-selector">
+              <button class="pill-btn ${wallCalcState.mode==='perimeter'?'active':''}" onclick="wallCalcState.mode='perimeter';renderCalculator();">All 4 Room Walls (Perimeter)</button>
+              <button class="pill-btn ${wallCalcState.mode==='single'?'active':''}" onclick="wallCalcState.mode='single';renderCalculator();">Single Feature / Accent Wall</button>
+            </div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <label style="margin:0;">Measurement Unit</label>
+              <div class="pill-selector" style="margin:0;">
+                <button class="pill-btn ${wallCalcState.unit==='ft'?'active':''}" onclick="wallCalcState.unit='ft';renderCalculator();">Feet (ft)</button>
+                <button class="pill-btn ${wallCalcState.unit==='m'?'active':''}" onclick="wallCalcState.unit='m';renderCalculator();">Meters (m)</button>
+              </div>
+            </div>
+
+            ${wallCalcState.mode === 'perimeter' ? `
+              <div class="input-row">
+                <div class="input-group">
+                  <label for="wRoomL">Room Length (${wallCalcState.unit})</label>
+                  <input id="wRoomL" type="number" step="0.1" value="${wallCalcState.roomL}" oninput="wallCalcState.roomL=parseFloat(this.value)||0;refreshWallCalcOutputs();">
+                </div>
+                <div class="input-group">
+                  <label for="wRoomW">Room Width (${wallCalcState.unit})</label>
+                  <input id="wRoomW" type="number" step="0.1" value="${wallCalcState.roomW}" oninput="wallCalcState.roomW=parseFloat(this.value)||0;refreshWallCalcOutputs();">
+                </div>
+              </div>
+            ` : `
+              <div class="input-group">
+                <label for="wSingleL">Feature Wall Length (${wallCalcState.unit})</label>
+                <input id="wSingleL" type="number" step="0.1" value="${wallCalcState.singleWallL}" oninput="wallCalcState.singleWallL=parseFloat(this.value)||0;refreshWallCalcOutputs();">
+              </div>
+            `}
+
+            <div class="input-group">
+              <label for="wHeight">Finished Ceiling / Wall Height (${wallCalcState.unit})</label>
+              <input id="wHeight" type="number" step="0.1" value="${wallCalcState.wallHeight}" oninput="wallCalcState.wallHeight=parseFloat(this.value)||0;refreshWallCalcOutputs();">
+            </div>
+
+            <!-- 2. Openings Deductions (Doors & Windows) -->
+            <div class="calc-section-title">2. Openings Deductions</div>
+            <div class="input-row">
+              <div class="input-group">
+                <label>Number of Doors</label>
+                <input type="number" min="0" value="${wallCalcState.doorCount}" oninput="wallCalcState.doorCount=parseInt(this.value)||0;refreshWallCalcOutputs();">
+              </div>
+              <div class="input-group">
+                <label>Door Size (W × H ${wallCalcState.unit})</label>
+                <div style="display:flex;gap:6px;">
+                  <input type="number" step="0.1" value="${wallCalcState.doorWidth}" placeholder="W" oninput="wallCalcState.doorWidth=parseFloat(this.value)||0;refreshWallCalcOutputs();">
+                  <input type="number" step="0.1" value="${wallCalcState.doorHeight}" placeholder="H" oninput="wallCalcState.doorHeight=parseFloat(this.value)||0;refreshWallCalcOutputs();">
+                </div>
+              </div>
+            </div>
+
+            <div class="input-row">
+              <div class="input-group">
+                <label>Number of Windows</label>
+                <input type="number" min="0" value="${wallCalcState.windowCount}" oninput="wallCalcState.windowCount=parseInt(this.value)||0;refreshWallCalcOutputs();">
+              </div>
+              <div class="input-group">
+                <label>Window Size (W × H ${wallCalcState.unit})</label>
+                <div style="display:flex;gap:6px;">
+                  <input type="number" step="0.1" value="${wallCalcState.windowWidth}" placeholder="W" oninput="wallCalcState.windowWidth=parseFloat(this.value)||0;refreshWallCalcOutputs();">
+                  <input type="number" step="0.1" value="${wallCalcState.windowHeight}" placeholder="H" oninput="wallCalcState.windowHeight=parseFloat(this.value)||0;refreshWallCalcOutputs();">
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Cladding & Acoustic Material Specification -->
+            <div class="calc-section-title">3. Cladding &amp; Finish System</div>
+            <div class="pill-selector">
+              <button class="pill-btn ${wallCalcState.material==='acoustic_slats'?'active':''}" onclick="selectWallMaterial('acoustic_slats')">Acoustic Timber Slats</button>
+              <button class="pill-btn ${wallCalcState.material==='porcelain_slab'?'active':''}" onclick="selectWallMaterial('porcelain_slab')">Porcelain Slabs (Monolithic)</button>
+              <button class="pill-btn ${wallCalcState.material==='microcement'?'active':''}" onclick="selectWallMaterial('microcement')">Microcement / Plaster</button>
+              <button class="pill-btn ${wallCalcState.material==='drywall_partition'?'active':''}" onclick="selectWallMaterial('drywall_partition')">Drywall Partition</button>
+              <button class="pill-btn ${wallCalcState.material==='mineral_paint'?'active':''}" onclick="selectWallMaterial('mineral_paint')">Mineral Paint</button>
+              <button class="pill-btn ${wallCalcState.material==='custom'?'active':''}" onclick="selectWallMaterial('custom')">Custom</button>
+            </div>
+
+            ${(wallCalcState.material !== 'microcement' && wallCalcState.material !== 'mineral_paint') ? `
+              <div class="input-row">
+                <div class="input-group">
+                  <label>Modular Panel Width (${wallCalcState.panelUnit})</label>
+                  <input type="number" step="0.1" value="${wallCalcState.panelW}" oninput="wallCalcState.panelW=parseFloat(this.value)||0;refreshWallCalcOutputs();">
+                </div>
+                <div class="input-group">
+                  <label>Modular Panel Height (${wallCalcState.panelUnit})</label>
+                  <input type="number" step="0.1" value="${wallCalcState.panelH}" oninput="wallCalcState.panelH=parseFloat(this.value)||0;refreshWallCalcOutputs();">
+                </div>
+              </div>
+            ` : `
+              <div style="font-size:11.5px;color:var(--text-muted);margin-bottom:12px;background:var(--bg);padding:10px;border-radius:var(--radius-sm);">
+                Seamless troweled application: calculated in continuous square footage coverage with multi-coat primer and protective sealer.
+              </div>
+            `}
+
+            <!-- 4. Wastage Allowance -->
+            <div class="calc-section-title">4. Wastage Allowance</div>
+            <div class="pill-selector">
+              <button class="pill-btn ${wallCalcState.wastagePercent===5?'active':''}" onclick="wallCalcState.wastagePercent=5;renderCalculator();">5% (Minimal Reveals)</button>
+              <button class="pill-btn ${wallCalcState.wastagePercent===10?'active':''}" onclick="wallCalcState.wastagePercent=10;renderCalculator();">10% (Standard)</button>
+              <button class="pill-btn ${wallCalcState.wastagePercent===15?'active':''}" onclick="wallCalcState.wastagePercent=15;renderCalculator();">15% (Complex Edge Reveals)</button>
+            </div>
+
+            <!-- 5. Pricing & Currency -->
+            <div class="calc-section-title">5. Commercial Pricing &amp; Currency</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <label style="margin:0;">Currency</label>
+              <div class="pill-selector" style="margin:0;">
+                <button class="pill-btn ${wallCalcState.currency==='₹'?'active':''}" onclick="wallCalcState.currency='₹';renderCalculator();">₹ INR</button>
+                <button class="pill-btn ${wallCalcState.currency==='$'?'active':''}" onclick="wallCalcState.currency='$';renderCalculator();">$ USD</button>
+                <button class="pill-btn ${wallCalcState.currency==='£'?'active':''}" onclick="wallCalcState.currency='£';renderCalculator();">£ GBP</button>
+                <button class="pill-btn ${wallCalcState.currency==='€'?'active':''}" onclick="wallCalcState.currency='€';renderCalculator();">€ EUR</button>
+              </div>
+            </div>
+
+            <div class="input-row">
+              <div class="input-group">
+                <label>Material Cost per sq.ft (${wallCalcState.currency})</label>
+                <input type="number" value="${wallCalcState.pricePerSqFt}" oninput="wallCalcState.pricePerSqFt=parseFloat(this.value)||0;refreshWallCalcOutputs();">
+              </div>
+              <div class="input-group">
+                <label>Sub-structure &amp; Labor per sq.ft (${wallCalcState.currency})</label>
+                <input type="number" value="${wallCalcState.installPerSqFt}" oninput="wallCalcState.installPerSqFt=parseFloat(this.value)||0;refreshWallCalcOutputs();">
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Results & 2D Elevation Canvas -->
+          <div>
+            <!-- Summary Results Strip -->
+            <div class="results-grid">
+              <div class="result-stat-box">
+                <div class="result-stat-label">Gross Wall Area</div>
+                <div class="result-stat-val" id="outWallGross">${Math.round(wRes.grossArea)} sq.ft</div>
+                <div class="result-stat-sub" id="outWallGrossSqm">${wRes.grossAreaSqm.toFixed(1)} m²</div>
+              </div>
+              <div class="result-stat-box">
+                <div class="result-stat-label">Openings Deducted</div>
+                <div class="result-stat-val" style="color:#b23b3b;" id="outWallDeductions">-${Math.round(wRes.totalDeductions)} sq.ft</div>
+                <div class="result-stat-sub" id="outWallDeductionsSqm">-${wRes.totalDeductionsSqm.toFixed(1)} m²</div>
+              </div>
+              <div class="result-stat-box" style="background:#f4efe6;">
+                <div class="result-stat-label">Net Cladding Area</div>
+                <div class="result-stat-val" style="color:var(--panel-forest);" id="outWallNet">${Math.round(wRes.netArea)} sq.ft</div>
+                <div class="result-stat-sub" id="outWallNetSqm">${wRes.netAreaSqm.toFixed(1)} m²</div>
+              </div>
+            </div>
+
+            <!-- Total Cost Banner -->
+            <div class="total-cost-box">
+              <div>
+                <div class="cost-label">Total Estimated Investment</div>
+                <div style="font-size:12px;opacity:0.8;margin-top:2px;">Architectural cladding supply + specialized acoustic installation</div>
+              </div>
+              <div class="cost-val" id="outWallTotal">${wallCalcState.currency}${Math.round(wRes.totalCost).toLocaleString()}</div>
+            </div>
+
+            <!-- Detailed Item Breakdown -->
+            <div class="calc-card" style="margin-bottom:24px;">
+              <div class="cost-breakdown">
+                <span>Gross Wall Area (${Math.round(wRes.grossArea)} sq.ft) - Deductions (${Math.round(wRes.totalDeductions)} sq.ft)</span>
+                <strong>Net: ${Math.round(wRes.netArea)} sq.ft</strong>
+              </div>
+              <div class="cost-breakdown">
+                <span>Material Supply (with ${wallCalcState.wastagePercent}% wastage: ${Math.round(wRes.areaWithWastage)} sq.ft @ ${wallCalcState.currency}${wallCalcState.pricePerSqFt})</span>
+                <strong id="outWallMatCost">${wallCalcState.currency}${Math.round(wRes.materialCost).toLocaleString()}</strong>
+              </div>
+              <div class="cost-breakdown">
+                <span>Sub-structure Framing &amp; Labor (@ ${wallCalcState.currency}${wallCalcState.installPerSqFt}/sq.ft)</span>
+                <strong id="outWallInstallCost">${wallCalcState.currency}${Math.round(wRes.installCost).toLocaleString()}</strong>
+              </div>
+              <div class="cost-breakdown" style="border-bottom:none;padding-top:12px;font-weight:600;color:var(--text);">
+                <span>Requirements: ${wRes.isContinuous ? wRes.paintLiters + ' Liters' : wRes.panelsRequired + ' Panel Units'}</span>
+                <span id="outWallCombinedTotal" style="color:var(--panel-forest);">${wallCalcState.currency}${Math.round(wRes.totalCost).toLocaleString()}</span>
+              </div>
+            </div>
+
+            <!-- 2D Visual Wall Elevation Engine -->
+            <div class="canvas-wrapper">
+              <div class="canvas-header">
+                <div>
+                  <span class="section-tag" style="margin:0;">Elevation Visualizer</span>
+                  <h4 style="margin:2px 0 0;font-size:16px;">Live 2D Architectural Wall Elevation</h4>
+                </div>
+                <div style="font-size:11px;font-weight:600;color:var(--accent-gold);">CAD Scale 1:1</div>
+              </div>
+
+              <canvas id="wallCanvas" style="width:100%;height:320px;border-radius:4px;display:block;"></canvas>
+
+              <div class="canvas-legend">
+                <div class="legend-item">
+                  <span class="legend-box" style="background:#f4f2ec;border:1px solid #151413;"></span>
+                  <span>Cladding Field: <strong>${Math.round(wRes.netArea)} sq.ft</strong></span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-box" style="background:#24211e;border:1px solid #000;"></span>
+                  <span>Doors (${wallCalcState.doorCount}): <strong>-${Math.round(wRes.doorsArea)} sq.ft</strong></span>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-box" style="background:rgba(215, 230, 240, 0.85);border:1px solid #3e4f61;"></span>
+                  <span>Windows (${wallCalcState.windowCount}): <strong>-${Math.round(wRes.windowsArea)} sq.ft</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Save Estimate / Request Consultation CTA -->
+            <div style="margin-top:24px;text-align:right;">
+              <button class="btn-talk" onclick="saveWallEstimate()" style="padding:12px 20px;font-size:14px;width:100%;justify-content:center;">
+                <span>Save Estimate &amp; Request Technical Consultation</span>
+                <span class="arrow-circle">
+                  <svg viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11 4.007 6.887 8H4.545l3.482-3.2H0V3.215h8.027L4.529 0h2.342z" fill="currentColor"/>
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `}
     </div>
   `;
 
-  // Draw the initial canvas
-  setTimeout(() => drawTileLayout(res), 50);
+  // Draw the respective canvas
+  setTimeout(() => {
+    if (activeCalcTab === 'flooring') {
+      drawTileLayout(fRes);
+    } else {
+      drawWallLayout(wRes);
+    }
+  }, 50);
 }
 
 function refreshCalcOutputs() {
@@ -5609,6 +6197,33 @@ function refreshCalcOutputs() {
   drawTileLayout(res);
 }
 
+function refreshWallCalcOutputs() {
+  const res = calculateWallCladding();
+  const elGross = document.getElementById('outWallGross');
+  const elGrossSqm = document.getElementById('outWallGrossSqm');
+  const elDed = document.getElementById('outWallDeductions');
+  const elDedSqm = document.getElementById('outWallDeductionsSqm');
+  const elNet = document.getElementById('outWallNet');
+  const elNetSqm = document.getElementById('outWallNetSqm');
+  const elTotal = document.getElementById('outWallTotal');
+  const elMat = document.getElementById('outWallMatCost');
+  const elInst = document.getElementById('outWallInstallCost');
+  const elComb = document.getElementById('outWallCombinedTotal');
+
+  if (elGross) elGross.textContent = `${Math.round(res.grossArea)} sq.ft`;
+  if (elGrossSqm) elGrossSqm.textContent = `${res.grossAreaSqm.toFixed(1)} m²`;
+  if (elDed) elDed.textContent = `-${Math.round(res.totalDeductions)} sq.ft`;
+  if (elDedSqm) elDedSqm.textContent = `-${res.totalDeductionsSqm.toFixed(1)} m²`;
+  if (elNet) elNet.textContent = `${Math.round(res.netArea)} sq.ft`;
+  if (elNetSqm) elNetSqm.textContent = `${res.netAreaSqm.toFixed(1)} m²`;
+  if (elTotal) elTotal.textContent = `${wallCalcState.currency}${Math.round(res.totalCost).toLocaleString()}`;
+  if (elMat) elMat.textContent = `${wallCalcState.currency}${Math.round(res.materialCost).toLocaleString()}`;
+  if (elInst) elInst.textContent = `${wallCalcState.currency}${Math.round(res.installCost).toLocaleString()}`;
+  if (elComb) elComb.textContent = `${wallCalcState.currency}${Math.round(res.totalCost).toLocaleString()}`;
+
+  drawWallLayout(res);
+}
+
 function addRoom() {
   calcState.rooms.push({
     id: Date.now(),
@@ -5634,6 +6249,25 @@ function saveFlooringEstimate() {
 • Material Cost: ${calcState.currency}${Math.round(res.materialCost).toLocaleString()}
 • Installation Labor: ${calcState.currency}${Math.round(res.installCost).toLocaleString()}
 • Total Projected Investment: ${calcState.currency}${Math.round(res.totalCost).toLocaleString()}`;
+
+  const notesEl = document.getElementById('cnotes');
+  if (notesEl) notesEl.value = summary;
+  openContactModal();
+}
+
+function saveWallEstimate() {
+  const res = calculateWallCladding();
+  const summary = `Wall Cladding & Acoustic Estimation:
+• Material: ${WALL_MATERIAL_PRESETS[wallCalcState.material]?.name || 'Custom Specification'}
+• Configuration: ${wallCalcState.mode === 'perimeter' ? 'All 4 Room Walls (Perimeter)' : 'Single Feature Wall'}
+• Gross Wall Area: ${Math.round(res.grossArea)} sq.ft (${res.grossAreaSqm.toFixed(1)} m²)
+• Deductions: ${Math.round(res.totalDeductions)} sq.ft (${wallCalcState.doorCount} doors, ${wallCalcState.windowCount} windows)
+• Net Cladding Area: ${Math.round(res.netArea)} sq.ft (${res.netAreaSqm.toFixed(1)} m²)
+• Coverage with ${wallCalcState.wastagePercent}% Wastage: ${Math.round(res.areaWithWastage)} sq.ft
+• Requirements: ${res.isContinuous ? res.paintLiters + ' Liters' : res.panelsRequired + ' Panel Units'}
+• Material Cost: ${wallCalcState.currency}${Math.round(res.materialCost).toLocaleString()}
+• Installation Labor: ${wallCalcState.currency}${Math.round(res.installCost).toLocaleString()}
+• Total Projected Investment: ${wallCalcState.currency}${Math.round(res.totalCost).toLocaleString()}`;
 
   const notesEl = document.getElementById('cnotes');
   if (notesEl) notesEl.value = summary;
@@ -6210,6 +6844,11 @@ async function renderProjectDetail(id){
   let horizontalCooldown = false;
 
   function onVvdWheel(e) {
+    const curHash = location.hash.slice(1) || '';
+    if (!curHash.startsWith('projects/') || curHash === 'projects') {
+      cleanUpVvdListeners();
+      return;
+    }
     if (vvdState.drawerOpen) return;
 
     // 1. SIDE SCROLL (horizontal wheel or shift + wheel) -> Change Project Images!
@@ -6239,6 +6878,11 @@ async function renderProjectDetail(id){
   }
 
   function onVvdKey(e) {
+    const curHash = location.hash.slice(1) || '';
+    if (!curHash.startsWith('projects/') || curHash === 'projects') {
+      cleanUpVvdListeners();
+      return;
+    }
     if (vvdState.drawerOpen) return;
     if (e.key === 'ArrowRight') {
       nextVvdImage();
@@ -6263,6 +6907,11 @@ async function renderProjectDetail(id){
     }
   }
   function onVvdTouchEnd(e) {
+    const curHash = location.hash.slice(1) || '';
+    if (!curHash.startsWith('projects/') || curHash === 'projects') {
+      cleanUpVvdListeners();
+      return;
+    }
     if (vvdState.drawerOpen || !e.changedTouches || !e.changedTouches[0]) return;
     const diffX = touchStartX - e.changedTouches[0].clientX;
     const diffY = touchStartY - e.changedTouches[0].clientY;
@@ -7208,6 +7857,48 @@ function initParallaxEngine() {
   updateParallax();
 }
 
+// ── Footer Slow Architectural Scroll Damping Engine ──
+function handleFooterWheelDamping(e) {
+  // Do not intercept if a modal or menu overlay is open
+  if (document.body.classList.contains('modal-open')) return;
+  const menuOverlay = document.getElementById('thirdwayMenuOverlay');
+  if (menuOverlay && menuOverlay.classList.contains('active')) return;
+
+  // Locate the footer or CTA stage
+  const footer = document.querySelector('.site-footer');
+  const cta = document.getElementById('sec-cta');
+  const anchor = cta || footer;
+  if (!anchor) return;
+
+  const rect = anchor.getBoundingClientRect();
+  const winH = window.innerHeight;
+
+  // When user reaches the footer zone (anchor top enters within 70% of viewport)
+  if (rect.top <= winH * 0.7) {
+    if (Math.abs(e.deltaY) > 2) {
+      const isAtBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 5);
+      if (isAtBottom && e.deltaY > 0) return; // Allow natural rubberband at wall
+
+      e.preventDefault();
+      // Slow down scroll by ~70% (damp factor 0.30x) for a deliberate, slow, dignified architectural feel in footer!
+      const dampedStep = e.deltaY * 0.30;
+      window.scrollBy({
+        top: dampedStep,
+        left: 0,
+        behavior: 'auto'
+      });
+    }
+  }
+}
+
+function initFooterScrollDamping() {
+  if (window.__footerWheelDampingHandler) {
+    window.removeEventListener('wheel', window.__footerWheelDampingHandler, { passive: false });
+  }
+  window.__footerWheelDampingHandler = handleFooterWheelDamping;
+  window.addEventListener('wheel', handleFooterWheelDamping, { passive: false });
+}
+
 // Thirdway Cookie Notice Dismiss Handler
 function dismissCookieBar(reopen = false) {
   const bar = document.getElementById('thirdwayCookieBar');
@@ -7235,6 +7926,7 @@ function updateActiveNav(navId) {
 function route(){
   closeMobileMenu();
   cleanupSectionScrollLock();
+  cleanUpVvdListeners();
   const hash = location.hash.slice(1) || '/';
   const parts = hash.split('/').filter(Boolean);
   if (parts.length === 0) renderHome();
@@ -7247,6 +7939,7 @@ function route(){
   else renderHome();
   setTimeout(updateNavbarState, 50);
   setTimeout(initParallaxEngine, 60);
+  setTimeout(initFooterScrollDamping, 70);
 }
 
 // ── Signature Logo-First Architectural Entrance Flight & Header Docking ──
@@ -7315,6 +8008,7 @@ window.addEventListener('hashchange', route);
 route();
 initSiteEntrance();
 initParallaxEngine();
+initFooterScrollDamping();
 </script>
 </body>
 </html>
