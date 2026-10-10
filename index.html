@@ -4027,6 +4027,14 @@ async function submitInquiry() {
     err.style.display = 'block';
     return;
   }
+  // Store in local storage leads list for testing/demo
+  try {
+    const raw = localStorage.getItem('hbz_leads');
+    const leads = raw ? JSON.parse(raw) : [];
+    leads.unshift({ name, phone, post_id: notes || 'Direct Consultation Inquiry', created_at: new Date().toISOString() });
+    localStorage.setItem('hbz_leads', JSON.stringify(leads));
+  } catch(e) {}
+
   if (LIVE) {
     const { error } = await db.from('leads').insert([{ name, phone, post_id: null }]);
     if (error) {
@@ -4713,6 +4721,13 @@ async function submitJournalUnlockModal() {
   }
 
   saveJournalUser(name, phone);
+
+  try {
+    const raw = localStorage.getItem('hbz_leads');
+    const leads = raw ? JSON.parse(raw) : [];
+    leads.unshift({ name, phone, post_id: pendingJournalTargetId || 'Journal Monograph Unlock', created_at: new Date().toISOString() });
+    localStorage.setItem('hbz_leads', JSON.stringify(leads));
+  } catch (e) {}
 
   // If Supabase live is active, record in leads table
   if (LIVE) {
@@ -6733,7 +6748,7 @@ async function renderProjectDetail(id){
           <span class="vvd-capsule-counter" id="vvdImageCounter">${pad(1)} / ${pad(images.length)}</span>
           <span class="vvd-capsule-dims" id="vvdImageDims">${getImgRatio(firstImg).replace('/', ':')}${getImgDims(firstImg) ? ' &bull; ' + getImgDims(firstImg) : ''}</span>
           <button class="vvd-capsule-btn" onclick="nextVvdImage()" title="Next Image">&#8594;</button>
-          <span class="vvd-capsule-hint">&bull; Side-scroll to explore</span>
+          <span class="vvd-capsule-hint">&bull; Mouse wheel / arrows cycle plates</span>
         </div>
 
         <button class="vvd-side-next" onclick="nextVvdImage()" title="Next Image (Side Scroll)">&#8594;</button>
@@ -6745,7 +6760,7 @@ async function renderProjectDetail(id){
           <div class="vvd-typology-tag">${escapeHtml(p.subCategory || p.category || 'Architecture')}</div>
           <h2 class="vvd-project-title serif">${escapeHtml(p.title)}</h2>
 
-          <div class="vvd-specs-strip">
+          <div class="specs-strip vvd-specs-strip">
             <div class="vvd-spec-row">
               <span class="vvd-spec-lbl">Location</span>
               <span class="vvd-spec-val">${escapeHtml(p.location || 'Tokyo, Japan')}</span>
@@ -6776,10 +6791,10 @@ async function renderProjectDetail(id){
 
         <div class="vvd-vertical-cues">
           <div class="vvd-cue-buttons-row">
-            <button class="vvd-nav-pill" onclick="switchVvdProject(-1)" title="Scroll Up for Previous Scheme">&uarr; Prev Scheme</button>
-            <button class="vvd-nav-pill" onclick="switchVvdProject(1)" title="Scroll Down for Next Scheme">&darr; Next Scheme</button>
+            <button class="vvd-nav-pill" onclick="switchVvdProject(-1)" title="Previous Project Scheme">&larr; Prev Scheme</button>
+            <button class="vvd-nav-pill" onclick="switchVvdProject(1)" title="Next Project Scheme">Next Scheme &rarr;</button>
           </div>
-          <div class="vvd-scroll-hint">&#8597; Vertical scroll switches schemes</div>
+          <div class="vvd-scroll-hint">&#8597; Mouse scroll cycles monograph plates</div>
         </div>
       </aside>
 
@@ -6839,58 +6854,58 @@ async function renderProjectDetail(id){
     </div>
   `;
 
-  // Attach Navigation Physics: Side Scroll changes images; Down/Top scroll changes projects
+  // Attach Navigation Physics: Mouse wheel (vertical or horizontal) cycles project images!
   let wheelCooldown = false;
-  let horizontalCooldown = false;
+
+  function isVvdActive() {
+    const rawHash = (location.hash.slice(1) || '').replace(/^\//, '');
+    const parts = rawHash.split('/').filter(Boolean);
+    return parts[0] === 'projects' && Boolean(parts[1]);
+  }
 
   function onVvdWheel(e) {
-    const curHash = location.hash.slice(1) || '';
-    if (!curHash.startsWith('projects/') || curHash === 'projects') {
+    if (!isVvdActive()) {
       cleanUpVvdListeners();
       return;
     }
     if (vvdState.drawerOpen) return;
 
-    // 1. SIDE SCROLL (horizontal wheel or shift + wheel) -> Change Project Images!
-    const isHorizontal = Math.abs(e.deltaX) > 22 || (e.shiftKey && Math.abs(e.deltaY) > 22);
-    if (isHorizontal) {
-      e.preventDefault();
-      if (horizontalCooldown) return;
-      horizontalCooldown = true;
-      setTimeout(() => { horizontalCooldown = false; }, 240);
+    // Use dominant delta (vertical mouse wheel deltaY or horizontal deltaX)
+    const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+    if (Math.abs(delta) < 15) return;
 
-      const dir = (e.deltaX > 0 || (e.shiftKey && e.deltaY > 0)) ? 1 : -1;
-      setVvdImage(vvdState.imageIndex + dir);
-      return;
-    }
+    e.preventDefault();
+    if (wheelCooldown) return;
+    wheelCooldown = true;
+    setTimeout(() => { wheelCooldown = false; }, 260);
 
-    // 2. DOWN OR TOP SCROLL (vertical wheel) -> Change Between Projects!
-    const isVertical = Math.abs(e.deltaY) > 28;
-    if (isVertical) {
-      e.preventDefault();
-      if (wheelCooldown) return;
-      wheelCooldown = true;
-      setTimeout(() => { wheelCooldown = false; }, 420);
-
-      const dir = e.deltaY > 0 ? 1 : -1;
-      switchVvdProject(dir);
+    if (delta > 0) {
+      nextVvdImage();
+    } else {
+      prevVvdImage();
     }
   }
 
   function onVvdKey(e) {
-    const curHash = location.hash.slice(1) || '';
-    if (!curHash.startsWith('projects/') || curHash === 'projects') {
+    if (!isVvdActive()) {
       cleanUpVvdListeners();
       return;
     }
-    if (vvdState.drawerOpen) return;
-    if (e.key === 'ArrowRight') {
+    if (vvdState.drawerOpen) {
+      if (e.key === 'Escape') toggleVvdDrawer(false);
+      return;
+    }
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault();
       nextVvdImage();
-    } else if (e.key === 'ArrowLeft') {
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
       prevVvdImage();
-    } else if (e.key === 'ArrowDown') {
+    } else if (e.key === 'PageDown') {
+      e.preventDefault();
       switchVvdProject(1);
-    } else if (e.key === 'ArrowUp') {
+    } else if (e.key === 'PageUp') {
+      e.preventDefault();
       switchVvdProject(-1);
     } else if (e.key === 'Escape') {
       toggleVvdDrawer(false);
@@ -6907,8 +6922,7 @@ async function renderProjectDetail(id){
     }
   }
   function onVvdTouchEnd(e) {
-    const curHash = location.hash.slice(1) || '';
-    if (!curHash.startsWith('projects/') || curHash === 'projects') {
+    if (!isVvdActive()) {
       cleanUpVvdListeners();
       return;
     }
@@ -6916,14 +6930,10 @@ async function renderProjectDetail(id){
     const diffX = touchStartX - e.changedTouches[0].clientX;
     const diffY = touchStartY - e.changedTouches[0].clientY;
 
-    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
-      // Horizontal swipe -> Change Image!
-      if (diffX > 0) nextVvdImage();
+    if (Math.abs(diffX) > 35 || Math.abs(diffY) > 35) {
+      const delta = Math.abs(diffX) >= Math.abs(diffY) ? diffX : diffY;
+      if (delta > 0) nextVvdImage();
       else prevVvdImage();
-    } else if (Math.abs(diffY) > 40) {
-      // Vertical swipe -> Change Project!
-      if (diffY > 0) switchVvdProject(1);
-      else switchVvdProject(-1);
     }
   }
 
@@ -7092,6 +7102,13 @@ async function unlockPostInline(id){
     return;
   }
   saveJournalUser(name, phone);
+  try {
+    const raw = localStorage.getItem('hbz_leads');
+    const leads = raw ? JSON.parse(raw) : [];
+    leads.unshift({ name, phone, post_id: id || 'Inline Journal Monograph Unlock', created_at: new Date().toISOString() });
+    localStorage.setItem('hbz_leads', JSON.stringify(leads));
+  } catch (e) {}
+
   if (LIVE) {
     try {
       const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
@@ -7108,58 +7125,191 @@ async function unlockPostInline(id){
 // ── Admin CMS Panel ──
 let adminTab = 'projects';
 
-async function renderAdmin(){
-  updateActiveNav('nav-admin');
-  if (LIVE) {
-    const { data: { session } } = await db.auth.getSession();
-    if (!session) { renderAdminLogin(); return; }
-  } else if (!sessionStorage.getItem('demo-admin')) {
-    renderAdminLogin();
+const DEFAULT_CMS_USER = 'admin';
+const DEFAULT_CMS_PASS = 'hbz@2026';
+
+function getCmsCredentials() {
+  try {
+    const raw = localStorage.getItem('hbz_cms_creds');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.username && parsed.password) return parsed;
+    }
+  } catch(e) {}
+  return { username: DEFAULT_CMS_USER, password: DEFAULT_CMS_PASS };
+}
+
+function updateCmsCredentials(username, password) {
+  localStorage.setItem('hbz_cms_creds', JSON.stringify({ username, password }));
+}
+
+function saveCmsCredentialsFromPanel() {
+  const newUser = (document.getElementById('newCmsUser')?.value || '').trim();
+  const newPass = (document.getElementById('newCmsPass')?.value || '').trim();
+  const confirmPass = (document.getElementById('confirmCmsPass')?.value || '').trim();
+  const err = document.getElementById('credErr');
+  const success = document.getElementById('credSuccess');
+
+  if (err) err.style.display = 'none';
+  if (success) success.style.display = 'none';
+
+  if (!newUser) {
+    if (err) { err.textContent = 'Username cannot be blank.'; err.style.display = 'block'; }
     return;
   }
-  renderAdminPanel();
+  if (!newPass) {
+    if (err) { err.textContent = 'Please provide a new password.'; err.style.display = 'block'; }
+    return;
+  }
+  if (newPass !== confirmPass) {
+    if (err) { err.textContent = 'Passwords do not match.'; err.style.display = 'block'; }
+    return;
+  }
+
+  updateCmsCredentials(newUser, newPass);
+  sessionStorage.setItem('hbz_admin_user', newUser);
+  if (success) success.style.display = 'block';
+  setTimeout(() => { loadAdminTab(); }, 1200);
+}
+
+function resetDefaultCredentials() {
+  if (!confirm('Reset CMS credentials back to default (admin / hbz@2026)?')) return;
+  updateCmsCredentials(DEFAULT_CMS_USER, DEFAULT_CMS_PASS);
+  sessionStorage.setItem('hbz_admin_user', DEFAULT_CMS_USER);
+  alert('CMS credentials reset to default: admin / hbz@2026');
+  loadAdminTab();
+}
+
+async function resetAllLeads() {
+  if (!confirm('Are you sure you want to permanently reset and clear all client lead test data? This will purge all recorded test leads and inquiries.')) {
+    return;
+  }
+
+  try {
+    localStorage.removeItem('hbz_leads');
+    localStorage.removeItem('oboro_journal_pass');
+    sessionStorage.removeItem('oboro_journal_pass');
+  } catch(e) {}
+
+  if (LIVE && db) {
+    try {
+      const { error } = await db.from('leads').delete().neq('name', '___NON_EXISTENT_NAME_FILTER___');
+      if (error) console.warn('Supabase lead deletion error:', error);
+    } catch(err) {
+      console.warn('Supabase lead deletion:', err);
+    }
+  }
+
+  alert('All client lead test data has been successfully cleared and reset.');
+  loadAdminTab();
+}
+
+async function renderAdmin(){
+  updateActiveNav('nav-admin');
+  const sessionUser = sessionStorage.getItem('hbz_admin_user');
+  if (sessionUser) {
+    renderAdminPanel();
+    return;
+  }
+  if (LIVE && db?.auth) {
+    try {
+      const { data: { session } } = await db.auth.getSession();
+      if (session) {
+        sessionStorage.setItem('hbz_admin_user', session.user.email);
+        renderAdminPanel();
+        return;
+      }
+    } catch(e) {}
+  }
+  if (sessionStorage.getItem('demo-admin')) {
+    renderAdminPanel();
+    return;
+  }
+  renderAdminLogin();
 }
 
 function renderAdminLogin(){
+  const creds = getCmsCredentials();
   app.innerHTML = `
     <div class="container" style="padding:110px 24px 60px;max-width:440px;">
       <div class="section-tag">CMS Portal</div>
       <h1 class="serif" style="font-size:32px;margin-bottom:8px;">Studio Admin</h1>
-      <p class="lead" style="font-size:14px;margin-bottom:24px;">${LIVE ? 'Sign in with your authorized credentials.' : 'Demo mode active — enter any demo email and password to explore.'}</p>
+      <p class="lead" style="font-size:13.5px;margin-bottom:24px;color:var(--text-muted);">
+        Sign in to the HBZ Studio management console to publish projects, manage monograph articles, and monitor client leads.
+      </p>
       
-      <div class="card">
-        <label for="aemail">Admin Email</label>
-        <input id="aemail" type="email" placeholder="admin@hbzstudio.com">
-        <label for="apass">Password</label>
-        <input id="apass" type="password" placeholder="••••••••">
-        <div class="err" id="aerr" style="display:none;"></div>
-        <button class="btn-talk" onclick="adminLogin()" style="width:100%;justify-content:center;padding:10px 14px;">
-          <span>Access Management Panel</span>
+      <div class="card" style="box-shadow: 0 10px 30px rgba(0,0,0,0.06); border: 1px solid var(--border);">
+        <label for="aemail" style="font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;">Username or Email</label>
+        <input id="aemail" type="text" placeholder="${escapeHtml(creds.username)}" value="${escapeHtml(creds.username)}" style="margin-bottom:14px;">
+        
+        <label for="apass" style="font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;">Password</label>
+        <input id="apass" type="password" placeholder="••••••••" value="${escapeHtml(creds.password)}" style="margin-bottom:16px;">
+        
+        <div class="err" id="aerr" style="display:none;margin-bottom:12px;"></div>
+        
+        <button class="btn-talk" onclick="adminLogin()" style="width:100%;justify-content:center;padding:11px 14px;">
+          <span>Sign In to Studio CMS &rarr;</span>
         </button>
+
+        <div style="margin-top:16px;padding:10px 12px;background:var(--bg-subtle, rgba(0,0,0,0.03));border-radius:6px;font-size:12px;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center;">
+          <span>Studio Default: <strong>${escapeHtml(creds.username)}</strong> / <strong>${escapeHtml(creds.password)}</strong></span>
+          <span style="font-size:11px;opacity:0.75;">(Editable inside panel)</span>
+        </div>
       </div>
     </div>
   `;
 }
 
 async function adminLogin(){
-  const email = document.getElementById('aemail').value.trim();
-  const password = document.getElementById('apass').value.trim();
+  const username = (document.getElementById('aemail')?.value || '').trim();
+  const password = (document.getElementById('apass')?.value || '').trim();
   const err = document.getElementById('aerr');
-  if (LIVE) {
-    const { error } = await db.auth.signInWithPassword({ email, password });
-    if (error) {
-      err.textContent = error.message;
+  if (err) err.style.display = 'none';
+
+  if (!username || !password) {
+    if (err) {
+      err.textContent = 'Please enter both username and password.';
       err.style.display = 'block';
-      return;
     }
-  } else {
-    sessionStorage.setItem('demo-admin', '1');
+    return;
   }
-  renderAdmin();
+
+  const creds = getCmsCredentials();
+  const isMatch = (username.toLowerCase() === creds.username.toLowerCase() ||
+                   username.toLowerCase() === (creds.username.toLowerCase() + '@hbzstudio.com') ||
+                   (creds.username.toLowerCase() === 'admin' && username.toLowerCase() === 'admin@hbzstudio.com')) &&
+                  (password === creds.password);
+
+  if (isMatch) {
+    sessionStorage.setItem('hbz_admin_user', creds.username);
+    sessionStorage.setItem('demo-admin', '1');
+    renderAdmin();
+    return;
+  }
+
+  if (LIVE && db?.auth) {
+    try {
+      const { data, error } = await db.auth.signInWithPassword({ email: username, password });
+      if (!error && data?.session) {
+        sessionStorage.setItem('hbz_admin_user', username);
+        sessionStorage.setItem('demo-admin', '1');
+        renderAdmin();
+        return;
+      }
+    } catch(e) {}
+  }
+
+  if (err) {
+    err.textContent = `Invalid credentials. Studio default is "${creds.username}" / "${creds.password}".`;
+    err.style.display = 'block';
+  }
 }
 
 async function adminLogout(){
-  if (LIVE) await db.auth.signOut();
+  if (LIVE && db?.auth) {
+    try { await db.auth.signOut(); } catch(e) {}
+  }
+  sessionStorage.removeItem('hbz_admin_user');
   sessionStorage.removeItem('demo-admin');
   renderAdmin();
 }
@@ -7179,6 +7329,7 @@ async function renderAdminPanel(){
         <button class="${adminTab==='projects'?'active':''}" onclick="switchAdminTab('projects')">Projects Portfolio</button>
         <button class="${adminTab==='blog'?'active':''}" onclick="switchAdminTab('blog')">Journal Articles</button>
         <button class="${adminTab==='leads'?'active':''}" onclick="switchAdminTab('leads')">Client Leads</button>
+        <button class="${adminTab==='security'?'active':''}" onclick="switchAdminTab('security')">Security &amp; Credentials</button>
       </div>
 
       <div id="adminContent"></div>
@@ -7306,17 +7457,42 @@ async function loadAdminTab(){
         </div>
       </div>
     `;
-  } else {
+  } else if (adminTab === 'leads') {
     let leads = [];
-    if (LIVE) {
-      const { data } = await db.from('leads').select('*').order('created_at', { ascending: false });
-      leads = data || [];
+    if (LIVE && db) {
+      try {
+        const { data } = await db.from('leads').select('*').order('created_at', { ascending: false });
+        if (data && data.length) leads = [...data];
+      } catch(e) {}
     }
+    try {
+      const localRaw = localStorage.getItem('hbz_leads');
+      if (localRaw) {
+        const localLeads = JSON.parse(localRaw);
+        if (Array.isArray(localLeads)) {
+          if (!leads.length) {
+            leads = localLeads;
+          } else {
+            localLeads.forEach(loc => {
+              if (!leads.some(l => l.phone === loc.phone && l.name === loc.name)) {
+                leads.push(loc);
+              }
+            });
+          }
+        }
+      }
+    } catch(e) {}
+
     el.innerHTML = `
       <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-          <h3 class="serif" style="font-size:20px;margin:0;">Captured Client Leads (${leads.length})</h3>
-          <span style="font-size:12px;color:var(--text-muted);">${LIVE ? 'Connected live to Supabase leads table' : 'Connect Supabase to capture live submissions'}</span>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+          <div>
+            <h3 class="serif" style="font-size:20px;margin:0;">Captured Client Leads (${leads.length})</h3>
+            <span style="font-size:12px;color:var(--text-muted);">${LIVE ? 'Live database & local inquiries recorded' : 'Demo & test inquiries recorded locally'}</span>
+          </div>
+          <button class="btn-secondary" onclick="resetAllLeads()" style="color:#e53e3e;border-color:#feb2b2;padding:6px 14px;font-size:12px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;">
+            <span>🗑️ Reset All Lead Test Data</span>
+          </button>
         </div>
         <div style="overflow-x:auto;">
           <table>
@@ -7334,11 +7510,55 @@ async function loadAdminTab(){
                   <td><strong>${escapeHtml(l.name)}</strong></td>
                   <td>${escapeHtml(l.phone)}</td>
                   <td>${escapeHtml(l.post_id || 'General Consultation / Calculator')}</td>
-                  <td>${new Date(l.created_at).toLocaleDateString()}</td>
+                  <td>${l.created_at ? new Date(l.created_at).toLocaleDateString() : 'Recent'}</td>
                 </tr>
               `).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:32px;">No leads recorded yet. Submissions from calculator estimates and inquiries will appear here.</td></tr>'}
             </tbody>
           </table>
+        </div>
+      </div>
+    `;
+  } else if (adminTab === 'security') {
+    const creds = getCmsCredentials();
+    el.innerHTML = `
+      <div style="max-width:560px;">
+        <div class="card">
+          <h3 class="serif" style="font-size:20px;margin-bottom:8px;">CMS Security &amp; Credentials</h3>
+          <p style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">
+            Manage and update the administrative credentials used to access the HBZ Studio management console.
+          </p>
+
+          <div style="margin-bottom:16px;">
+            <label for="curUser" style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Current Username</label>
+            <input id="curUser" type="text" value="${escapeHtml(creds.username)}" readonly style="opacity:0.7;background:var(--bg-subtle, #f5f5f5);">
+          </div>
+
+          <div style="margin-bottom:16px;">
+            <label for="newCmsUser" style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">New Username / Email</label>
+            <input id="newCmsUser" type="text" placeholder="e.g. admin" value="${escapeHtml(creds.username)}">
+          </div>
+
+          <div style="margin-bottom:16px;">
+            <label for="newCmsPass" style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">New Password</label>
+            <input id="newCmsPass" type="password" placeholder="Enter new password" value="${escapeHtml(creds.password)}">
+          </div>
+
+          <div style="margin-bottom:20px;">
+            <label for="confirmCmsPass" style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px;">Confirm New Password</label>
+            <input id="confirmCmsPass" type="password" placeholder="Re-type new password" value="${escapeHtml(creds.password)}">
+          </div>
+
+          <div class="err" id="credErr" style="display:none;margin-bottom:14px;"></div>
+          <div id="credSuccess" style="display:none;margin-bottom:14px;padding:10px 14px;background:rgba(46,125,50,0.1);color:#2e7d32;border-radius:4px;font-size:13px;">Credentials updated successfully!</div>
+
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <button class="btn-talk" onclick="saveCmsCredentialsFromPanel()" style="padding:10px 18px;">
+              <span>Save CMS Credentials</span>
+            </button>
+            <button class="btn-secondary" onclick="resetDefaultCredentials()" style="padding:10px 14px;font-size:12px;">
+              <span>Reset to Default (admin / hbz@2026)</span>
+            </button>
+          </div>
         </div>
       </div>
     `;
@@ -7873,15 +8093,15 @@ function handleFooterWheelDamping(e) {
   const rect = anchor.getBoundingClientRect();
   const winH = window.innerHeight;
 
-  // When user reaches the footer zone (anchor top enters within 70% of viewport)
-  if (rect.top <= winH * 0.7) {
+  // When user reaches the footer zone (anchor top enters within 45% of viewport)
+  if (rect.top <= winH * 0.45) {
     if (Math.abs(e.deltaY) > 2) {
       const isAtBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 5);
       if (isAtBottom && e.deltaY > 0) return; // Allow natural rubberband at wall
 
       e.preventDefault();
-      // Slow down scroll by ~70% (damp factor 0.30x) for a deliberate, slow, dignified architectural feel in footer!
-      const dampedStep = e.deltaY * 0.30;
+      // Refined gentle deceleration (0.68x) - smooth and weighted, reaching the end in 2-3 natural scrolls
+      const dampedStep = e.deltaY * 0.68;
       window.scrollBy({
         top: dampedStep,
         left: 0,
