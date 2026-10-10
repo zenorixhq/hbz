@@ -80,7 +80,13 @@ header.site-header {
   padding: 0 clamp(16px, 2.8vw, 36px);
   margin-bottom: 0;
   pointer-events: none;
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(-130%);
+  opacity: 0;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
+}
+header.site-header.is-docked {
+  transform: translateY(0);
+  opacity: 1;
 }
 @media (max-width: 640px) {
   header.site-header {
@@ -257,42 +263,42 @@ header.site-header.is-collapsed .header-nav {
   gap: 0;
 }
 
-/* Menu Button with Architectural Bars */
+/* Menu Button with Architectural Bars (Icon Only - Thirdway Signature) */
 .nav-menu-btn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
   border-radius: var(--radius-full);
-  padding: 6px 12px;
-  font-size: 11.5px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  width: 32px;
+  height: 32px;
+  padding: 0;
   cursor: pointer;
   transition: all 0.25s ease;
   border: 1px solid transparent;
   line-height: 1;
+  flex-shrink: 0;
 }
 .menu-icon-bars {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
   gap: 3.5px;
-  width: 14px;
+  width: 15px;
 }
 .menu-icon-bars .bar {
   display: block;
-  width: 100%;
+  width: 15px;
   height: 1.5px;
   border-radius: 1px;
   transition: background-color 0.35s ease, transform 0.25s ease, width 0.25s ease;
 }
 .menu-icon-bars .bar-2 {
-  width: 70%;
+  width: 10px;
   margin-left: auto;
 }
 .nav-menu-btn:hover .menu-icon-bars .bar-2 {
-  width: 100%;
+  width: 15px;
 }
 
 @media (max-width: 992px) {
@@ -503,14 +509,91 @@ header.site-header.nav-theme-light .btn-talk:hover {
   background: #2a2723;
 }
 
-/* ── Thirdway Signature Fullscreen Architectural Menu Overlay ── */
+/* ── Entrance Reveal Curtain (Cinematic Architectural Arrival) ── */
+.site-entrance-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: #11100f;
+  color: #f7f6f2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  will-change: transform;
+  transition: transform 0.85s cubic-bezier(0.77, 0, 0.175, 1);
+}
+.site-entrance-curtain.is-lifted {
+  transform: translateY(-100%);
+  pointer-events: none;
+}
+.entrance-curtain-inner {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.entrance-brand {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: clamp(26px, 3.8vw, 42px);
+  letter-spacing: 0.12em;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+}
+.entrance-brand .entrance-tagline {
+  font-size: clamp(10px, 1.3vw, 14px);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  margin-left: 8px;
+  padding-left: 8px;
+  border-left: 1px solid rgba(255, 255, 255, 0.3);
+  opacity: 0.7;
+}
+.entrance-atelier-meta {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: rgba(255, 255, 255, 0.45);
+  font-weight: 500;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.entrance-progress-bar-wrap {
+  width: 140px;
+  height: 1.5px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+.entrance-progress-bar {
+  width: 0%;
+  height: 100%;
+  background: #ffffff;
+  transition: width 0.08s linear;
+}
+.entrance-counter {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.65);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Thirdway Signature Dropdown / Overlay Architectural Menu ── */
 .thirdway-menu-overlay {
   position: fixed;
   inset: 0;
-  z-index: 200;
+  z-index: 300;
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(16px, 3vw, 32px);
   transition: opacity 0.35s ease, visibility 0.35s ease;
 }
 .thirdway-menu-overlay.open {
@@ -521,169 +604,239 @@ header.site-header.nav-theme-light .btn-talk:hover {
 .thirdway-menu-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(18, 17, 16, 0.84);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: rgba(18, 17, 16, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
-.thirdway-menu-container {
+.thirdway-menu-card {
   position: relative;
+  z-index: 2;
   width: 100%;
-  height: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: clamp(24px, 4vw, 56px) 24px;
-  box-sizing: border-box;
+  max-width: 680px;
+  max-height: calc(90vh);
+  background: #ffffff;
+  color: #121110;
+  border-radius: 16px;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  color: #ffffff;
-  z-index: 2;
-  overflow-y: auto;
+  overflow: hidden;
+  transform: translateY(-24px) scale(0.98);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.thirdway-menu-overlay.open .thirdway-menu-card {
+  transform: translateY(0) scale(1);
 }
 .thirdway-menu-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 20px 28px 16px;
+  border-bottom: 1px solid rgba(21, 20, 19, 0.08);
 }
-.menu-brand {
-  font-size: 20px;
+.thirdway-menu-header .menu-brand {
+  font-family: var(--font-sans);
+  font-size: 16px;
   font-weight: 800;
   letter-spacing: 0.08em;
-  color: #ffffff;
+  color: #121110;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.thirdway-menu-header .menu-brand .tagline {
+  font-size: 8.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-left: 1px solid currentColor;
+  padding-left: 5px;
+  opacity: 0.7;
 }
 .thirdway-menu-close {
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(21, 20, 19, 0.06);
+  border: 1px solid rgba(21, 20, 19, 0.1);
   border-radius: var(--radius-full);
-  color: #ffffff;
-  padding: 8px 18px;
-  font-size: 13px;
+  color: #121110;
+  padding: 6px 14px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   transition: all 0.2s ease;
 }
 .thirdway-menu-close:hover {
-  background: #ffffff;
-  color: #121110;
+  background: #121110;
+  color: #ffffff;
 }
-.thirdway-menu-content {
-  display: grid;
-  grid-template-columns: 1fr 1.6fr;
-  gap: clamp(32px, 6vw, 80px);
-  margin: auto 0;
-  padding: 40px 0;
-}
-@media (max-width: 900px) {
-  .thirdway-menu-content {
-    grid-template-columns: 1fr;
-    gap: 32px;
-    margin: 20px 0;
-  }
-  .thirdway-menu-meta {
-    order: 2;
-  }
-}
-.thirdway-menu-meta {
+.thirdway-menu-scrollable {
+  overflow-y: auto;
+  max-height: calc(90vh - 65px);
   display: flex;
   flex-direction: column;
-  gap: 28px;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-  padding-right: 32px;
 }
-@media (max-width: 900px) {
-  .thirdway-menu-meta {
-    border-right: none;
-    padding-right: 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 24px;
-  }
+.thirdway-editorial-nav {
+  padding: 16px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
-.meta-section .meta-label {
-  display: block;
+.editorial-nav-item {
+  display: flex;
+  align-items: center;
+  position: relative;
+  text-decoration: none;
+  padding: 10px 0;
+  color: #121110;
+  transition: color 0.2s ease;
+}
+.editorial-nav-item .nav-hover-arrow {
+  position: absolute;
+  left: 0;
+  font-size: 20px;
+  line-height: 1;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #121110;
+}
+.editorial-nav-item .nav-item-text {
+  font-family: var(--font-sans);
+  font-size: clamp(24px, 3.2vw, 32px);
+  font-weight: 550;
+  letter-spacing: -0.05em;
+  line-height: 1.15;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.2s ease;
+}
+.editorial-nav-item:hover .nav-hover-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+.editorial-nav-item:hover .nav-item-text {
+  transform: translateX(28px);
+  color: #000000;
+}
+.menu-lately-section {
+  border-top: 1px solid rgba(21, 20, 19, 0.08);
+  padding: 20px 28px 24px;
+  background: #faf8f5;
+}
+.menu-lately-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.lately-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #16a34a;
+}
+.lately-title {
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.5);
-  margin-bottom: 8px;
+  color: rgba(21, 20, 19, 0.6);
 }
-.meta-link {
-  color: #ffffff;
-  font-size: 18px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.2s;
+.menu-lately-track {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
 }
-.meta-link:hover {
-  color: #ffd166;
-}
-.meta-phone {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 14px;
-  margin: 4px 0 0;
-}
-.meta-text {
-  color: rgba(255, 255, 255, 0.75);
-  font-size: 13.5px;
-  margin: 3px 0;
-}
-.meta-award {
-  color: #ffd166;
-  font-size: 13px;
-  font-weight: 600;
-  margin: 0;
-}
-.thirdway-menu-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.menu-nav-item {
-  display: flex;
-  align-items: baseline;
-  gap: 16px;
-  padding: 14px 18px;
-  border-radius: var(--radius-md);
-  text-decoration: none;
-  color: #ffffff;
-  transition: background 0.2s ease, transform 0.2s ease;
-}
-.menu-nav-item:hover {
-  background: rgba(255, 255, 255, 0.08);
-  transform: translateX(6px);
-}
-.menu-nav-item .item-num {
-  font-size: 12px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.45);
-  letter-spacing: 0.06em;
-}
-.menu-nav-item .item-title {
-  font-family: var(--font-serif);
-  font-size: clamp(22px, 2.6vw, 36px);
-  font-weight: 600;
-  line-height: 1.1;
-  color: #ffffff;
-}
-.menu-nav-item .item-desc {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.55);
-  margin-left: auto;
-}
-@media (max-width: 768px) {
-  .menu-nav-item .item-desc {
-    display: none;
+@media (max-width: 640px) {
+  .menu-lately-track {
+    grid-template-columns: 1fr;
   }
 }
-.menu-nav-cta {
-  margin-top: 18px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+.lately-card {
+  border-radius: 10px;
+  overflow: hidden;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 150px;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.lately-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+.lately-card-1 {
+  background: #ece7de;
+  color: #121110;
+}
+.lately-card-2 {
+  background: #15222e;
+  color: #ffffff;
+}
+.lately-card-3 {
+  background: #16241c;
+  color: #ffffff;
+}
+.lately-card-meta .lately-tag {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-bottom: 4px;
+}
+.lately-card-meta .lately-name {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0;
+}
+.lately-thumb-wrap {
+  margin-top: 10px;
+  height: 70px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.lately-thumb-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.menu-contact-footer {
+  border-top: 1px solid rgba(21, 20, 19, 0.08);
+  padding: 16px 28px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+}
+.menu-footer-meta {
+  display: flex;
+  gap: 24px;
+}
+.footer-meta-block .f-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(21, 20, 19, 0.45);
+}
+.footer-meta-block .f-link,
+.footer-meta-block .f-text {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #121110;
+}
+@media (max-width: 600px) {
+  .menu-contact-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
 }
 
 /* ── Hero Section (Full-Screen 100vh Edge-to-Edge) ── */
@@ -3406,6 +3559,26 @@ dialog#journalUnlockModal::backdrop {
 </head>
 <body>
 
+<!-- Architectural Entrance Reveal Curtain -->
+<div class="site-entrance-curtain" id="siteEntranceCurtain">
+  <div class="entrance-curtain-inner">
+    <div class="entrance-brand">
+      HBZ<span class="entrance-tagline">STUDIO</span>
+    </div>
+    <div class="entrance-atelier-meta">
+      <span>LONDON</span>
+      <span class="dot">&bull;</span>
+      <span>TOKYO</span>
+      <span class="dot">&bull;</span>
+      <span>ZURICH</span>
+    </div>
+    <div class="entrance-progress-bar-wrap">
+      <div class="entrance-progress-bar" id="entranceProgressBar"></div>
+    </div>
+    <div class="entrance-counter" id="entranceCounter">00%</div>
+  </div>
+</div>
+
 <!-- Floating Capsule Header (Thirdway Signature: Left Date/Time Dock, Center HBZ Glass Capsule, Right Let's Talk Dock) -->
 <header class="site-header" id="siteHeader">
   <div class="site-header-inner" id="siteHeaderInner">
@@ -3433,9 +3606,8 @@ dialog#journalUnlockModal::backdrop {
         <a href="#/admin" id="nav-admin">CMS Admin</a>
       </nav>
 
-      <!-- Thirdway Signature Menu Button -->
-      <button class="nav-menu-btn" id="navMenuBtn" onclick="toggleThirdwayMenu()" aria-label="Toggle Menu">
-        <span class="menu-label">Menu</span>
+      <!-- Thirdway Signature Menu Button (Icon Only - No Text) -->
+      <button class="nav-menu-btn" id="navMenuBtn" onclick="toggleThirdwayMenu()" aria-label="Toggle Navigation Menu">
         <span class="menu-icon-bars">
           <span class="bar bar-1"></span>
           <span class="bar bar-2"></span>
@@ -3456,72 +3628,101 @@ dialog#journalUnlockModal::backdrop {
     </div>
   </div>
 
-  <!-- Fullscreen Architectural Overlay Menu (Thirdway Signature) -->
+  <!-- Thirdway Signature Dropdown / Overlay Architectural Menu -->
   <div class="thirdway-menu-overlay" id="thirdwayMenuOverlay">
     <div class="thirdway-menu-backdrop" onclick="toggleThirdwayMenu(false)"></div>
-    <div class="thirdway-menu-container">
+    <div class="thirdway-menu-card">
       <div class="thirdway-menu-header">
-        <div class="menu-brand">HBZ <span style="font-size:11px;opacity:0.6;font-weight:400;letter-spacing:0.1em;">/ ARCHITECTURAL STUDIO</span></div>
+        <div class="menu-brand">HBZ<span class="tagline">STUDIO</span></div>
         <button class="thirdway-menu-close" onclick="toggleThirdwayMenu(false)" aria-label="Close Menu">
           <span>Close</span>
           <span class="close-cross">&times;</span>
         </button>
       </div>
 
-      <div class="thirdway-menu-content">
-        <!-- Left: Studio Meta & Details -->
-        <div class="thirdway-menu-meta">
-          <div class="meta-section">
-            <span class="meta-label">Studio Inquiries</span>
-            <a href="mailto:hello@hbz.studio" class="meta-link">hello@hbz.studio</a>
-            <p class="meta-phone">+44 (0) 20 7490 8988</p>
+      <div class="thirdway-menu-scrollable">
+        <!-- Editorial Navigation Links with Signature Arrow Hover Slide -->
+        <nav class="thirdway-editorial-nav">
+          <a href="#/" class="editorial-nav-item" onclick="toggleThirdwayMenu(false)">
+            <span class="nav-hover-arrow">&rarr;</span>
+            <span class="nav-item-text">Overview</span>
+          </a>
+          <a href="#/projects" class="editorial-nav-item" onclick="toggleThirdwayMenu(false)">
+            <span class="nav-hover-arrow">&rarr;</span>
+            <span class="nav-item-text">Projects Archive</span>
+          </a>
+          <a href="#/calculator" class="editorial-nav-item" onclick="toggleThirdwayMenu(false)">
+            <span class="nav-hover-arrow">&rarr;</span>
+            <span class="nav-item-text">Spatial Calculator</span>
+          </a>
+          <a href="#/blog" class="editorial-nav-item" onclick="toggleThirdwayMenu(false)">
+            <span class="nav-hover-arrow">&rarr;</span>
+            <span class="nav-item-text">Monographs &amp; Journal</span>
+          </a>
+          <a href="#/admin" class="editorial-nav-item" onclick="toggleThirdwayMenu(false)">
+            <span class="nav-hover-arrow">&rarr;</span>
+            <span class="nav-item-text">CMS Admin</span>
+          </a>
+        </nav>
+
+        <!-- Signature "Lately at HBZ" Card Track (Exact Thirdway Signature) -->
+        <div class="menu-lately-section">
+          <div class="menu-lately-header">
+            <span class="lately-pulse-dot"></span>
+            <span class="lately-title">Lately at HBZ Studio</span>
           </div>
-          <div class="meta-section">
-            <span class="meta-label">Atelier Locations</span>
-            <p class="meta-text">London &bull; 14 Clerkenwell Close, EC1R 0AA</p>
-            <p class="meta-text">Tokyo &bull; Minami-Aoyama, Minato-ku</p>
-            <p class="meta-text">Zurich &bull; Neugasse 29</p>
+          <div class="menu-lately-track">
+            <a href="#/projects/p1" class="lately-card lately-card-1" onclick="toggleThirdwayMenu(false)">
+              <div class="lately-card-meta">
+                <span class="lately-tag">Behind the Build</span>
+                <h4 class="lately-name">Palazzo Molteni Tokyo</h4>
+              </div>
+              <div class="lately-thumb-wrap">
+                <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=400&q=80" alt="Palazzo Molteni Tokyo" loading="lazy">
+              </div>
+            </a>
+            <a href="#/projects/p2" class="lately-card lately-card-2" onclick="toggleThirdwayMenu(false)">
+              <div class="lately-card-meta">
+                <span class="lately-tag">Monograph Dossier</span>
+                <h4 class="lately-name">Meridian Campus London</h4>
+              </div>
+              <div class="lately-thumb-wrap">
+                <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=400&q=80" alt="Meridian Campus" loading="lazy">
+              </div>
+            </a>
+            <a href="#/calculator" class="lately-card lately-card-3" onclick="toggleThirdwayMenu(false)">
+              <div class="lately-card-meta">
+                <span class="lately-tag">Spatial Advisory</span>
+                <h4 class="lately-name">Material &amp; Cost Modeler</h4>
+              </div>
+              <div class="lately-thumb-wrap">
+                <img src="https://images.unsplash.com/photo-1600573472550-8090b5e0745e?auto=format&fit=crop&w=400&q=80" alt="Calculator" loading="lazy">
+              </div>
+            </a>
           </div>
         </div>
 
-        <!-- Right: Primary Editorial Navigation -->
-        <nav class="thirdway-menu-nav">
-          <a href="#/" class="menu-nav-item" onclick="toggleThirdwayMenu(false)">
-            <span class="item-num">01</span>
-            <span class="item-title">Overview</span>
-            <span class="item-desc">Studio manifesto, philosophy &amp; selected scheme showcase</span>
-          </a>
-          <a href="#/projects" class="menu-nav-item" onclick="toggleThirdwayMenu(false)">
-            <span class="item-num">02</span>
-            <span class="item-title">Projects Archive</span>
-            <span class="item-desc">MVRDV-style multi-scale grid, list &amp; global map index</span>
-          </a>
-          <a href="#/blog" class="menu-nav-item" onclick="toggleThirdwayMenu(false)">
-            <span class="item-num">03</span>
-            <span class="item-title">Monographs &amp; Journal</span>
-            <span class="item-desc">Gated technical architectural briefings &amp; field reports</span>
-          </a>
-          <a href="#/calculator" class="menu-nav-item" onclick="toggleThirdwayMenu(false)">
-            <span class="item-num">04</span>
-            <span class="item-title">Spatial Calculator</span>
-            <span class="item-desc">Interactive tile layout, wastage &amp; investment modeler</span>
-          </a>
-          <a href="#/admin" class="menu-nav-item" onclick="toggleThirdwayMenu(false)">
-            <span class="item-num">05</span>
-            <span class="item-title">CMS Admin</span>
-            <span class="item-desc">Publish schemes, monographs &amp; manage leads</span>
-          </a>
-          <div class="menu-nav-cta">
-            <button class="btn-talk" onclick="openContactModal(); toggleThirdwayMenu(false);" style="width:100%;justify-content:center;padding:14px 24px;font-size:14px;">
-              <span>Initiate Spatial Brief</span>
-              <span class="arrow-circle">
-                <svg viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M11 4.007 6.887 8H4.545l3.482-3.2H0V3.215h8.027L4.529 0h2.342z" fill="currentColor"/>
-                </svg>
-              </span>
-            </button>
+        <!-- Studio Contact & Atelier Meta -->
+        <div class="menu-contact-footer">
+          <div class="menu-footer-meta">
+            <div class="footer-meta-block">
+              <span class="f-label">Studio Inquiries</span>
+              <a href="mailto:hello@hbz.studio" class="f-link">hello@hbz.studio</a>
+            </div>
+            <div class="footer-meta-block">
+              <span class="f-label">Atelier</span>
+              <span class="f-text">London &bull; Tokyo &bull; Zurich</span>
+            </div>
           </div>
-        </nav>
+          <button class="btn-talk" onclick="openContactModal(); toggleThirdwayMenu(false);">
+            <span>Let’s talk</span>
+            <span class="arrow-circle">
+              <svg viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11 4.007 6.887 8H4.545l3.482-3.2H0V3.215h8.027L4.529 0h2.342z" fill="currentColor"/>
+              </svg>
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -7255,6 +7456,11 @@ function dismissCookieBar(reopen = false) {
 }
 
 // ── Routing & Active Nav ──
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
+}
+window.scrollTo(0, 0);
+
 function updateActiveNav(navId) {
   document.querySelectorAll('.header-nav a').forEach(a => a.classList.remove('active'));
   const target = document.getElementById(navId);
@@ -7278,8 +7484,52 @@ function route(){
   setTimeout(updateNavbarState, 50);
 }
 
+// ── Cinematic Architectural Entrance Reveal & Header Docking ──
+function initSiteEntrance() {
+  const curtain = document.getElementById('siteEntranceCurtain');
+  const bar = document.getElementById('entranceProgressBar');
+  const counter = document.getElementById('entranceCounter');
+  const header = document.getElementById('siteHeader');
+
+  if (!curtain) {
+    if (header) header.classList.add('is-docked');
+    return;
+  }
+
+  window.scrollTo(0, 0);
+
+  let progress = 0;
+  const startTime = performance.now();
+  const duration = 750;
+
+  function step(now) {
+    const elapsed = now - startTime;
+    progress = Math.min(100, Math.round((elapsed / duration) * 100));
+
+    if (bar) bar.style.width = progress + '%';
+    if (counter) counter.textContent = String(progress).padStart(2, '0') + '%';
+
+    if (progress < 100) {
+      requestAnimationFrame(step);
+    } else {
+      setTimeout(() => {
+        curtain.classList.add('is-lifted');
+        // Unveil hero first, then dock header smoothly
+        setTimeout(() => {
+          if (header) header.classList.add('is-docked');
+        }, 320);
+        setTimeout(() => {
+          curtain.style.display = 'none';
+        }, 900);
+      }, 80);
+    }
+  }
+  requestAnimationFrame(step);
+}
+
 window.addEventListener('hashchange', route);
 route();
+initSiteEntrance();
 </script>
 </body>
 </html>
