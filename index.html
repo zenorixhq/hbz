@@ -8084,46 +8084,10 @@ function initParallaxEngine() {
   updateParallax();
 }
 
-// ── Footer Slow Architectural Scroll Damping Engine ──
-function handleFooterWheelDamping(e) {
-  // Do not intercept if a modal or menu overlay is open
-  if (document.body.classList.contains('modal-open')) return;
-  const menuOverlay = document.getElementById('thirdwayMenuOverlay');
-  if (menuOverlay && menuOverlay.classList.contains('active')) return;
-
-  // Locate the footer or CTA stage
-  const footer = document.querySelector('.site-footer');
-  const cta = document.getElementById('sec-cta');
-  const anchor = cta || footer;
-  if (!anchor) return;
-
-  const rect = anchor.getBoundingClientRect();
-  const winH = window.innerHeight;
-
-  // When user reaches the footer zone (anchor top enters within 45% of viewport)
-  if (rect.top <= winH * 0.45) {
-    if (Math.abs(e.deltaY) > 2) {
-      const isAtBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 5);
-      if (isAtBottom && e.deltaY > 0) return; // Allow natural rubberband at wall
-
-      e.preventDefault();
-      // Refined gentle deceleration (0.68x) - smooth and weighted, reaching the end in 2-3 natural scrolls
-      const dampedStep = e.deltaY * 0.68;
-      window.scrollBy({
-        top: dampedStep,
-        left: 0,
-        behavior: 'auto'
-      });
-    }
-  }
-}
-
-function initFooterScrollDamping() {
-  if (window.__footerWheelDampingHandler) {
-    window.removeEventListener('wheel', window.__footerWheelDampingHandler, { passive: false });
-  }
-  window.__footerWheelDampingHandler = handleFooterWheelDamping;
-  window.addEventListener('wheel', handleFooterWheelDamping, { passive: false });
+// Clean up any footer scroll damping handlers to guarantee natural, silky-smooth scrolling throughout the footer
+if (window.__footerWheelDampingHandler) {
+  window.removeEventListener('wheel', window.__footerWheelDampingHandler, { passive: false });
+  window.__footerWheelDampingHandler = null;
 }
 
 // Thirdway Cookie Notice Dismiss Handler
@@ -8166,7 +8130,6 @@ function route(){
   else renderHome();
   setTimeout(updateNavbarState, 50);
   setTimeout(initParallaxEngine, 60);
-  setTimeout(initFooterScrollDamping, 70);
 }
 
 // ── Signature Logo-First Architectural Entrance Flight & Header Docking ──
@@ -8235,7 +8198,6 @@ window.addEventListener('hashchange', route);
 route();
 initSiteEntrance();
 initParallaxEngine();
-initFooterScrollDamping();
 </script>
 </body>
 </html>
