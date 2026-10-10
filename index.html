@@ -80,13 +80,39 @@ header.site-header {
   padding: 0 clamp(16px, 2.8vw, 36px);
   margin-bottom: 0;
   pointer-events: none;
-  transform: translateY(-130%);
-  opacity: 0;
-  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease;
-}
-header.site-header.is-docked {
-  transform: translateY(0);
   opacity: 1;
+}
+header.site-header.entrance-running #headerBrandLogo {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+header.site-header.entrance-running .header-left-dock,
+header.site-header.entrance-running .header-nav,
+header.site-header.entrance-running .nav-menu-btn,
+header.site-header.entrance-running .nav-hairline-sep,
+header.site-header.entrance-running .header-right-dock {
+  opacity: 0 !important;
+}
+header.site-header.entrance-running .header-center-pill {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+header.site-header .header-left-dock,
+header.site-header .header-nav,
+header.site-header .nav-menu-btn,
+header.site-header .nav-hairline-sep,
+header.site-header .header-right-dock,
+header.site-header #headerBrandLogo {
+  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.55s ease;
+}
+header.site-header .header-center-pill {
+  transition: background 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.55s ease,
+              box-shadow 0.55s ease,
+              backdrop-filter 0.55s ease;
 }
 @media (max-width: 640px) {
   header.site-header {
@@ -509,7 +535,7 @@ header.site-header.nav-theme-light .btn-talk:hover {
   background: #2a2723;
 }
 
-/* ── Entrance Reveal Curtain (Cinematic Architectural Arrival) ── */
+/* ── Entrance Reveal Curtain with Flying Logo ── */
 .site-entrance-curtain {
   position: fixed;
   inset: 0;
@@ -519,67 +545,64 @@ header.site-header.nav-theme-light .btn-talk:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  will-change: transform;
-  transition: transform 0.85s cubic-bezier(0.77, 0, 0.175, 1);
-}
-.site-entrance-curtain.is-lifted {
-  transform: translateY(-100%);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
 }
-.entrance-curtain-inner {
-  text-align: center;
+.site-entrance-curtain.fade-out {
+  opacity: 0;
+}
+.entrance-logo-stage {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
-.entrance-brand {
+.entrance-flying-logo {
   font-family: var(--font-sans);
   font-weight: 800;
-  font-size: clamp(26px, 3.8vw, 42px);
-  letter-spacing: 0.12em;
+  font-size: clamp(34px, 5.5vw, 56px);
+  letter-spacing: 0.1em;
   color: #ffffff;
-  display: flex;
+  display: inline-flex;
   align-items: center;
+  gap: 6px;
+  line-height: 1;
+  position: fixed;
+  z-index: 100000;
+  transform-origin: center center;
+  will-change: transform, opacity;
+  pointer-events: none;
 }
-.entrance-brand .entrance-tagline {
-  font-size: clamp(10px, 1.3vw, 14px);
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  margin-left: 8px;
+.entrance-flying-logo .tagline {
+  font-size: clamp(12px, 1.8vw, 18px);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border-left: 2px solid rgba(255, 255, 255, 0.4);
   padding-left: 8px;
-  border-left: 1px solid rgba(255, 255, 255, 0.3);
-  opacity: 0.7;
+  margin-left: 4px;
+  opacity: 0.75;
 }
-.entrance-atelier-meta {
-  font-size: 11px;
+.entrance-sub-manifesto {
+  position: fixed;
+  top: calc(50% + 46px);
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 11.5px;
   letter-spacing: 0.22em;
+  text-transform: uppercase;
   color: rgba(255, 255, 255, 0.45);
   font-weight: 500;
-  display: flex;
-  gap: 10px;
-  align-items: center;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
 }
-.entrance-progress-bar-wrap {
-  width: 140px;
-  height: 1.5px;
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 2px;
-  overflow: hidden;
-  margin-top: 12px;
-}
-.entrance-progress-bar {
-  width: 0%;
-  height: 100%;
-  background: #ffffff;
-  transition: width 0.08s linear;
-}
-.entrance-counter {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: rgba(255, 255, 255, 0.65);
-  font-variant-numeric: tabular-nums;
+.entrance-sub-manifesto.hide {
+  opacity: 0;
 }
 
 /* ── Thirdway Signature Dropdown / Overlay Architectural Menu ── */
@@ -856,13 +879,14 @@ header.site-header.nav-theme-light .btn-talk:hover {
 }
 .hero-silence-bg {
   position: absolute;
-  inset: 0;
+  inset: -10% 0 -10% 0;
   width: 100%;
-  height: 100%;
+  height: 120%;
   object-fit: cover;
   object-position: center;
-  transition: opacity 0.5s var(--transition-cubic), transform 0.7s var(--transition-cubic);
+  transition: opacity 0.5s var(--transition-cubic);
   z-index: 1;
+  will-change: transform;
 }
 .hero-silence-overlay {
   position: absolute;
@@ -1320,9 +1344,9 @@ header.site-header.nav-theme-light .btn-talk:hover {
 }
 .wipe-bg-img {
   position: absolute;
-  inset: 0;
+  inset: -8% 0 -8% 0;
   width: 100%;
-  height: 100%;
+  height: 116%;
   object-fit: cover;
   z-index: 1;
   will-change: transform;
@@ -1811,11 +1835,13 @@ header.site-header.nav-theme-light .btn-talk:hover {
   height: 100%;
 }
 .thirdway-cta-img {
+  position: absolute;
+  inset: -12% 0 -12% 0;
   width: 100%;
-  height: 100%;
+  height: 124%;
   object-fit: cover;
   object-position: center 60%;
-  transform: scale(1.02);
+  will-change: transform;
 }
 .thirdway-cta-overlay {
   position: absolute;
@@ -3559,23 +3585,15 @@ dialog#journalUnlockModal::backdrop {
 </head>
 <body>
 
-<!-- Architectural Entrance Reveal Curtain -->
+<!-- Architectural Entrance Curtain with Flying Logo Transition -->
 <div class="site-entrance-curtain" id="siteEntranceCurtain">
-  <div class="entrance-curtain-inner">
-    <div class="entrance-brand">
-      HBZ<span class="entrance-tagline">STUDIO</span>
+  <div class="entrance-logo-stage" id="entranceLogoStage">
+    <div class="entrance-flying-logo" id="entranceFlyingLogo">
+      HBZ<span class="tagline">STUDIO</span>
     </div>
-    <div class="entrance-atelier-meta">
-      <span>LONDON</span>
-      <span class="dot">&bull;</span>
-      <span>TOKYO</span>
-      <span class="dot">&bull;</span>
-      <span>ZURICH</span>
+    <div class="entrance-sub-manifesto" id="entranceSubManifesto">
+      <span>Spatial practice &bull; London &bull; Tokyo &bull; Zurich</span>
     </div>
-    <div class="entrance-progress-bar-wrap">
-      <div class="entrance-progress-bar" id="entranceProgressBar"></div>
-    </div>
-    <div class="entrance-counter" id="entranceCounter">00%</div>
   </div>
 </div>
 
@@ -5326,7 +5344,7 @@ async function renderHome(){
   window.__activeProjects = projects;
   initScrollAnimations();
   initProjectsWipe(projects);
-  initSectionScrollLock();
+  initParallaxEngine();
   updateJournalPassUI();
 }
 
@@ -7109,339 +7127,85 @@ function initProjectsWipe(projectsList) {
   renderWipe(currentProgress);
 }
 
-// ── Section-Wise Smooth Scroll Locking Engine ──
-let isScrollAnimating = false;
-let scrollAnimationId = null;
-let lastWheelTime = 0;
-const WHEEL_DEBOUNCE_MS = 240;
-
-function smoothScrollTo(targetY, duration = 750, onComplete) {
-  if (scrollAnimationId) {
-    cancelAnimationFrame(scrollAnimationId);
-  }
-  isScrollAnimating = true;
-
-  const startY = window.scrollY || window.pageYOffset;
-  const distance = targetY - startY;
-
-  if (Math.abs(distance) < 2) {
-    window.scrollTo(0, targetY);
-    isScrollAnimating = false;
-    if (onComplete) onComplete();
-    return;
-  }
-
-  const startTime = performance.now();
-
-  function easeOutCubic(t) {
-    return 1 - Math.pow(1 - t, 3);
-  }
-
-  function step(currentTime) {
-    const elapsed = currentTime - startTime;
-    const progress = Math.min(1, elapsed / duration);
-    const ease = easeOutCubic(progress);
-
-    window.scrollTo(0, Math.round(startY + distance * ease));
-
-    if (progress < 1) {
-      scrollAnimationId = requestAnimationFrame(step);
-    } else {
-      window.scrollTo(0, targetY);
-      setTimeout(() => {
-        isScrollAnimating = false;
-        if (onComplete) onComplete();
-      }, 100);
-    }
-  }
-
-  scrollAnimationId = requestAnimationFrame(step);
-}
-
-function getSectionStops() {
-  const hash = location.hash.slice(1) || '/';
-  if (hash !== '/' && hash !== '' && hash !== '#/') return [];
-
-  const stops = [0];
-  const windowH = window.innerHeight;
-
-  // Notice: 'sec-manifesto' is excluded so Section [02] has NO locking stops and can scrub naturally!
-  const secIds = [
-    'sec-lead-in',
-    'sec-projects-wipe',
-    'sec-impact',
-    'sec-home-journal',
-    'sec-clients',
-    'sec-cta'
-  ];
-
-  secIds.forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const top = Math.round(rect.top + (window.scrollY || window.pageYOffset));
-
-    if (id === 'sec-projects-wipe') {
-      const slides = el.querySelectorAll('.wipe-slide');
-      const count = Math.max(1, slides.length);
-      for (let s = 0; s < count; s++) {
-        stops.push(Math.round(top + s * windowH));
-      }
-    } else {
-      stops.push(top);
-      if (el.offsetHeight > windowH + 120) {
-        stops.push(Math.round(top + el.offsetHeight - windowH));
-      }
-    }
-  });
-
-  const maxScroll = Math.max(0, document.documentElement.scrollHeight - windowH);
-  stops.push(maxScroll);
-
-  stops.sort((a, b) => a - b);
-  const cleanStops = [];
-  stops.forEach(s => {
-    const clamped = Math.max(0, Math.min(maxScroll, s));
-    if (!cleanStops.length || Math.abs(clamped - cleanStops[cleanStops.length - 1]) > 70) {
-      cleanStops.push(clamped);
-    }
-  });
-
-  return cleanStops;
-}
+// ── Native Smooth Scrolling (Section Locking Disabled) ──
+function cleanupSectionScrollLock() {}
+function initSectionScrollLock() {}
 
 function scrollToNextSection() {
-  const currentY = window.scrollY || window.pageYOffset;
-  const secManifesto = document.getElementById('sec-manifesto');
-  if (secManifesto && currentY < secManifesto.offsetTop - 40) {
-    smoothScrollTo(secManifesto.offsetTop, 750);
-    return;
-  }
-  const stops = getSectionStops();
-  for (let i = 0; i < stops.length; i++) {
-    if (stops[i] > currentY + 30) {
-      smoothScrollTo(stops[i], 750);
-      return;
-    }
-  }
-}
-
-function handleSectionWheel(e) {
-  const hash = location.hash.slice(1) || '/';
-  if (hash !== '/' && hash !== '' && hash !== '#/') return;
-
-  const modalActive = document.querySelector('.auth-modal-overlay.active, .site-menu-overlay.active, .contact-modal.active');
-  if (modalActive || document.body.classList.contains('modal-open')) {
-    return;
-  }
-
-  let p = e.target;
-  while (p && p !== document.body) {
-    if (p.classList && (p.classList.contains('scrollable') || p.classList.contains('modal-body'))) {
-      return;
-    }
-    p = p.parentElement;
-  }
-
-  // ── REMOVE SECTION SCROLL LOCK IN MANIFESTO SECTION ──
-  // When Manifesto is in view, bypass locking entirely to allow natural scroll scrub reveal!
   const secManifesto = document.getElementById('sec-manifesto');
   if (secManifesto) {
-    const rect = secManifesto.getBoundingClientRect();
-    const windowH = window.innerHeight;
-    if (rect.top <= windowH && rect.bottom >= 0) {
-      return; // Natural, free browser scroll for word-by-word reveal!
-    }
-  }
-
-  const now = performance.now();
-  if (isScrollAnimating) {
-    e.preventDefault();
-    return;
-  }
-
-  if (now - lastWheelTime < WHEEL_DEBOUNCE_MS) {
-    e.preventDefault();
-    return;
-  }
-
-  const delta = e.deltaY;
-  if (Math.abs(delta) < 15) return;
-
-  e.preventDefault();
-  lastWheelTime = now;
-
-  const stops = getSectionStops();
-  if (stops.length <= 1) return;
-
-  const currentY = window.scrollY || window.pageYOffset;
-  const direction = delta > 0 ? 1 : -1;
-  let targetY = currentY;
-
-  if (direction > 0) {
-    for (let i = 0; i < stops.length; i++) {
-      if (stops[i] > currentY + 30) {
-        targetY = stops[i];
-        break;
-      }
-    }
+    secManifesto.scrollIntoView({ behavior: 'smooth' });
   } else {
-    for (let i = stops.length - 1; i >= 0; i--) {
-      if (stops[i] < currentY - 30) {
-        targetY = stops[i];
-        break;
+    window.scrollBy({ top: window.innerHeight * 0.85, behavior: 'smooth' });
+  }
+}
+
+// ── High-Performance Architectural Image Parallax Engine ──
+let parallaxTicking = false;
+
+function updateParallax() {
+  const windowH = window.innerHeight;
+  const scrollY = window.scrollY || window.pageYOffset;
+
+  // 1. Hero Silence Image Parallax (Gentle cinematic drift down)
+  const heroBg = document.getElementById('heroSilenceBg');
+  if (heroBg && scrollY <= windowH * 1.5) {
+    const heroOffset = scrollY * 0.35;
+    heroBg.style.transform = `translate3d(0, ${heroOffset.toFixed(1)}px, 0) scale(1.06)`;
+  }
+
+  // 2. Monograph Section in Home
+  // A. Manifesto Colonnade Image in Section [02]
+  const manifestoWraps = document.querySelectorAll('.manifesto-parallax-wrap');
+  manifestoWraps.forEach(wrap => {
+    const rect = wrap.getBoundingClientRect();
+    if (rect.top < windowH && rect.bottom > 0) {
+      const center = rect.top + rect.height / 2;
+      const screenCenter = windowH / 2;
+      const offset = (center - screenCenter) / (windowH / 2); // -1 to +1
+      const translateY = offset * 45;
+      const img = wrap.querySelector('.manifesto-parallax-img');
+      if (img) {
+        img.style.transform = `translate3d(0, ${translateY.toFixed(1)}px, 0) scale(1.08)`;
+      }
+    }
+  });
+
+  // 3. Footer CTA Full-Bleed Image Parallax
+  const ctaSec = document.getElementById('sec-cta');
+  if (ctaSec) {
+    const rect = ctaSec.getBoundingClientRect();
+    if (rect.top < windowH && rect.bottom > 0) {
+      const totalTravel = windowH + rect.height;
+      const currentTravel = windowH - rect.top;
+      const progress = Math.max(0, Math.min(1, currentTravel / totalTravel));
+      const ctaTranslateY = (progress - 0.5) * 80;
+      const ctaImg = ctaSec.querySelector('.thirdway-cta-img');
+      if (ctaImg) {
+        ctaImg.style.transform = `translate3d(0, ${ctaTranslateY.toFixed(1)}px, 0) scale(1.08)`;
       }
     }
   }
 
-  if (Math.abs(targetY - currentY) > 5) {
-    smoothScrollTo(targetY, 750);
+  parallaxTicking = false;
+}
+
+function onParallaxScroll() {
+  if (!parallaxTicking) {
+    parallaxTicking = true;
+    requestAnimationFrame(updateParallax);
   }
 }
 
-function handleSectionKeyDown(e) {
-  const hash = location.hash.slice(1) || '/';
-  if (hash !== '/' && hash !== '' && hash !== '#/') return;
-
-  if (['input', 'textarea', 'select'].includes((document.activeElement?.tagName || '').toLowerCase())) return;
-
-  const secManifesto = document.getElementById('sec-manifesto');
-  if (secManifesto) {
-    const rect = secManifesto.getBoundingClientRect();
-    const windowH = window.innerHeight;
-    if (rect.top <= windowH && rect.bottom >= 0) {
-      return; // Allow native arrow key scrolling in Manifesto
-    }
+function initParallaxEngine() {
+  if (window.__parallaxScrollHandler) {
+    window.removeEventListener('scroll', window.__parallaxScrollHandler);
+    window.removeEventListener('resize', window.__parallaxScrollHandler);
   }
-
-  let direction = 0;
-  if (e.key === 'ArrowDown' || e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) {
-    direction = 1;
-  } else if (e.key === 'ArrowUp' || e.key === 'PageUp' || (e.key === ' ' && e.shiftKey)) {
-    direction = -1;
-  }
-
-  if (direction !== 0) {
-    e.preventDefault();
-    const stops = getSectionStops();
-    const currentY = window.scrollY || window.pageYOffset;
-    let targetY = currentY;
-
-    if (direction > 0) {
-      for (let i = 0; i < stops.length; i++) {
-        if (stops[i] > currentY + 30) {
-          targetY = stops[i];
-          break;
-        }
-      }
-    } else {
-      for (let i = stops.length - 1; i >= 0; i--) {
-        if (stops[i] < currentY - 30) {
-          targetY = stops[i];
-          break;
-        }
-      }
-    }
-
-    if (Math.abs(targetY - currentY) > 5) {
-      smoothScrollTo(targetY, 750);
-    }
-  }
-}
-
-let touchStartY = 0;
-let touchStartX = 0;
-
-function handleSectionTouchStart(e) {
-  if (e.touches && e.touches[0]) {
-    touchStartY = e.touches[0].clientY;
-    touchStartX = e.touches[0].clientX;
-  }
-}
-
-function handleSectionTouchEnd(e) {
-  const hash = location.hash.slice(1) || '/';
-  if (hash !== '/' && hash !== '' && hash !== '#/') return;
-  if (isScrollAnimating) return;
-
-  const secManifesto = document.getElementById('sec-manifesto');
-  if (secManifesto) {
-    const rect = secManifesto.getBoundingClientRect();
-    const windowH = window.innerHeight;
-    if (rect.top <= windowH && rect.bottom >= 0) {
-      return; // Allow native touch scrolling in Manifesto
-    }
-  }
-
-  if (e.changedTouches && e.changedTouches[0]) {
-    const deltaY = touchStartY - e.changedTouches[0].clientY;
-    const deltaX = touchStartX - e.changedTouches[0].clientX;
-
-    if (Math.abs(deltaY) > 40 && Math.abs(deltaY) > Math.abs(deltaX) * 1.3) {
-      const stops = getSectionStops();
-      const currentY = window.scrollY || window.pageYOffset;
-      const direction = deltaY > 0 ? 1 : -1;
-      let targetY = currentY;
-
-      if (direction > 0) {
-        for (let i = 0; i < stops.length; i++) {
-          if (stops[i] > currentY + 30) {
-            targetY = stops[i];
-            break;
-          }
-        }
-      } else {
-        for (let i = stops.length - 1; i >= 0; i--) {
-          if (stops[i] < currentY - 30) {
-            targetY = stops[i];
-            break;
-          }
-        }
-      }
-
-      if (Math.abs(targetY - currentY) > 5) {
-        smoothScrollTo(targetY, 680);
-      }
-    }
-  }
-}
-
-function cleanupSectionScrollLock() {
-  if (window.__sectionWheelHandler) {
-    window.removeEventListener('wheel', window.__sectionWheelHandler, { passive: false });
-    window.__sectionWheelHandler = null;
-  }
-  if (window.__sectionKeyHandler) {
-    window.removeEventListener('keydown', window.__sectionKeyHandler);
-    window.__sectionKeyHandler = null;
-  }
-  if (window.__sectionTouchStartHandler) {
-    window.removeEventListener('touchstart', window.__sectionTouchStartHandler);
-    window.__sectionTouchStartHandler = null;
-  }
-  if (window.__sectionTouchEndHandler) {
-    window.removeEventListener('touchend', window.__sectionTouchEndHandler);
-    window.__sectionTouchEndHandler = null;
-  }
-  if (scrollAnimationId) {
-    cancelAnimationFrame(scrollAnimationId);
-    scrollAnimationId = null;
-  }
-  isScrollAnimating = false;
-}
-
-function initSectionScrollLock() {
-  cleanupSectionScrollLock();
-
-  window.__sectionWheelHandler = handleSectionWheel;
-  window.__sectionKeyHandler = handleSectionKeyDown;
-  window.__sectionTouchStartHandler = handleSectionTouchStart;
-  window.__sectionTouchEndHandler = handleSectionTouchEnd;
-
-  window.addEventListener('wheel', handleSectionWheel, { passive: false });
-  window.addEventListener('keydown', handleSectionKeyDown);
-  window.addEventListener('touchstart', handleSectionTouchStart, { passive: true });
-  window.addEventListener('touchend', handleSectionTouchEnd, { passive: true });
+  window.__parallaxScrollHandler = onParallaxScroll;
+  window.addEventListener('scroll', onParallaxScroll, { passive: true });
+  window.addEventListener('resize', onParallaxScroll, { passive: true });
+  updateParallax();
 }
 
 // Thirdway Cookie Notice Dismiss Handler
@@ -7482,54 +7246,75 @@ function route(){
   else if (parts[0] === 'admin') renderAdmin();
   else renderHome();
   setTimeout(updateNavbarState, 50);
+  setTimeout(initParallaxEngine, 60);
 }
 
-// ── Cinematic Architectural Entrance Reveal & Header Docking ──
+// ── Signature Logo-First Architectural Entrance Flight & Header Docking ──
 function initSiteEntrance() {
   const curtain = document.getElementById('siteEntranceCurtain');
-  const bar = document.getElementById('entranceProgressBar');
-  const counter = document.getElementById('entranceCounter');
+  const flyingLogo = document.getElementById('entranceFlyingLogo');
+  const subManifesto = document.getElementById('entranceSubManifesto');
   const header = document.getElementById('siteHeader');
+  const brandLogo = document.getElementById('headerBrandLogo');
 
-  if (!curtain) {
-    if (header) header.classList.add('is-docked');
+  if (!curtain || !flyingLogo || !header || !brandLogo) {
+    if (header) {
+      header.classList.remove('entrance-running');
+      header.classList.add('is-docked');
+    }
+    if (curtain) curtain.style.display = 'none';
     return;
   }
 
   window.scrollTo(0, 0);
+  header.classList.add('entrance-running');
 
-  let progress = 0;
-  const startTime = performance.now();
-  const duration = 750;
+  // Position flying logo in exact center of viewport initially
+  const winW = window.innerWidth;
+  const winH = window.innerHeight;
+  const logoRect = flyingLogo.getBoundingClientRect();
+  const initialLeft = (winW - logoRect.width) / 2;
+  const initialTop = (winH - logoRect.height) / 2;
 
-  function step(now) {
-    const elapsed = now - startTime;
-    progress = Math.min(100, Math.round((elapsed / duration) * 100));
+  flyingLogo.style.left = initialLeft + 'px';
+  flyingLogo.style.top = initialTop + 'px';
+  flyingLogo.style.transformOrigin = '0 0';
+  flyingLogo.style.transform = 'translate3d(0, 0, 0) scale(1)';
 
-    if (bar) bar.style.width = progress + '%';
-    if (counter) counter.textContent = String(progress).padStart(2, '0') + '%';
+  // Stage 1: Display centered brand mark with sub-manifesto for 550ms
+  setTimeout(() => {
+    // Fade sub-manifesto
+    if (subManifesto) subManifesto.classList.add('hide');
 
-    if (progress < 100) {
-      requestAnimationFrame(step);
-    } else {
+    // Measure destination brand logo inside navbar capsule
+    const targetRect = brandLogo.getBoundingClientRect();
+    const deltaX = targetRect.left - initialLeft;
+    const deltaY = targetRect.top - initialTop;
+    const scale = (logoRect.height > 0) ? (targetRect.height / logoRect.height) : 0.38;
+
+    // Stage 2: Smooth flight of logo from center to navbar capsule + fade out dark curtain
+    flyingLogo.style.transition = 'transform 0.85s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.85s ease';
+    flyingLogo.style.transform = `translate3d(${deltaX.toFixed(2)}px, ${deltaY.toFixed(2)}px, 0) scale(${scale.toFixed(4)})`;
+
+    curtain.classList.add('fade-out');
+
+    // Stage 3: Logo docks into navbar! Drop entrance-running to unveil navbar capsule
+    setTimeout(() => {
+      header.classList.remove('entrance-running');
+      header.classList.add('is-docked');
+      flyingLogo.style.opacity = '0';
       setTimeout(() => {
-        curtain.classList.add('is-lifted');
-        // Unveil hero first, then dock header smoothly
-        setTimeout(() => {
-          if (header) header.classList.add('is-docked');
-        }, 320);
-        setTimeout(() => {
-          curtain.style.display = 'none';
-        }, 900);
-      }, 80);
-    }
-  }
-  requestAnimationFrame(step);
+        curtain.style.display = 'none';
+        flyingLogo.style.display = 'none';
+      }, 250);
+    }, 800);
+  }, 550);
 }
 
 window.addEventListener('hashchange', route);
 route();
 initSiteEntrance();
+initParallaxEngine();
 </script>
 </body>
 </html>
