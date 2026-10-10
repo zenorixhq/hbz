@@ -4033,13 +4033,16 @@ window.addEventListener('hashchange', () => {
 setTimeout(updateNavbarState, 100);
 
 // Contact Modal
-function openContactModal() {
+// Contact Modal
+function openContactModal(context = null) {
+  if (context) window.__inquirySource = context;
   const dialog = document.getElementById('contactDialog');
   if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
 }
 function closeContactModal() {
   const dialog = document.getElementById('contactDialog');
   if (dialog) dialog.close();
+  window.__inquirySource = null;
 }
 async function submitInquiry() {
   const name = document.getElementById('cname').value.trim();
@@ -4051,20 +4054,37 @@ async function submitInquiry() {
     err.style.display = 'block';
     return;
   }
+
+  // Determine source context
+  let source = window.__inquirySource || '';
+  if (!source) {
+    if (notes.includes('Flooring Calculation')) source = 'Calculator: Flooring Estimator';
+    else if (notes.includes('Wall Cladding')) source = 'Calculator: Wall Cladding Estimator';
+    else if (location.hash.startsWith('#/calculator')) source = 'Calculator: CAD Estimator';
+    else if (location.hash.startsWith('#/projects/')) source = 'Project Scheme Dossier';
+    else source = 'Direct Studio Consultation';
+  }
+
   // Store in local storage leads list for testing/demo
   try {
     const raw = localStorage.getItem('hbz_leads');
     const leads = raw ? JSON.parse(raw) : [];
-    leads.unshift({ name, phone, post_id: notes || 'Direct Consultation Inquiry', created_at: new Date().toISOString() });
+    leads.unshift({
+      name,
+      phone,
+      source: source,
+      details: notes || source,
+      post_id: notes || source,
+      created_at: new Date().toISOString()
+    });
     localStorage.setItem('hbz_leads', JSON.stringify(leads));
   } catch(e) {}
 
   if (LIVE) {
-    const { error } = await db.from('leads').insert([{ name, phone, post_id: null }]);
-    if (error) {
-      err.textContent = 'Error saving inquiry: ' + error.message;
-      err.style.display = 'block';
-      return;
+    try {
+      await db.from('leads').insert([{ name, phone, post_id: null }]);
+    } catch(err) {
+      console.warn('Supabase lead insert error:', err);
     }
   }
   alert('Thank you, ' + name + '. Your estimate & inquiry have been received.');
@@ -4749,7 +4769,14 @@ async function submitJournalUnlockModal() {
   try {
     const raw = localStorage.getItem('hbz_leads');
     const leads = raw ? JSON.parse(raw) : [];
-    leads.unshift({ name, phone, post_id: pendingJournalTargetId || 'Journal Monograph Unlock', created_at: new Date().toISOString() });
+    leads.unshift({
+      name,
+      phone,
+      source: 'Journal Unlock',
+      details: pendingJournalTargetId ? `Journal Monograph Unlock [${pendingJournalTargetId}]` : 'Journal Access Pass Unlock',
+      post_id: pendingJournalTargetId || 'Journal Monograph Unlock',
+      created_at: new Date().toISOString()
+    });
     localStorage.setItem('hbz_leads', JSON.stringify(leads));
   } catch (e) {}
 
@@ -6291,7 +6318,7 @@ function saveFlooringEstimate() {
 
   const notesEl = document.getElementById('cnotes');
   if (notesEl) notesEl.value = summary;
-  openContactModal();
+  openContactModal('Calculator: Flooring & Materials');
 }
 
 function saveWallEstimate() {
@@ -6310,7 +6337,7 @@ function saveWallEstimate() {
 
   const notesEl = document.getElementById('cnotes');
   if (notesEl) notesEl.value = summary;
-  openContactModal();
+  openContactModal('Calculator: Wall Cladding & Acoustics');
 }
 
 // ════════════════════════════════════════════════════════════════════
@@ -7129,7 +7156,14 @@ async function unlockPostInline(id){
   try {
     const raw = localStorage.getItem('hbz_leads');
     const leads = raw ? JSON.parse(raw) : [];
-    leads.unshift({ name, phone, post_id: id || 'Inline Journal Monograph Unlock', created_at: new Date().toISOString() });
+    leads.unshift({
+      name,
+      phone,
+      source: 'Journal Unlock',
+      details: id ? `Inline Briefing Unlock [${id}]` : 'Inline Journal Monograph Unlock',
+      post_id: id || 'Inline Journal Monograph Unlock',
+      created_at: new Date().toISOString()
+    });
     localStorage.setItem('hbz_leads', JSON.stringify(leads));
   } catch (e) {}
 
@@ -7507,6 +7541,40 @@ async function loadAdminTab(){
       }
     } catch(e) {}
 
+    function getLeadOrigin(lead) {
+      const src = (lead.source || '').toLowerCase();
+      const post = (lead.post_id || '').toLowerCase();
+      const details = (lead.details || '').toLowerCase();
+      const combined = `${src} ${post} ${details}`;
+
+      if (combined.includes('journal') || combined.includes('briefing') || combined.includes('monograph')) {
+        return {
+          type: 'Journal Unlock',
+          badge: 'background:#f2ece1;color:#6d5635;border:1px solid #dfd3c0;',
+          icon: '📖'
+        };
+      }
+      if (combined.includes('calculator') || combined.includes('calculation') || combined.includes('flooring') || combined.includes('cladding') || combined.includes('timber') || combined.includes('plaster') || combined.includes('estimator')) {
+        return {
+          type: 'Calculator Estimator',
+          badge: 'background:#e7f2e8;color:#27592a;border:1px solid #c8e0ca;',
+          icon: '🧮'
+        };
+      }
+      if (combined.includes('project') || combined.includes('scheme') || (lead.post_id && String(lead.post_id).startsWith('p'))) {
+        return {
+          type: 'Project Scheme',
+          badge: 'background:#e8eff8;color:#284a75;border:1px solid #cad9ee;',
+          icon: '🏛️'
+        };
+      }
+      return {
+        type: 'Direct Consultation',
+        badge: 'background:#f4f3f0;color:#55524d;border:1px solid #e0ded9;',
+        icon: '✉️'
+      };
+    }
+
     el.innerHTML = `
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
@@ -7522,21 +7590,36 @@ async function loadAdminTab(){
           <table>
             <thead>
               <tr>
-                <th>Name</th>
+                <th>Client Name</th>
                 <th>Contact Phone / Email</th>
-                <th>Source Briefing / Project</th>
-                <th>Date Received</th>
+                <th>Lead Source</th>
+                <th>Inquired Item / Specifications</th>
+                <th style="text-align:right;">Date Received</th>
               </tr>
             </thead>
             <tbody>
-              ${leads.map(l => `
-                <tr>
-                  <td><strong>${escapeHtml(l.name)}</strong></td>
-                  <td>${escapeHtml(l.phone)}</td>
-                  <td>${escapeHtml(l.post_id || 'General Consultation / Calculator')}</td>
-                  <td>${l.created_at ? new Date(l.created_at).toLocaleDateString() : 'Recent'}</td>
-                </tr>
-              `).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:32px;">No leads recorded yet. Submissions from calculator estimates and inquiries will appear here.</td></tr>'}
+              ${leads.map(l => {
+                const origin = getLeadOrigin(l);
+                let desc = l.details || l.post_id || 'General Consultation Inquiry';
+                if (desc.startsWith('p') && desc.length <= 4) desc = 'Architectural Scheme ' + desc.toUpperCase();
+                return `
+                  <tr>
+                    <td><strong>${escapeHtml(l.name)}</strong></td>
+                    <td>${escapeHtml(l.phone)}</td>
+                    <td>
+                      <span class="pill-badge" style="${origin.badge}font-size:11px;padding:3px 9px;font-weight:600;display:inline-flex;align-items:center;gap:5px;border-radius:4px;white-space:nowrap;">
+                        <span>${origin.icon}</span> <span>${origin.type}</span>
+                      </span>
+                    </td>
+                    <td style="max-width:340px;font-size:12px;color:var(--text-muted);line-height:1.45;">
+                      ${escapeHtml(desc)}
+                    </td>
+                    <td style="text-align:right;white-space:nowrap;font-size:12px;color:var(--text-muted);">
+                      ${l.created_at ? new Date(l.created_at).toLocaleDateString() : 'Recent'}
+                    </td>
+                  </tr>
+                `;
+              }).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px;">No leads recorded yet. Submissions from calculator estimates and journal unlocks will appear here.</td></tr>'}
             </tbody>
           </table>
         </div>
