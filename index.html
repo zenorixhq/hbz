@@ -6754,6 +6754,13 @@ let vvdState = {
   isTransitioning: false
 };
 
+let vvdWheelLocked = false;
+let vvdWheelIdleTimer = null;
+let vvdLastProjectSwitchTime = 0;
+let plateWheelLocked = false;
+let plateIdleTimer = null;
+let lastPlateSwitchTime = 0;
+
 function cleanUpVvdListeners() {
   if (window.__vvdWheelHandler) {
     window.removeEventListener('wheel', window.__vvdWheelHandler);
@@ -6771,6 +6778,11 @@ function cleanUpVvdListeners() {
     window.removeEventListener('touchend', window.__vvdTouchEndHandler);
     window.__vvdTouchEndHandler = null;
   }
+  clearTimeout(vvdWheelIdleTimer);
+  clearTimeout(plateIdleTimer);
+  vvdWheelLocked = false;
+  plateWheelLocked = false;
+  vvdState.isTransitioning = false;
 }
 
 function setVvdImage(index) {
@@ -6907,6 +6919,14 @@ function updateVvdProjectDOM(p, currentIdx) {
         nextBtn.title = 'Next Project Scheme';
       }
     }
+    const hintEl = document.getElementById('vvdScrollHint');
+    if (hintEl) {
+      if (currentIdx === total - 1) {
+        hintEl.innerHTML = '&#8595; Scroll down to explore studio footer &bull; &#8596; Side scroll plates';
+      } else {
+        hintEl.innerHTML = '&#8597; Vertical scroll cycles projects &bull; &#8596; Side scroll plates';
+      }
+    }
   }
 
   // 5. Drawer content
@@ -6970,6 +6990,8 @@ function switchVvdProject(direction) {
   if (!targetProject) return;
 
   vvdState.isTransitioning = true;
+  vvdLastProjectSwitchTime = performance.now();
+  vvdWheelLocked = true;
   const stage = document.getElementById('vvdStage');
 
   if (stage) {
@@ -7208,8 +7230,6 @@ async function renderProjectDetail(id){
   window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 
   // Attach Navigation Physics: Vertical scroll = projects, Side scroll = plates
-  let wheelCooldown = false;
-
   function isVvdActive() {
     const rawHash = (location.hash.slice(1) || '').replace(/^\//, '');
     const parts = rawHash.split('/').filter(Boolean);
@@ -7223,23 +7243,60 @@ async function renderProjectDetail(id){
     }
     if (vvdState.drawerOpen) return;
 
+    const winH = window.innerHeight || 800;
     const scrollY = window.scrollY || window.pageYOffset || 0;
-    const currentIdx = vvdState.allProjects.findIndex(x => x.id === vvdState.currentProject?.id);
-    const isAtLastProject = (currentIdx >= 0 && currentIdx === vvdState.allProjects.length - 1);
-    const isAtFirstProject = (currentIdx === 0);
+    const isInFooter = (scrollY > winH * 0.35);
 
-    const isHorizontal = Math.abs(e.deltaX) >= Math.abs(e.deltaY) && Math.abs(e.deltaX) > 12;
-    const isShiftHorizontal = e.shiftKey && Math.abs(e.deltaY) > 12;
+    // ── 1. IF CURRENTLY IN THE FOOTER ──
+    if (isInFooter) {
+      if (e.deltaY > 0) {
+        // Natural downward scroll inside footer content
+        return;
+      } else {
+        // Scrolling up inside footer
+        if (scrollY > 80) {
+          // Natural upward scroll towards top of footer
+          return;
+        } else {
+          // Hit the upper boundary of footer -> return smoothly to project stage
+          e.preventDefault();
+          if (vvdWheelLocked) return;
+          vvdWheelLocked = true;
+          vvdLastProjectSwitchTime = performance.now();
+          setTimeout(() => { vvdWheelLocked = false; }, 500);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+      }
+    }
 
-    // ── 1. SIDE SCROLL -> Next/Previous Image of Same Project ──
+    // ── 2. ON THE PROJECT STAGE (scrollY <= winH * 0.35) ──
+    // PREVENT ALL NATIVE PAGE SCROLLING: Keep the stage pinned at top.
+    // Native scroll should never bleed through to the footer during project viewing!
+    e.preventDefault();
+
+    const absX = Math.abs(e.deltaX);
+    const absY = Math.abs(e.deltaY);
+    const isHorizontal = (absX > absY) && (absX > 10);
+    const isShiftHorizontal = e.shiftKey && (absY > 10);
+
+    // ── A. SIDE SCROLL -> Cycle Plates/Images of Current Project ──
     if (isHorizontal || isShiftHorizontal) {
-      const deltaX = isShiftHorizontal ? e.deltaY : e.deltaX;
-      e.preventDefault();
-      if (wheelCooldown) return;
-      wheelCooldown = true;
-      setTimeout(() => { wheelCooldown = false; }, 240);
+      const delta = isShiftHorizontal ? e.deltaY : e.deltaX;
+      if (Math.abs(delta) < 12) return;
 
-      if (deltaX > 0) {
+      clearTimeout(plateIdleTimer);
+      plateIdleTimer = setTimeout(() => {
+        plateWheelLocked = false;
+      }, 200);
+
+      const now = performance.now();
+      if (plateWheelLocked || (now - lastPlateSwitchTime < 240)) return;
+
+      plateWheelLocked = true;
+      lastPlateSwitchTime = now;
+
+      if (delta > 0) {
         nextVvdImage();
       } else {
         prevVvdImage();
@@ -7247,62 +7304,55 @@ async function renderProjectDetail(id){
       return;
     }
 
-    // ── 2. VERTICAL SCROLL -> Move to Next/Prev Project Or Footer ──
-    const deltaY = e.deltaY;
-    if (Math.abs(deltaY) < 18) return;
+    // ── B. VERTICAL SCROLL -> Move To Next / Prev Project Scheme Or Footer ──
+    if (absY < 14) return;
+    if (vvdState.isTransitioning) return;
 
-    // A. User is in the footer
-    if (scrollY > 20) {
-      if (deltaY > 0) {
-        // Natural scrolling down inside footer
-        return;
-      } else {
-        // Scrolling up while in footer
-        if (scrollY > 50) {
-          // Natural scrolling up towards top of footer
-          return;
-        } else {
-          // Reached top boundary of footer / stage: return smoothly to project stage
-          e.preventDefault();
-          if (wheelCooldown) return;
-          wheelCooldown = true;
-          setTimeout(() => { wheelCooldown = false; }, 400);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          return;
-        }
-      }
+    // Trackpad inertia / momentum absorber:
+    clearTimeout(vvdWheelIdleTimer);
+    vvdWheelIdleTimer = setTimeout(() => {
+      vvdWheelLocked = false;
+    }, 220);
+
+    const now = performance.now();
+    if (vvdWheelLocked || (now - vvdLastProjectSwitchTime < 550)) {
+      return;
     }
 
-    // B. Viewport is on the project stage (scrollY <= 20)
-    if (deltaY > 0) {
-      // SCROLL DOWN: Next project
+    const currentIdx = vvdState.allProjects.findIndex(x => x.id === vvdState.currentProject?.id);
+    const totalProjects = vvdState.allProjects.length;
+    const isAtLastProject = (currentIdx >= 0 && currentIdx === totalProjects - 1);
+    const isAtFirstProject = (currentIdx === 0);
+
+    if (e.deltaY > 0) {
+      // SCROLL DOWN: Next project scheme
       if (!isAtLastProject) {
-        e.preventDefault();
-        if (wheelCooldown) return;
-        wheelCooldown = true;
-        setTimeout(() => { wheelCooldown = false; }, 480);
+        vvdWheelLocked = true;
+        vvdLastProjectSwitchTime = now;
         switchVvdProject(1);
       } else {
         // AT LAST PROJECT: After all projects complete only, move to footer!
-        if (wheelCooldown) return;
-        wheelCooldown = true;
-        setTimeout(() => { wheelCooldown = false; }, 480);
+        // Require that the user has settled on the last project (at least 750ms since entering it)
+        // so that scroll momentum from reaching the last project never auto-triggers footer!
+        if (now - vvdLastProjectSwitchTime < 750) {
+          return;
+        }
+        vvdWheelLocked = true;
+        vvdLastProjectSwitchTime = now;
         const footer = document.querySelector('.site-footer');
         if (footer) {
           footer.scrollIntoView({ behavior: 'smooth' });
         }
       }
     } else {
-      // SCROLL UP: Previous project
+      // SCROLL UP: Previous project scheme
       if (!isAtFirstProject) {
-        e.preventDefault();
-        if (wheelCooldown) return;
-        wheelCooldown = true;
-        setTimeout(() => { wheelCooldown = false; }, 480);
+        vvdWheelLocked = true;
+        vvdLastProjectSwitchTime = now;
         switchVvdProject(-1);
       } else {
-        // Already at first project: do not scroll offscreen
-        e.preventDefault();
+        // Already at first scheme: keep pinned
+        window.scrollTo({ top: 0, behavior: 'instant' });
       }
     }
   }
@@ -7317,9 +7367,12 @@ async function renderProjectDetail(id){
       return;
     }
 
+    const winH = window.innerHeight || 800;
     const scrollY = window.scrollY || window.pageYOffset || 0;
+    const isInFooter = (scrollY > winH * 0.35);
     const currentIdx = vvdState.allProjects.findIndex(x => x.id === vvdState.currentProject?.id);
-    const isAtLastProject = (currentIdx >= 0 && currentIdx === vvdState.allProjects.length - 1);
+    const totalProjects = vvdState.allProjects.length;
+    const isAtLastProject = (currentIdx >= 0 && currentIdx === totalProjects - 1);
     const isAtFirstProject = (currentIdx === 0);
 
     if (e.key === 'ArrowRight') {
@@ -7329,15 +7382,19 @@ async function renderProjectDetail(id){
       e.preventDefault();
       prevVvdImage();
     } else if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+      if (isInFooter) {
+        // Natural navigation inside footer
+        return;
+      }
+      e.preventDefault();
       if (!isAtLastProject) {
-        e.preventDefault();
         switchVvdProject(1);
       } else {
         const footer = document.querySelector('.site-footer');
         if (footer) footer.scrollIntoView({ behavior: 'smooth' });
       }
     } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
-      if (scrollY > 20) {
+      if (isInFooter) {
         e.preventDefault();
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (!isAtFirstProject) {
@@ -7367,9 +7424,12 @@ async function renderProjectDetail(id){
     const diffX = touchStartX - e.changedTouches[0].clientX;
     const diffY = touchStartY - e.changedTouches[0].clientY;
 
+    const winH = window.innerHeight || 800;
     const scrollY = window.scrollY || window.pageYOffset || 0;
+    const isInFooter = (scrollY > winH * 0.35);
     const currentIdx = vvdState.allProjects.findIndex(x => x.id === vvdState.currentProject?.id);
-    const isAtLastProject = (currentIdx >= 0 && currentIdx === vvdState.allProjects.length - 1);
+    const totalProjects = vvdState.allProjects.length;
+    const isAtLastProject = (currentIdx >= 0 && currentIdx === totalProjects - 1);
     const isAtFirstProject = (currentIdx === 0);
 
     // Horizontal swipe: Next / Prev image of same project
@@ -7383,15 +7443,17 @@ async function renderProjectDetail(id){
     if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 35) {
       if (diffY > 0) {
         // Swipe up -> scroll down -> next project
-        if (!isAtLastProject) {
-          switchVvdProject(1);
-        } else {
-          const footer = document.querySelector('.site-footer');
-          if (footer) footer.scrollIntoView({ behavior: 'smooth' });
+        if (!isInFooter) {
+          if (!isAtLastProject) {
+            switchVvdProject(1);
+          } else {
+            const footer = document.querySelector('.site-footer');
+            if (footer) footer.scrollIntoView({ behavior: 'smooth' });
+          }
         }
       } else {
         // Swipe down -> scroll up -> prev project
-        if (scrollY > 20) {
+        if (isInFooter) {
           window.scrollTo({ top: 0, behavior: 'smooth' });
         } else if (!isAtFirstProject) {
           switchVvdProject(-1);
