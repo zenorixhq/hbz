@@ -1432,20 +1432,11 @@ header.site-header.nav-theme-light .btn-talk:hover {
 }
 .wipe-bg-img {
   position: absolute;
-  top: -15%;
-  bottom: -15%;
-  left: -3%;
-  right: -3%;
-  width: 106%;
-  height: 130%;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   z-index: 1;
-  will-change: transform;
-  transform: translate3d(0, 0, 0);
-  transition: none;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform-origin: center center;
 }
 .wipe-overlay {
   position: absolute;
@@ -8087,17 +8078,14 @@ function initProjectsWipe(projectsList) {
     // progress is strictly clamped to [0, 1]
     const p = progress * transitions;
 
-    // 1. Scrub each slide with GPU-accelerated transforms
+    // 1. Scrub each slide with clean vertical card wipe (no image parallax)
     slides.forEach((slide, idx) => {
-      const bgImg = slide.querySelector('.wipe-bg-img');
-
       if (idx === 0) {
-        // Base slide stays pinned flush edge-to-edge without shrinking borders
+        // Base slide stays pinned flush edge-to-edge
         const u0 = Math.min(1, Math.max(0, p));
         const o = 1 - u0 * 0.35;
         slide.style.transform = 'translate3d(0, 0, 0)';
         slide.style.opacity = o.toFixed(3);
-        if (bgImg) bgImg.style.transform = 'translate3d(0, 0, 0) scale(1)';
       } else {
         // Slide idx enters over the range [idx - 1, idx]
         const u = p - (idx - 1);
@@ -8106,7 +8094,6 @@ function initProjectsWipe(projectsList) {
           // Offscreen below
           slide.style.transform = 'translate3d(0, 100%, 0)';
           slide.style.opacity = '1';
-          if (bgImg) bgImg.style.transform = 'translate3d(0, -6%, 0) scale(1.04)';
         } else if (u >= 1) {
           // Fully arrived and flush edge-to-edge
           const nextU = Math.min(1, Math.max(0, p - idx));
@@ -8118,19 +8105,11 @@ function initProjectsWipe(projectsList) {
             slide.style.transform = 'translate3d(0, 0, 0)';
             slide.style.opacity = '1';
           }
-          if (bgImg) bgImg.style.transform = 'translate3d(0, 0, 0) scale(1)';
         } else {
           // Actively wiping into view
           const translateY = (1 - u) * 100;
           slide.style.transform = `translate3d(0, ${translateY.toFixed(2)}%, 0)`;
           slide.style.opacity = '1';
-
-          // Interior image counter-parallax with protected bleed
-          if (bgImg) {
-            const imgY = (1 - u) * -6;
-            const imgScale = 1.04 - u * 0.04;
-            bgImg.style.transform = `translate3d(0, ${imgY.toFixed(2)}%, 0) scale(${imgScale.toFixed(3)})`;
-          }
         }
       }
     });
