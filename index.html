@@ -3161,6 +3161,39 @@ dialog#journalUnlockModal::backdrop {
   padding: 0;
   user-select: none;
 }
+/* ── Architectural Monograph Transition Physics ── */
+.vvd-stage .vvd-center-stage,
+.vvd-stage .vvd-right-panel,
+.vvd-stage .vvd-sidebar-header {
+  transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  will-change: transform, opacity;
+}
+.vvd-stage.vvd-out-next .vvd-center-stage,
+.vvd-stage.vvd-out-next .vvd-right-panel,
+.vvd-stage.vvd-out-next .vvd-sidebar-header {
+  opacity: 0;
+  transform: translate3d(0, -32px, 0);
+}
+.vvd-stage.vvd-out-prev .vvd-center-stage,
+.vvd-stage.vvd-out-prev .vvd-right-panel,
+.vvd-stage.vvd-out-prev .vvd-sidebar-header {
+  opacity: 0;
+  transform: translate3d(0, 32px, 0);
+}
+.vvd-stage.vvd-in-next .vvd-center-stage,
+.vvd-stage.vvd-in-next .vvd-right-panel,
+.vvd-stage.vvd-in-next .vvd-sidebar-header {
+  opacity: 0;
+  transform: translate3d(0, 32px, 0);
+  transition: none !important;
+}
+.vvd-stage.vvd-in-prev .vvd-center-stage,
+.vvd-stage.vvd-in-prev .vvd-right-panel,
+.vvd-stage.vvd-in-prev .vvd-sidebar-header {
+  opacity: 0;
+  transform: translate3d(0, -32px, 0);
+  transition: none !important;
+}
 @media (max-width: 1200px) {
   .vvd-stage {
     grid-template-columns: 240px 1fr 300px;
@@ -6810,21 +6843,165 @@ function prevVvdImage() {
   setVvdImage(vvdState.imageIndex - 1);
 }
 
+function updateVvdProjectDOM(p, currentIdx) {
+  const pad = (n) => String(n).padStart(2, '0');
+  const total = vvdState.allProjects.length;
+  const progressPercent = Math.round(((currentIdx + 1) / total) * 100);
+  const images = (p.images && p.images.length) ? p.images : [p.image_url];
+  const activeTypology = p.subCategory || p.category || 'Architecture';
+
+  // 1. Sidebar header progress
+  const schemeProgressEl = document.querySelector('.vvd-scheme-progress');
+  if (schemeProgressEl) {
+    schemeProgressEl.innerHTML = `
+      <span>Scheme ${pad(currentIdx + 1)} of ${pad(total)}</span>
+      <span style="font-size:11.5px;color:var(--text-muted);">${progressPercent}%</span>
+    `;
+  }
+  const progressBarFill = document.querySelector('.vvd-progress-bar-fill');
+  if (progressBarFill) {
+    progressBarFill.style.width = `${progressPercent}%`;
+  }
+
+  // 2. Typology active highlight
+  document.querySelectorAll('.vvd-cat-item').forEach(el => {
+    const subcat = el.dataset.subcat;
+    const isActive = (vvdState.activeSubcategory === subcat) || (vvdState.activeSubcategory === 'All' && (p.subCategory === subcat || p.category === subcat));
+    el.classList.toggle('active', !!isActive);
+  });
+
+  // 3. Center image & capsule
+  setVvdImage(0);
+
+  // 4. Right panel meta
+  const typologyTag = document.querySelector('.vvd-typology-tag');
+  if (typologyTag) typologyTag.textContent = activeTypology;
+
+  const projectTitle = document.querySelector('.vvd-project-title');
+  if (projectTitle) projectTitle.textContent = p.title || '';
+
+  const specVals = document.querySelectorAll('.vvd-spec-row .vvd-spec-val');
+  if (specVals.length >= 5) {
+    specVals[0].textContent = p.location || 'Tokyo, Japan';
+    specVals[1].textContent = p.year || '2024';
+    specVals[2].textContent = p.area || '2,400 m²';
+    specVals[3].textContent = p.materials || 'Cast Concrete, Oak, Steel';
+    specVals[4].textContent = p.status || 'Completed';
+  }
+
+  // Cue buttons update
+  const cueButtonsRow = document.querySelector('.vvd-cue-buttons-row');
+  if (cueButtonsRow) {
+    const prevBtn = cueButtonsRow.querySelector('.vvd-nav-pill:first-child');
+    const nextBtn = cueButtonsRow.querySelector('.vvd-nav-pill:last-child');
+    if (prevBtn) {
+      prevBtn.style.opacity = currentIdx === 0 ? '0.4' : '1';
+      prevBtn.style.pointerEvents = currentIdx === 0 ? 'none' : 'auto';
+    }
+    if (nextBtn) {
+      if (currentIdx === total - 1) {
+        nextBtn.innerHTML = 'Explore Footer &darr;';
+        nextBtn.title = 'Scroll to Studio Footer';
+      } else {
+        nextBtn.innerHTML = 'Next Scheme &rarr;';
+        nextBtn.title = 'Next Project Scheme';
+      }
+    }
+  }
+
+  // 5. Drawer content
+  const drawerCard = document.querySelector('.vvd-drawer-card');
+  if (drawerCard) {
+    const badge = drawerCard.querySelector('span');
+    if (badge) badge.textContent = `Monograph Dossier • Scheme ${pad(currentIdx + 1)}`;
+    const dTitle = drawerCard.querySelector('.vvd-drawer-title');
+    if (dTitle) dTitle.textContent = p.title || '';
+    const dMeta = drawerCard.querySelector('.vvd-drawer-meta');
+    if (dMeta) dMeta.textContent = `${p.location || ''} • ${p.year || ''} • ${activeTypology}`;
+    const dBody = drawerCard.querySelector('.vvd-drawer-body p');
+    if (dBody) dBody.textContent = p.body || p.summary || '';
+
+    // Drawer plates grid
+    const platesGrid = drawerCard.querySelector('.vvd-plates-grid');
+    if (platesGrid) {
+      platesGrid.innerHTML = images.map((img, idx) => `
+        <div class="vvd-plate-thumb ${idx === 0 ? 'active' : ''}" onclick="setVvdImage(${idx}); toggleVvdDrawer(false);" title="${escapeHtml(getImgTitle(img, 'Plate ' + (idx + 1)))}">
+          <img src="${escapeHtml(getImgUrl(img))}" alt="Plate ${idx + 1}" loading="lazy">
+          <span class="vvd-plate-ratio-badge">${getImgRatio(img).replace('/', ':')}</span>
+        </div>
+      `).join('');
+    }
+
+    const dSpecs = drawerCard.querySelectorAll('.vvd-spec-item p');
+    if (dSpecs.length >= 4) {
+      dSpecs[0].textContent = p.client || 'Private';
+      dSpecs[1].textContent = p.area || '2,400 m²';
+      dSpecs[2].textContent = activeTypology;
+      dSpecs[3].textContent = p.materials || 'Cast Concrete, Oak, Steel';
+    }
+  }
+}
+
 function switchVvdProject(direction) {
   if (vvdState.isTransitioning) return;
+  const projects = vvdState.allProjects;
+  if (!projects || !projects.length) return;
+
+  const currentIdx = projects.findIndex(x => x.id === vvdState.currentProject?.id);
+  if (currentIdx === -1) return;
+
+  const nextIdx = currentIdx + direction;
+
+  // After all projects complete: scroll to footer
+  if (nextIdx >= projects.length) {
+    const footer = document.querySelector('.site-footer');
+    if (footer) {
+      footer.scrollIntoView({ behavior: 'smooth' });
+    }
+    return;
+  }
+
+  // Before first project: stay at first project
+  if (nextIdx < 0) {
+    return;
+  }
+
+  const targetProject = projects[nextIdx];
+  if (!targetProject) return;
+
   vvdState.isTransitioning = true;
+  const stage = document.getElementById('vvdStage');
 
-  const currentIdx = vvdState.allProjects.findIndex(x => x.id === vvdState.currentProject.id);
-  let nextIdx = currentIdx + direction;
-  if (nextIdx < 0) nextIdx = vvdState.allProjects.length - 1;
-  if (nextIdx >= vvdState.allProjects.length) nextIdx = 0;
+  if (stage) {
+    const outClass = direction > 0 ? 'vvd-out-next' : 'vvd-out-prev';
+    const inClass = direction > 0 ? 'vvd-in-next' : 'vvd-in-prev';
 
-  const targetProject = vvdState.allProjects[nextIdx];
-  location.hash = `#/projects/${targetProject.id}`;
+    stage.classList.add(outClass);
 
-  setTimeout(() => {
-    vvdState.isTransitioning = false;
-  }, 420);
+    setTimeout(() => {
+      vvdState.currentProject = targetProject;
+      vvdState.imageIndex = 0;
+      updateVvdProjectDOM(targetProject, nextIdx);
+      history.replaceState(null, '', `#/projects/${targetProject.id}`);
+
+      stage.classList.remove(outClass);
+      stage.classList.add(inClass);
+
+      // Force synchronous reflow so browser registers the starting translate state
+      void stage.offsetHeight;
+
+      stage.classList.remove(inClass);
+
+      setTimeout(() => {
+        vvdState.isTransitioning = false;
+      }, 380);
+    }, 180);
+  } else {
+    location.hash = `#/projects/${targetProject.id}`;
+    setTimeout(() => {
+      vvdState.isTransitioning = false;
+    }, 400);
+  }
 }
 
 function toggleVvdDrawer(open) {
@@ -6923,7 +7100,7 @@ async function renderProjectDetail(id){
           <span class="vvd-capsule-counter" id="vvdImageCounter">${pad(1)} / ${pad(images.length)}</span>
           <span class="vvd-capsule-dims" id="vvdImageDims">${getImgRatio(firstImg).replace('/', ':')}${getImgDims(firstImg) ? ' &bull; ' + getImgDims(firstImg) : ''}</span>
           <button class="vvd-capsule-btn" onclick="nextVvdImage()" title="Next Image">&#8594;</button>
-          <span class="vvd-capsule-hint">&bull; Mouse wheel / arrows cycle plates</span>
+          <span class="vvd-capsule-hint">&bull; Side scroll / &#8592;&#8594; cycles plates</span>
         </div>
 
         <button class="vvd-side-next" onclick="nextVvdImage()" title="Next Image (Side Scroll)">&#8594;</button>
@@ -6966,10 +7143,10 @@ async function renderProjectDetail(id){
 
         <div class="vvd-vertical-cues">
           <div class="vvd-cue-buttons-row">
-            <button class="vvd-nav-pill" onclick="switchVvdProject(-1)" title="Previous Project Scheme">&larr; Prev Scheme</button>
-            <button class="vvd-nav-pill" onclick="switchVvdProject(1)" title="Next Project Scheme">Next Scheme &rarr;</button>
+            <button class="vvd-nav-pill" onclick="switchVvdProject(-1)" title="Previous Project Scheme" style="${currentIdx === 0 ? 'opacity:0.4;pointer-events:none;' : ''}">&larr; Prev Scheme</button>
+            <button class="vvd-nav-pill" onclick="switchVvdProject(1)" title="${currentIdx === projects.length - 1 ? 'Scroll to Studio Footer' : 'Next Project Scheme'}">${currentIdx === projects.length - 1 ? 'Explore Footer &darr;' : 'Next Scheme &rarr;'}</button>
           </div>
-          <div class="vvd-scroll-hint">&#8597; Mouse scroll cycles monograph plates</div>
+          <div class="vvd-scroll-hint" id="vvdScrollHint">&#8597; Vertical scroll cycles projects &bull; &#8596; Side scroll cycles plates</div>
         </div>
       </aside>
 
@@ -7030,7 +7207,7 @@ async function renderProjectDetail(id){
   `;
   window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 
-  // Attach Navigation Physics: Mouse wheel (vertical or horizontal) cycles project images!
+  // Attach Navigation Physics: Vertical scroll = projects, Side scroll = plates
   let wheelCooldown = false;
 
   function isVvdActive() {
@@ -7046,19 +7223,87 @@ async function renderProjectDetail(id){
     }
     if (vvdState.drawerOpen) return;
 
-    // Use dominant delta (vertical mouse wheel deltaY or horizontal deltaX)
-    const delta = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
-    if (Math.abs(delta) < 15) return;
+    const scrollY = window.scrollY || window.pageYOffset || 0;
+    const currentIdx = vvdState.allProjects.findIndex(x => x.id === vvdState.currentProject?.id);
+    const isAtLastProject = (currentIdx >= 0 && currentIdx === vvdState.allProjects.length - 1);
+    const isAtFirstProject = (currentIdx === 0);
 
-    e.preventDefault();
-    if (wheelCooldown) return;
-    wheelCooldown = true;
-    setTimeout(() => { wheelCooldown = false; }, 260);
+    const isHorizontal = Math.abs(e.deltaX) >= Math.abs(e.deltaY) && Math.abs(e.deltaX) > 12;
+    const isShiftHorizontal = e.shiftKey && Math.abs(e.deltaY) > 12;
 
-    if (delta > 0) {
-      nextVvdImage();
+    // ── 1. SIDE SCROLL -> Next/Previous Image of Same Project ──
+    if (isHorizontal || isShiftHorizontal) {
+      const deltaX = isShiftHorizontal ? e.deltaY : e.deltaX;
+      e.preventDefault();
+      if (wheelCooldown) return;
+      wheelCooldown = true;
+      setTimeout(() => { wheelCooldown = false; }, 240);
+
+      if (deltaX > 0) {
+        nextVvdImage();
+      } else {
+        prevVvdImage();
+      }
+      return;
+    }
+
+    // ── 2. VERTICAL SCROLL -> Move to Next/Prev Project Or Footer ──
+    const deltaY = e.deltaY;
+    if (Math.abs(deltaY) < 18) return;
+
+    // A. User is in the footer
+    if (scrollY > 20) {
+      if (deltaY > 0) {
+        // Natural scrolling down inside footer
+        return;
+      } else {
+        // Scrolling up while in footer
+        if (scrollY > 50) {
+          // Natural scrolling up towards top of footer
+          return;
+        } else {
+          // Reached top boundary of footer / stage: return smoothly to project stage
+          e.preventDefault();
+          if (wheelCooldown) return;
+          wheelCooldown = true;
+          setTimeout(() => { wheelCooldown = false; }, 400);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+      }
+    }
+
+    // B. Viewport is on the project stage (scrollY <= 20)
+    if (deltaY > 0) {
+      // SCROLL DOWN: Next project
+      if (!isAtLastProject) {
+        e.preventDefault();
+        if (wheelCooldown) return;
+        wheelCooldown = true;
+        setTimeout(() => { wheelCooldown = false; }, 480);
+        switchVvdProject(1);
+      } else {
+        // AT LAST PROJECT: After all projects complete only, move to footer!
+        if (wheelCooldown) return;
+        wheelCooldown = true;
+        setTimeout(() => { wheelCooldown = false; }, 480);
+        const footer = document.querySelector('.site-footer');
+        if (footer) {
+          footer.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
     } else {
-      prevVvdImage();
+      // SCROLL UP: Previous project
+      if (!isAtFirstProject) {
+        e.preventDefault();
+        if (wheelCooldown) return;
+        wheelCooldown = true;
+        setTimeout(() => { wheelCooldown = false; }, 480);
+        switchVvdProject(-1);
+      } else {
+        // Already at first project: do not scroll offscreen
+        e.preventDefault();
+      }
     }
   }
 
@@ -7071,18 +7316,34 @@ async function renderProjectDetail(id){
       if (e.key === 'Escape') toggleVvdDrawer(false);
       return;
     }
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+
+    const scrollY = window.scrollY || window.pageYOffset || 0;
+    const currentIdx = vvdState.allProjects.findIndex(x => x.id === vvdState.currentProject?.id);
+    const isAtLastProject = (currentIdx >= 0 && currentIdx === vvdState.allProjects.length - 1);
+    const isAtFirstProject = (currentIdx === 0);
+
+    if (e.key === 'ArrowRight') {
       e.preventDefault();
       nextVvdImage();
-    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+    } else if (e.key === 'ArrowLeft') {
       e.preventDefault();
       prevVvdImage();
-    } else if (e.key === 'PageDown') {
-      e.preventDefault();
-      switchVvdProject(1);
-    } else if (e.key === 'PageUp') {
-      e.preventDefault();
-      switchVvdProject(-1);
+    } else if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+      if (!isAtLastProject) {
+        e.preventDefault();
+        switchVvdProject(1);
+      } else {
+        const footer = document.querySelector('.site-footer');
+        if (footer) footer.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+      if (scrollY > 20) {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (!isAtFirstProject) {
+        e.preventDefault();
+        switchVvdProject(-1);
+      }
     } else if (e.key === 'Escape') {
       toggleVvdDrawer(false);
     }
@@ -7106,10 +7367,36 @@ async function renderProjectDetail(id){
     const diffX = touchStartX - e.changedTouches[0].clientX;
     const diffY = touchStartY - e.changedTouches[0].clientY;
 
-    if (Math.abs(diffX) > 35 || Math.abs(diffY) > 35) {
-      const delta = Math.abs(diffX) >= Math.abs(diffY) ? diffX : diffY;
-      if (delta > 0) nextVvdImage();
+    const scrollY = window.scrollY || window.pageYOffset || 0;
+    const currentIdx = vvdState.allProjects.findIndex(x => x.id === vvdState.currentProject?.id);
+    const isAtLastProject = (currentIdx >= 0 && currentIdx === vvdState.allProjects.length - 1);
+    const isAtFirstProject = (currentIdx === 0);
+
+    // Horizontal swipe: Next / Prev image of same project
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 35) {
+      if (diffX > 0) nextVvdImage();
       else prevVvdImage();
+      return;
+    }
+
+    // Vertical swipe: Next / Prev project (or footer)
+    if (Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 35) {
+      if (diffY > 0) {
+        // Swipe up -> scroll down -> next project
+        if (!isAtLastProject) {
+          switchVvdProject(1);
+        } else {
+          const footer = document.querySelector('.site-footer');
+          if (footer) footer.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+        // Swipe down -> scroll up -> prev project
+        if (scrollY > 20) {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (!isAtFirstProject) {
+          switchVvdProject(-1);
+        }
+      }
     }
   }
 
