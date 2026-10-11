@@ -1405,7 +1405,6 @@ header.site-header.nav-theme-light .btn-talk:hover {
   max-width: 100vw;
   min-height: 100vh;
   background: #0d0c0b;
-  overflow: hidden;
 }
 .projects-wipe-sticky {
   position: sticky;
@@ -5605,7 +5604,7 @@ async function renderHome(){
           <strong>HBZ Design Atelier</strong>
           <span>London • Geneva • Zurich</span>
         </div>
-        <a href="#/projects" class="hero-index-tag" id="heroIndexTag" title="View Project Archive">[01]</a>
+        <div class="hero-index-tag" id="heroIndexTag">[01]</div>
       </div>
 
       <!-- Main Headline Content -->
@@ -5626,24 +5625,14 @@ async function renderHome(){
 
       <!-- Bottom Controls & CTA -->
       <div class="hero-bottom-bar">
-        <div class="hero-actions-dock">
-          <a href="#/projects" class="btn-hero-projects" id="heroCtaProjects">
-            <span>Explore Projects</span>
-            <span class="btn-hero-arrow">
-              <svg viewBox="0 0 11 8" fill="none" width="11" height="8">
-                <path d="M11 4.007 6.887 8H4.545l3.482-3.2H0V3.215h8.027L4.529 0h2.342z" fill="currentColor"/>
-              </svg>
-            </span>
-          </a>
-          <button class="btn-silence" onclick="openContactModal()">
-            <span>Begin the Silence</span>
-            <span class="btn-silence-arrow">
-              <svg viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M11 4.007 6.887 8H4.545l3.482-3.2H0V3.215h8.027L4.529 0h2.342z" fill="currentColor"/>
-              </svg>
-            </span>
-          </button>
-        </div>
+        <button class="btn-silence" onclick="openContactModal()">
+          <span>Begin the Silence</span>
+          <span class="btn-silence-arrow">
+            <svg viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11 4.007 6.887 8H4.545l3.482-3.2H0V3.215h8.027L4.529 0h2.342z" fill="currentColor"/>
+            </svg>
+          </span>
+        </button>
       </div>
     </section>
 
@@ -5734,9 +5723,7 @@ async function renderHome(){
           <div class="wipe-bottom-row" id="wipeFixedBottomRow">
             <div class="wipe-left-block" id="wipeFixedLeftBlock">
               <span class="wipe-cat-pill" id="wipeFixedCatPill">${escapeHtml(projects[0]?.category || 'Commercial Fit-Out')}</span>
-              <a href="#/projects/${projects[0]?.id || ''}" class="wipe-title-link" id="wipeFixedTitleLink">
-                <h2 class="wipe-title" id="wipeFixedTitle">${escapeHtml(projects[0]?.title || '')}</h2>
-              </a>
+              <h2 class="wipe-title" id="wipeFixedTitle">${escapeHtml(projects[0]?.title || '')}</h2>
               <a href="#/projects/${projects[0]?.id || ''}" class="btn-wipe-case" id="wipeFixedCtaBtn">
                 <span>Explore Case Study</span>
                 <span class="btn-wipe-arrow">
@@ -8019,7 +8006,6 @@ function initProjectsWipe(projectsList) {
   const fixedBottomRow = stage.querySelector('#wipeFixedBottomRow');
   const fixedCatPill = stage.querySelector('#wipeFixedCatPill');
   const fixedTitle = stage.querySelector('#wipeFixedTitle');
-  const fixedTitleLink = stage.querySelector('#wipeFixedTitleLink');
   const fixedCtaBtn = stage.querySelector('#wipeFixedCtaBtn');
   const fixedSubtextMeta = stage.querySelector('#wipeFixedSubtextMeta');
   const fixedSubtextDesc = stage.querySelector('#wipeFixedSubtextDesc');
@@ -8035,7 +8021,6 @@ function initProjectsWipe(projectsList) {
 
     if (fixedCatPill) fixedCatPill.textContent = p.category || 'Commercial Fit-Out';
     if (fixedTitle) fixedTitle.textContent = p.title || '';
-    if (fixedTitleLink) fixedTitleLink.href = `#/projects/${p.id || ''}`;
     if (fixedCtaBtn) fixedCtaBtn.href = `#/projects/${p.id || ''}`;
     if (fixedSubtextMeta) {
       fixedSubtextMeta.innerHTML = `<strong>Location:</strong> ${escapeHtml(p.location || 'London, UK')} &bull; <strong>Scope:</strong> ${escapeHtml(p.client || 'Full Architectural Commission')}`;
@@ -8047,19 +8032,6 @@ function initProjectsWipe(projectsList) {
       fixedCounter.innerHTML = `<span>0${idx + 1}</span> / 0${totalSlides}`;
     }
   }
-
-  // Allow clicking anywhere on wiping background cards to navigate to case study
-  slides.forEach((slide) => {
-    slide.style.cursor = 'pointer';
-    slide.addEventListener('click', (e) => {
-      if (e.target.closest('a, button')) return;
-      const idx = parseInt(slide.dataset.index, 10);
-      const p = projects[idx] || projects[currentProjectIndex] || projects[0];
-      if (p && p.id) {
-        location.hash = `#/projects/${p.id}`;
-      }
-    });
-  });
 
   let idleRestoreTimer = null;
   function scheduleIdleTextRestore() {
@@ -8338,28 +8310,11 @@ function updateActiveNav(navId) {
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
-function cleanUpHomeListeners() {
-  if (window.__wipeScrollHandler) {
-    window.removeEventListener('scroll', window.__wipeScrollHandler);
-    window.__wipeScrollHandler = null;
-  }
-  if (window.__wipeResizeHandler) {
-    window.removeEventListener('resize', window.__wipeResizeHandler);
-    window.__wipeResizeHandler = null;
-  }
-  if (window.__scrollAnimHandler) {
-    window.removeEventListener('scroll', window.__scrollAnimHandler);
-    window.removeEventListener('resize', window.__scrollAnimHandler);
-    window.__scrollAnimHandler = null;
-  }
-}
 
 function route(){
   closeMobileMenu();
   cleanupSectionScrollLock();
   cleanUpVvdListeners();
-  cleanUpHomeListeners();
-  window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   const hash = location.hash.slice(1) || '/';
   const parts = hash.split('/').filter(Boolean);
   if (parts.length === 0) renderHome();
@@ -8372,11 +8327,6 @@ function route(){
   else renderHome();
   setTimeout(updateNavbarState, 50);
   setTimeout(initParallaxEngine, 60);
-  setTimeout(() => {
-    if (location.hash && location.hash !== '#/' && location.hash !== '#') {
-      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    }
-  }, 10);
 }
 
 // ── Signature Logo-First Architectural Entrance Flight & Header Docking ──
