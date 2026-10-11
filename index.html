@@ -1029,6 +1029,81 @@ header.site-header.nav-theme-light .btn-talk:hover {
   align-items: center;
   width: 100%;
 }
+.hero-actions-dock {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.hero-index-tag {
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.hero-index-tag:hover {
+  opacity: 0.8;
+  transform: translateY(-1px);
+}
+.btn-hero-projects {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: var(--radius-full);
+  padding: 8px 8px 8px 22px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+  transition: all 0.25s ease;
+}
+.btn-hero-projects:hover {
+  background: rgba(255, 255, 255, 0.28);
+  border-color: rgba(255, 255, 255, 0.65);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  color: #ffffff;
+}
+.btn-hero-projects .btn-hero-arrow {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s ease, background 0.25s ease, color 0.25s ease;
+}
+.btn-hero-projects:hover .btn-hero-arrow {
+  transform: translateX(3px);
+  background: #ffffff;
+  color: #121110;
+}
+.btn-hero-projects .btn-hero-arrow svg {
+  width: 11px;
+  height: 11px;
+}
+.wipe-title-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.wipe-title-link:hover .wipe-title {
+  color: #f4f2ee;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 1.5px;
+}
 .btn-silence {
   display: inline-flex;
   align-items: center;
@@ -2721,6 +2796,52 @@ dialog#journalUnlockModal::backdrop {
   min-height: 100vh;
   background: #ffffff;
   padding-top: 72px;
+}
+/* Projects Archive Architectural Hero Banner */
+.projects-hero-banner {
+  background: #ffffff;
+  padding: clamp(36px, 5.5vw, 68px) clamp(20px, 4vw, 56px) 32px;
+  border-bottom: 1px solid #f0ede8;
+}
+.projects-hero-banner-inner {
+  max-width: 1320px;
+  margin: 0 auto;
+}
+.projects-hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.projects-hero-tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #c3924e;
+}
+.projects-hero-locs {
+  font-size: 12px;
+  font-weight: 500;
+  color: #7a7670;
+  letter-spacing: 0.04em;
+}
+.projects-hero-title {
+  font-size: clamp(32px, 4.4vw, 54px);
+  font-weight: 400;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  color: #121110;
+  margin-bottom: 12px;
+}
+.projects-hero-desc {
+  font-size: clamp(14px, 1.25vw, 16.5px);
+  color: #646059;
+  line-height: 1.6;
+  max-width: 64ch;
+  margin: 0;
 }
 .mvrdv-top-bar {
   display: flex;
@@ -5493,7 +5614,7 @@ async function renderHome(){
           <strong>HBZ Design Atelier</strong>
           <span>London • Geneva • Zurich</span>
         </div>
-        <div class="hero-index-tag" id="heroIndexTag">[01]</div>
+        <a href="#/projects" class="hero-index-tag" id="heroIndexTag" title="View Project Archive">[01]</a>
       </div>
 
       <!-- Main Headline Content -->
@@ -5514,14 +5635,24 @@ async function renderHome(){
 
       <!-- Bottom Controls & CTA -->
       <div class="hero-bottom-bar">
-        <button class="btn-silence" onclick="openContactModal()">
-          <span>Begin the Silence</span>
-          <span class="btn-silence-arrow">
-            <svg viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M11 4.007 6.887 8H4.545l3.482-3.2H0V3.215h8.027L4.529 0h2.342z" fill="currentColor"/>
-            </svg>
-          </span>
-        </button>
+        <div class="hero-actions-dock">
+          <a href="#/projects" class="btn-hero-projects" id="heroCtaProjects">
+            <span>Explore Projects</span>
+            <span class="btn-hero-arrow">
+              <svg viewBox="0 0 11 8" fill="none" width="11" height="8">
+                <path d="M11 4.007 6.887 8H4.545l3.482-3.2H0V3.215h8.027L4.529 0h2.342z" fill="currentColor"/>
+              </svg>
+            </span>
+          </a>
+          <button class="btn-silence" onclick="openContactModal()">
+            <span>Begin the Silence</span>
+            <span class="btn-silence-arrow">
+              <svg viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11 4.007 6.887 8H4.545l3.482-3.2H0V3.215h8.027L4.529 0h2.342z" fill="currentColor"/>
+              </svg>
+            </span>
+          </button>
+        </div>
       </div>
     </section>
 
@@ -5612,7 +5743,9 @@ async function renderHome(){
           <div class="wipe-bottom-row" id="wipeFixedBottomRow">
             <div class="wipe-left-block" id="wipeFixedLeftBlock">
               <span class="wipe-cat-pill" id="wipeFixedCatPill">${escapeHtml(projects[0]?.category || 'Commercial Fit-Out')}</span>
-              <h2 class="wipe-title" id="wipeFixedTitle">${escapeHtml(projects[0]?.title || '')}</h2>
+              <a href="#/projects/${projects[0]?.id || ''}" class="wipe-title-link" id="wipeFixedTitleLink">
+                <h2 class="wipe-title" id="wipeFixedTitle">${escapeHtml(projects[0]?.title || '')}</h2>
+              </a>
               <a href="#/projects/${projects[0]?.id || ''}" class="btn-wipe-case" id="wipeFixedCtaBtn">
                 <span>Explore Case Study</span>
                 <span class="btn-wipe-arrow">
@@ -6472,6 +6605,18 @@ async function renderProjects(){
 
   app.innerHTML = `
     <div class="mvrdv-projects-stage">
+      <!-- Architectural Projects Archive Hero Banner -->
+      <section class="projects-hero-banner">
+        <div class="projects-hero-banner-inner">
+          <div class="projects-hero-meta">
+            <span class="projects-hero-tag">[WORKS] &bull; 2018&mdash;2026</span>
+            <span class="projects-hero-locs">London &bull; Tokyo &bull; Zurich &bull; Antwerp</span>
+          </div>
+          <h1 class="projects-hero-title serif">Selected Spatial Works &amp; Built Monographs</h1>
+          <p class="projects-hero-desc">An index of built architecture, adaptive commercial fit-outs, and spatial studies balancing proportion, acoustic silence, and material permanence.</p>
+        </div>
+      </section>
+
       <!-- MVRDV Sticky Top Control Bar -->
       <div class="mvrdv-top-bar">
         <div class="mvrdv-bar-left">
@@ -6583,6 +6728,7 @@ async function renderProjects(){
       </div>
     </div>
   `;
+  window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 }
 
 // ════════════════════════════════════════════════════════════════════
@@ -6904,6 +7050,7 @@ async function renderProjectDetail(id){
       </div>
     </div>
   `;
+  window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 
   // Attach Navigation Physics: Mouse wheel (vertical or horizontal) cycles project images!
   let wheelCooldown = false;
@@ -7881,6 +8028,7 @@ function initProjectsWipe(projectsList) {
   const fixedBottomRow = stage.querySelector('#wipeFixedBottomRow');
   const fixedCatPill = stage.querySelector('#wipeFixedCatPill');
   const fixedTitle = stage.querySelector('#wipeFixedTitle');
+  const fixedTitleLink = stage.querySelector('#wipeFixedTitleLink');
   const fixedCtaBtn = stage.querySelector('#wipeFixedCtaBtn');
   const fixedSubtextMeta = stage.querySelector('#wipeFixedSubtextMeta');
   const fixedSubtextDesc = stage.querySelector('#wipeFixedSubtextDesc');
@@ -7896,6 +8044,7 @@ function initProjectsWipe(projectsList) {
 
     if (fixedCatPill) fixedCatPill.textContent = p.category || 'Commercial Fit-Out';
     if (fixedTitle) fixedTitle.textContent = p.title || '';
+    if (fixedTitleLink) fixedTitleLink.href = `#/projects/${p.id || ''}`;
     if (fixedCtaBtn) fixedCtaBtn.href = `#/projects/${p.id || ''}`;
     if (fixedSubtextMeta) {
       fixedSubtextMeta.innerHTML = `<strong>Location:</strong> ${escapeHtml(p.location || 'London, UK')} &bull; <strong>Scope:</strong> ${escapeHtml(p.client || 'Full Architectural Commission')}`;
@@ -7907,6 +8056,19 @@ function initProjectsWipe(projectsList) {
       fixedCounter.innerHTML = `<span>0${idx + 1}</span> / 0${totalSlides}`;
     }
   }
+
+  // Allow clicking anywhere on wiping background cards to navigate to case study
+  slides.forEach((slide) => {
+    slide.style.cursor = 'pointer';
+    slide.addEventListener('click', (e) => {
+      if (e.target.closest('a, button')) return;
+      const idx = parseInt(slide.dataset.index, 10);
+      const p = projects[idx] || projects[currentProjectIndex] || projects[0];
+      if (p && p.id) {
+        location.hash = `#/projects/${p.id}`;
+      }
+    });
+  });
 
   let idleRestoreTimer = null;
   function scheduleIdleTextRestore() {
@@ -8197,10 +8359,28 @@ function updateActiveNav(navId) {
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
+function cleanUpHomeListeners() {
+  if (window.__wipeScrollHandler) {
+    window.removeEventListener('scroll', window.__wipeScrollHandler);
+    window.__wipeScrollHandler = null;
+  }
+  if (window.__wipeResizeHandler) {
+    window.removeEventListener('resize', window.__wipeResizeHandler);
+    window.__wipeResizeHandler = null;
+  }
+  if (window.__scrollAnimHandler) {
+    window.removeEventListener('scroll', window.__scrollAnimHandler);
+    window.removeEventListener('resize', window.__scrollAnimHandler);
+    window.__scrollAnimHandler = null;
+  }
+}
+
 function route(){
   closeMobileMenu();
   cleanupSectionScrollLock();
   cleanUpVvdListeners();
+  cleanUpHomeListeners();
+  window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
   const hash = location.hash.slice(1) || '/';
   const parts = hash.split('/').filter(Boolean);
   if (parts.length === 0) renderHome();
@@ -8213,6 +8393,11 @@ function route(){
   else renderHome();
   setTimeout(updateNavbarState, 50);
   setTimeout(initParallaxEngine, 60);
+  setTimeout(() => {
+    if (location.hash && location.hash !== '#/' && location.hash !== '#') {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    }
+  }, 10);
 }
 
 // ── Signature Logo-First Architectural Entrance Flight & Header Docking ──
