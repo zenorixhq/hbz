@@ -2416,21 +2416,241 @@ th { color: var(--text-muted); font-weight: 600; text-transform: uppercase; font
 .legend-full { background: #ffffff; border: 1px solid rgba(21, 20, 19, 0.4); }
 .legend-cut { background: rgba(195, 146, 78, 0.28); border: 1px dashed rgba(195, 146, 78, 0.8); }
 
-/* Native Dialog Modal for Contact / Let's Talk */
+/* Native Dialog Modal for Contact & Architectural Project Briefing Wizard */
 dialog#contactDialog {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 32px;
-  max-width: 480px;
-  width: 90%;
+  padding: 0;
+  max-width: 660px;
+  width: 94%;
   margin: auto;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
   background: var(--surface);
   color: var(--text);
+  overflow: hidden;
+  max-height: 90vh;
 }
 dialog#contactDialog::backdrop {
-  background: rgba(21, 20, 19, 0.6);
-  backdrop-filter: blur(4px);
+  background: rgba(14, 13, 12, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.brief-modal-inner {
+  padding: 28px 32px 32px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+@media (max-width: 640px) {
+  .brief-modal-inner {
+    padding: 20px 16px 24px;
+  }
+}
+.brief-mode-tabs {
+  display: flex;
+  background: rgba(21, 20, 19, 0.05);
+  border-radius: var(--radius-full);
+  padding: 4px;
+  margin-bottom: 22px;
+  gap: 4px;
+}
+.brief-mode-tab {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.2s ease;
+  text-align: center;
+}
+.brief-mode-tab.active {
+  background: var(--panel-dark);
+  color: var(--text-light);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+.brief-step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.brief-step-dot {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.brief-step-dot.active {
+  color: #c3924e;
+}
+.brief-typology-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+@media (max-width: 520px) {
+  .brief-typology-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.brief-typology-btn {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.brief-typology-btn:hover {
+  border-color: var(--text);
+}
+.brief-typology-btn.active {
+  border-color: #121110;
+  background: rgba(18, 17, 16, 0.04);
+  box-shadow: inset 0 0 0 1px #121110;
+}
+.brief-typology-btn strong {
+  font-size: 13px;
+}
+.brief-typology-btn span {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.craft-tier-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: var(--bg);
+}
+.craft-tier-card:hover {
+  border-color: var(--text);
+}
+.craft-tier-card.active {
+  border-color: #121110;
+  background: rgba(18, 17, 16, 0.04);
+  box-shadow: inset 0 0 0 1px #121110;
+}
+.indicative-range-box {
+  background: #f4efe6;
+  border: 1px solid #dfd5c4;
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 14px 0 20px;
+}
+.indicative-range-val {
+  font-size: 17px;
+  font-weight: 700;
+  color: #121110;
+  font-family: var(--font-mono);
+}
+
+/* ── Admin Lead Pipeline Metrics & Status Styles ── */
+.pipeline-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 22px;
+}
+@media (max-width: 860px) {
+  .pipeline-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 480px) {
+  .pipeline-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.pipeline-stat-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+}
+.pipeline-stat-label {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.pipeline-stat-number {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+.lead-status-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid transparent;
+}
+.status-new { background: #e6f4ea; color: #137333; border-color: #ceead6; }
+.status-contacted { background: #e8f0fe; color: #1a73e8; border-color: #d2e3fc; }
+.status-booked { background: #fef7e0; color: #b06000; border-color: #feefc3; }
+.status-proposal { background: #f3e8fd; color: #8430ce; border-color: #e9d2fd; }
+.status-archived { background: #f1f3f4; color: #5f6368; border-color: #dadce0; }
+
+.lead-status-select {
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  cursor: pointer;
+  margin-bottom: 0;
+  width: auto;
+}
+
+/* ── Project Edit Modal ── */
+dialog#projectEditDialog {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  max-width: 720px;
+  width: 94%;
+  margin: auto;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+  background: var(--surface);
+  color: var(--text);
+  overflow: hidden;
+  max-height: 90vh;
+}
+dialog#projectEditDialog::backdrop {
+  background: rgba(14, 13, 12, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.admin-modal-inner {
+  padding: 28px 32px 32px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 /* ════════════════════════════════════════════════════════════════════
@@ -3983,32 +4203,278 @@ dialog#journalUnlockModal::backdrop {
   </div>
 </div>
 
-<!-- Native Contact / Consultation Modal -->
+<!-- Native Contact / Consultation Modal & Project Briefing Wizard -->
 <dialog id="contactDialog">
-  <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
-    <div>
-      <h3 style="margin:0 0 4px;">Let’s discuss your project</h3>
-      <p style="font-size:13px;color:var(--text-muted);margin:0;">Leave your details and a director will be in touch within 24 hours.</p>
+  <div class="brief-modal-inner">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
+      <div>
+        <span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#c3924e;display:block;margin-bottom:4px;">[COMMISSION INQUIRY] &bull; HBZ STUDIO</span>
+        <h3 class="serif" style="margin:0 0 4px;font-size:22px;">Start an Architectural Project</h3>
+        <p style="font-size:12.5px;color:var(--text-muted);margin:0;">Define your project scope or leave a direct message for studio directors.</p>
+      </div>
+      <button onclick="closeContactModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-muted);line-height:1;">&times;</button>
     </div>
-    <button onclick="closeContactModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-muted);">&times;</button>
+
+    <!-- Mode Selector: Wizard vs Quick Inquiry -->
+    <div class="brief-mode-tabs">
+      <button class="brief-mode-tab active" id="tabModeWizard" onclick="setBriefMode('wizard')">Guided Project Brief Wizard</button>
+      <button class="brief-mode-tab" id="tabModeQuick" onclick="setBriefMode('quick')">Direct Studio Message</button>
+    </div>
+
+    <!-- ── MODE A: GUIDED 3-STEP ARCHITECTURAL BRIEF WIZARD ── -->
+    <div id="briefWizardWrap">
+      <div class="brief-step-indicator">
+        <span class="brief-step-dot active" id="stepDot1">1. Typology &amp; Scale</span>
+        <span style="color:var(--border);">&rarr;</span>
+        <span class="brief-step-dot" id="stepDot2">2. Craft &amp; Timeline</span>
+        <span style="color:var(--border);">&rarr;</span>
+        <span class="brief-step-dot" id="stepDot3">3. Client Identity</span>
+      </div>
+
+      <!-- Step 1: Typology & Scale -->
+      <div id="briefStep1">
+        <label style="margin-bottom:8px;">Select Project Typology</label>
+        <div class="brief-typology-grid">
+          <div class="brief-typology-btn active" onclick="setBriefTypology(this, 'Residential Villa &amp; Estate')">
+            <strong>Residential Villa &amp; Estate</strong>
+            <span>Private homes &amp; coastal pavilions</span>
+          </div>
+          <div class="brief-typology-btn" onclick="setBriefTypology(this, 'Commercial Campus &amp; HQ')">
+            <strong>Commercial Campus &amp; HQ</strong>
+            <span>Workplaces &amp; corporate architecture</span>
+          </div>
+          <div class="brief-typology-btn" onclick="setBriefTypology(this, 'Cultural &amp; Civic Pavilion')">
+            <strong>Cultural &amp; Civic Pavilion</strong>
+            <span>Galleries, assembly &amp; museum halls</span>
+          </div>
+          <div class="brief-typology-btn" onclick="setBriefTypology(this, 'Adaptive Reuse &amp; Fit-Out')">
+            <strong>Adaptive Reuse &amp; Fit-Out</strong>
+            <span>Heritage conversion &amp; spatial interiors</span>
+          </div>
+        </div>
+
+        <div style="margin-bottom:18px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <label style="margin:0;">Gross Floor Area (GFA)</label>
+            <span id="briefAreaLabel" style="font-size:12px;font-weight:700;color:#c3924e;">1,200 m² (12,916 sq.ft)</span>
+          </div>
+          <input type="range" id="briefAreaRange" min="200" max="8000" step="100" value="1200" oninput="handleBriefAreaChange(this.value)" style="padding:0;accent-color:#121110;cursor:pointer;">
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;">
+            <button class="pill-btn" onclick="setBriefAreaPreset(450)" style="font-size:11px;padding:3px 10px;">Boutique (450 m²)</button>
+            <button class="pill-btn active" onclick="setBriefAreaPreset(1200)" style="font-size:11px;padding:3px 10px;">Substantial (1,200 m²)</button>
+            <button class="pill-btn" onclick="setBriefAreaPreset(3500)" style="font-size:11px;padding:3px 10px;">Monumental (3,500 m²)</button>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+          <button class="btn-talk" onclick="goToBriefStep(2)" style="padding:10px 18px;">
+            <span>Next: Craft Tier &amp; Timeline &rarr;</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Craft Tier & Timeline -->
+      <div id="briefStep2" style="display:none;">
+        <label style="margin-bottom:8px;">Architectural Specification &amp; Craft Tier</label>
+        
+        <div class="craft-tier-card active" onclick="setBriefCraftTier(this, 'monolithic')">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <strong style="font-size:13.5px;">High-Craft Monolithic Landmark</strong>
+            <span class="pill-badge" style="font-size:10px;background:#f3ecdf;color:#7a5a2f;">Benchmark ~£3,800/m²</span>
+          </div>
+          <p style="font-size:12px;color:var(--text-muted);margin:0;">Hand-cast basalt, board-formed concrete monoliths, patinated architectural bronze, museum-grade low-iron glass.</p>
+        </div>
+
+        <div class="craft-tier-card" onclick="setBriefCraftTier(this, 'contemporary')">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <strong style="font-size:13.5px;">Refined Contemporary Spatial Architecture</strong>
+            <span class="pill-badge" style="font-size:10px;background:#eef2f7;color:#33527a;">Benchmark ~£2,800/m²</span>
+          </div>
+          <p style="font-size:12px;color:var(--text-muted);margin:0;">Smoked European oak joinery, fluted limestone columns, structural steel frames, acoustic baffles.</p>
+        </div>
+
+        <div class="craft-tier-card" onclick="setBriefCraftTier(this, 'fitout')">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+            <strong style="font-size:13.5px;">Turnkey Cat A / Cat B Spatial Fit-Out</strong>
+            <span class="pill-badge" style="font-size:10px;background:#eaf3eb;color:#286333;">Benchmark ~£1,800/m²</span>
+          </div>
+          <p style="font-size:12px;color:var(--text-muted);margin:0;">Adaptive commercial fit-out, acoustic ceiling rafts, seamless micro-cement, demountable timber partitions.</p>
+        </div>
+
+        <div class="indicative-range-box">
+          <div>
+            <div style="font-size:10.5px;font-weight:700;text-transform:uppercase;color:#856d4b;letter-spacing:0.06em;">Indicative Investment Benchmark</div>
+            <div style="font-size:12px;color:#61594e;">Preliminary formula calculation based on area &amp; craft tier</div>
+          </div>
+          <div class="indicative-range-val" id="briefEstValue">£3.9M &mdash; £5.2M</div>
+        </div>
+
+        <div style="margin-bottom:14px;">
+          <label for="briefTimeline">Target Delivery Horizon</label>
+          <select id="briefTimeline" onchange="briefWizardState.timeline=this.value;">
+            <option value="Immediate (Construction Start 2027)">Immediate (Construction Start 2027)</option>
+            <option value="Planning &amp; Permitting Phase (12-18 Months)">Planning &amp; Permitting Phase (12-18 Months)</option>
+            <option value="Site Feasibility &amp; Pre-Acquisition Review">Site Feasibility &amp; Pre-Acquisition Review</option>
+          </select>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;margin-top:16px;">
+          <button class="btn-secondary" onclick="goToBriefStep(1)">Back</button>
+          <button class="btn-talk" onclick="goToBriefStep(3)" style="padding:10px 18px;">
+            <span>Next: Client Identity &rarr;</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3: Client Identity & Submit -->
+      <div id="briefStep3" style="display:none;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;">
+          <div>
+            <label for="bwName">Client / Principal Name</label>
+            <input id="bwName" placeholder="e.g. Eleanor Vance">
+          </div>
+          <div>
+            <label for="bwPhone">Corporate Email / Phone</label>
+            <input id="bwPhone" placeholder="e.g. +44 7911 123456 or name@company.com">
+          </div>
+        </div>
+
+        <div style="margin-bottom:10px;">
+          <label for="bwCity">Site City &amp; Country</label>
+          <input id="bwCity" placeholder="e.g. Mayfair, London, UK or Minami-Aoyama, Tokyo">
+        </div>
+
+        <div style="margin-bottom:10px;">
+          <label for="bwNotes">Specific Architectural Aspirations &amp; Site Context</label>
+          <textarea id="bwNotes" rows="3" placeholder="Particular requirements, natural lighting aspirations, statutory planning stage..."></textarea>
+        </div>
+
+        <div class="err" id="bwErr" style="display:none;margin-bottom:10px;"></div>
+
+        <div style="display:flex;justify-content:space-between;margin-top:16px;">
+          <button class="btn-secondary" onclick="goToBriefStep(2)">Back</button>
+          <button class="btn-talk" onclick="submitBriefWizard()">
+            <span>Submit Architectural Brief</span>
+            <span class="arrow-circle">
+              <svg viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11 4.007 6.887 8H4.545l3.482-3.2H0V3.215h8.027L4.529 0h2.342z" fill="currentColor"/>
+              </svg>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MODE B: QUICK INQUIRY ── -->
+    <div id="briefQuickWrap" style="display:none;">
+      <label for="cname">Your Name</label>
+      <input id="cname" placeholder="e.g. Eleanor Vance">
+      <label for="cphone">Phone / Email</label>
+      <input id="cphone" placeholder="e.g. +44 7911 123456 or eleanor@company.com">
+      <label for="cnotes">Project Brief &amp; Flooring Estimate</label>
+      <textarea id="cnotes" rows="4" placeholder="Scheme size, location, or timing requirements..."></textarea>
+      <div class="err" id="cerr" style="display:none;"></div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;">
+        <button class="btn-secondary" onclick="closeContactModal()">Cancel</button>
+        <button class="btn-talk" onclick="submitInquiry()">
+          <span>Submit Direct Inquiry</span>
+          <span class="arrow-circle">
+            <svg viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11 4.007 6.887 8H4.545l3.482-3.2H0V3.215h8.027L4.529 0h2.342z" fill="currentColor"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
   </div>
-  <label for="cname">Your Name</label>
-  <input id="cname" placeholder="e.g. Eleanor Vance">
-  <label for="cphone">Phone / Email</label>
-  <input id="cphone" placeholder="e.g. +44 7911 123456 or eleanor@company.com">
-  <label for="cnotes">Project Brief &amp; Flooring Estimate</label>
-  <textarea id="cnotes" rows="4" placeholder="Scheme size, location, or timing requirements..."></textarea>
-  <div class="err" id="cerr" style="display:none;"></div>
-  <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:8px;">
-    <button class="btn-secondary" onclick="closeContactModal()">Cancel</button>
-    <button class="btn-talk" onclick="submitInquiry()">
-      <span>Submit Inquiry</span>
-      <span class="arrow-circle">
-        <svg viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M11 4.007 6.887 8H4.545l3.482-3.2H0V3.215h8.027L4.529 0h2.342z" fill="currentColor"/>
-        </svg>
-      </span>
-    </button>
+</dialog>
+
+<!-- Native Dialog Modal for In-Browser Project CMS Editor -->
+<dialog id="projectEditDialog">
+  <div class="admin-modal-inner">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div>
+        <span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#c3924e;display:block;">[CMS STUDIO CURATION]</span>
+        <h3 class="serif" style="margin:2px 0 0;font-size:22px;">Edit Architectural Scheme</h3>
+      </div>
+      <button onclick="closeProjectEditModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-muted);">&times;</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:16px;">
+      <div>
+        <label for="editPTitle">Scheme Title</label>
+        <input id="editPTitle" placeholder="e.g. Palazzo Molteni Tokyo">
+      </div>
+      <div>
+        <label for="editPCat">Discipline Category</label>
+        <select id="editPCat">
+          <option value="Architecture">Architecture</option>
+          <option value="Interior">Interior</option>
+          <option value="Residential">Residential</option>
+          <option value="Commercial">Commercial</option>
+          <option value="Cultural">Cultural</option>
+          <option value="Renovation">Renovation</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+      <div>
+        <label for="editPSubcat">Typology Tag</label>
+        <input id="editPSubcat" placeholder="e.g. Offices & HQ">
+      </div>
+      <div>
+        <label for="editPLoc">Location</label>
+        <input id="editPLoc" placeholder="e.g. Tokyo, Japan">
+      </div>
+      <div>
+        <label for="editPYear">Completion Year</label>
+        <input id="editPYear" placeholder="e.g. 2024">
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div>
+        <label for="editPArea">Gross Floor Area (GFA)</label>
+        <input id="editPArea" placeholder="e.g. 3,400 m²">
+      </div>
+      <div>
+        <label for="editPClient">Client / Commissioner</label>
+        <input id="editPClient" placeholder="e.g. Private Residence">
+      </div>
+    </div>
+
+    <div>
+      <label for="editPMat">Primary Materiality</label>
+      <input id="editPMat" placeholder="e.g. Cast Concrete, Basalt, Smoked Oak, Bronze">
+    </div>
+
+    <div>
+      <label for="editPSum">Short Executive Summary</label>
+      <textarea id="editPSum" rows="2" placeholder="Brief descriptor shown on index cards..."></textarea>
+    </div>
+
+    <div>
+      <label for="editPBody">Complete Monograph Narrative</label>
+      <textarea id="editPBody" rows="4" placeholder="Detailed architectural narrative, spatial philosophy, engineering notes..."></textarea>
+    </div>
+
+    <div>
+      <label for="editPImg">Main Hero Image URL</label>
+      <input id="editPImg" placeholder="https://images.unsplash.com/...">
+    </div>
+
+    <div>
+      <label for="editPPlates">Multi-Scale Architectural Plate URLs (One URL per line)</label>
+      <textarea id="editPPlates" rows="4" placeholder="Enter high-res image URLs for plates strip..."></textarea>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;">
+      <button class="btn-secondary" onclick="closeProjectEditModal()">Cancel</button>
+      <button class="btn-talk" onclick="saveProjectEdit()" style="padding:10px 20px;">
+        <span>Save Scheme Changes</span>
+      </button>
+    </div>
   </div>
 </dialog>
 
@@ -4176,28 +4642,178 @@ window.addEventListener('hashchange', () => {
 // Initial check
 setTimeout(updateNavbarState, 100);
 
-// Contact Modal
-// Contact Modal
+// ════════════════════════════════════════════════════════════════════
+// Architectural Project Briefing Wizard & Contact Modal Logic
+// ════════════════════════════════════════════════════════════════════
+let briefWizardState = {
+  mode: 'wizard', // 'wizard' | 'quick'
+  step: 1,
+  typology: 'Residential Villa & Estate',
+  area: 1200, // sqm
+  craftTier: 'monolithic', // 'monolithic' | 'contemporary' | 'fitout'
+  timeline: 'Immediate (Construction Start 2027)'
+};
+
+function calculateBriefRange(area, craftTier) {
+  const rates = {
+    monolithic: 3800,
+    contemporary: 2800,
+    fitout: 1800
+  };
+  const baseRate = rates[craftTier] || 2800;
+  const total = area * baseRate;
+  const min = total * 0.88;
+  const max = total * 1.15;
+  const formatM = (v) => '£' + (v / 1000000).toFixed(1) + 'M';
+  return `${formatM(min)} — ${formatM(max)}`;
+}
+
+function setBriefMode(mode) {
+  briefWizardState.mode = mode;
+  document.getElementById('tabModeWizard')?.classList.toggle('active', mode === 'wizard');
+  document.getElementById('tabModeQuick')?.classList.toggle('active', mode === 'quick');
+  const wWrap = document.getElementById('briefWizardWrap');
+  const qWrap = document.getElementById('briefQuickWrap');
+  if (wWrap) wWrap.style.display = mode === 'wizard' ? 'block' : 'none';
+  if (qWrap) qWrap.style.display = mode === 'quick' ? 'block' : 'none';
+}
+
+function setBriefTypology(el, typology) {
+  briefWizardState.typology = typology;
+  document.querySelectorAll('.brief-typology-grid .brief-typology-btn').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+}
+
+function handleBriefAreaChange(val) {
+  const sqm = parseInt(val, 10) || 1200;
+  briefWizardState.area = sqm;
+  const sqft = Math.round(sqm * 10.7639);
+  const lbl = document.getElementById('briefAreaLabel');
+  if (lbl) lbl.textContent = `${sqm.toLocaleString()} m² (${sqft.toLocaleString()} sq.ft)`;
+  updateBriefEstValue();
+}
+
+function setBriefAreaPreset(sqm) {
+  const range = document.getElementById('briefAreaRange');
+  if (range) range.value = sqm;
+  document.querySelectorAll('#briefStep1 .pill-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.includes(sqm.toString()));
+  });
+  handleBriefAreaChange(sqm);
+}
+
+function setBriefCraftTier(el, tier) {
+  briefWizardState.craftTier = tier;
+  document.querySelectorAll('.craft-tier-card').forEach(c => c.classList.remove('active'));
+  if (el) el.classList.add('active');
+  updateBriefEstValue();
+}
+
+function updateBriefEstValue() {
+  const el = document.getElementById('briefEstValue');
+  if (el) el.textContent = calculateBriefRange(briefWizardState.area, briefWizardState.craftTier);
+}
+
+function goToBriefStep(step) {
+  briefWizardState.step = step;
+  [1, 2, 3].forEach(s => {
+    const stepEl = document.getElementById(`briefStep${s}`);
+    const dotEl = document.getElementById(`stepDot${s}`);
+    if (stepEl) stepEl.style.display = s === step ? 'block' : 'none';
+    if (dotEl) dotEl.classList.toggle('active', s === step);
+  });
+}
+
 function openContactModal(context = null) {
   if (context) window.__inquirySource = context;
+  goToBriefStep(1);
+  if (context && context.includes('Calculator')) {
+    setBriefMode('quick');
+  } else {
+    setBriefMode('wizard');
+  }
   const dialog = document.getElementById('contactDialog');
   if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
 }
+
 function closeContactModal() {
   const dialog = document.getElementById('contactDialog');
   if (dialog) dialog.close();
   window.__inquirySource = null;
 }
+
+async function submitBriefWizard() {
+  const name = document.getElementById('bwName').value.trim();
+  const phone = document.getElementById('bwPhone').value.trim();
+  const city = document.getElementById('bwCity').value.trim();
+  const notes = document.getElementById('bwNotes').value.trim();
+  const err = document.getElementById('bwErr');
+
+  if (!name || !phone) {
+    if (err) {
+      err.textContent = 'Please enter your name and contact email or phone.';
+      err.style.display = 'block';
+    }
+    return;
+  }
+  if (err) err.style.display = 'none';
+
+  const craftNames = {
+    monolithic: 'High-Craft Monolithic Landmark',
+    contemporary: 'Refined Contemporary Spatial',
+    fitout: 'Turnkey Cat A / Cat B Spatial Fit-Out'
+  };
+
+  const estRange = calculateBriefRange(briefWizardState.area, briefWizardState.craftTier);
+  const briefDesc = `[Project Brief] Typology: ${briefWizardState.typology} | Scale: ${briefWizardState.area.toLocaleString()} m² | Craft Tier: ${craftNames[briefWizardState.craftTier]} (Est: ${estRange}) | Target Schedule: ${briefWizardState.timeline} | Site Location: ${city || 'Not specified'} | Notes: ${notes || 'None'}`;
+
+  // Store lead record in localStorage with status: 'New'
+  try {
+    const raw = localStorage.getItem('hbz_leads');
+    const leads = raw ? JSON.parse(raw) : [];
+    leads.unshift({
+      id: 'lead_' + Date.now(),
+      name,
+      phone,
+      source: 'Interactive Project Brief',
+      status: 'New',
+      details: briefDesc,
+      post_id: briefWizardState.typology,
+      notes: city ? `Site City: ${city}` : '',
+      created_at: new Date().toISOString()
+    });
+    localStorage.setItem('hbz_leads', JSON.stringify(leads));
+  } catch(e) {}
+
+  if (LIVE && db) {
+    try {
+      await db.from('leads').insert([{ name, phone, post_id: briefWizardState.typology, details: briefDesc }]);
+    } catch(err) {
+      console.warn('Supabase lead insert error:', err);
+    }
+  }
+
+  alert(`✓ Architectural Brief Received\n\nThank you, ${name}.\nYour project brief for a ${briefWizardState.typology} (${briefWizardState.area.toLocaleString()} m²) has been logged (Est: ${estRange}).\n\nA studio director will review your scheme feasibility and contact you within 24 hours.`);
+  closeContactModal();
+  document.getElementById('bwName').value = '';
+  document.getElementById('bwPhone').value = '';
+  document.getElementById('bwCity').value = '';
+  document.getElementById('bwNotes').value = '';
+}
+
 async function submitInquiry() {
   const name = document.getElementById('cname').value.trim();
   const phone = document.getElementById('cphone').value.trim();
   const notes = document.getElementById('cnotes').value.trim();
   const err = document.getElementById('cerr');
   if (!name || !phone) {
-    err.textContent = 'Please enter your name and contact details.';
-    err.style.display = 'block';
+    if (err) {
+      err.textContent = 'Please enter your name and contact details.';
+      err.style.display = 'block';
+    }
     return;
   }
+  if (err) err.style.display = 'none';
 
   // Determine source context
   let source = window.__inquirySource || '';
@@ -4214,19 +4830,22 @@ async function submitInquiry() {
     const raw = localStorage.getItem('hbz_leads');
     const leads = raw ? JSON.parse(raw) : [];
     leads.unshift({
+      id: 'lead_' + Date.now(),
       name,
       phone,
       source: source,
+      status: 'New',
       details: notes || source,
       post_id: notes || source,
+      notes: '',
       created_at: new Date().toISOString()
     });
     localStorage.setItem('hbz_leads', JSON.stringify(leads));
   } catch(e) {}
 
-  if (LIVE) {
+  if (LIVE && db) {
     try {
-      await db.from('leads').insert([{ name, phone, post_id: null }]);
+      await db.from('leads').insert([{ name, phone, post_id: null, details: notes || source }]);
     } catch(err) {
       console.warn('Supabase lead insert error:', err);
     }
@@ -4804,10 +5423,29 @@ async function uploadImage(inputId){
 }
 
 async function getProjects(){
-  if (!LIVE) return SAMPLE_PROJECTS;
+  try {
+    const custom = localStorage.getItem('hbz_custom_projects');
+    if (custom) {
+      const parsed = JSON.parse(custom);
+      if (Array.isArray(parsed) && parsed.length) {
+        window.__allProjectsCache = parsed;
+        return parsed;
+      }
+    } else {
+      localStorage.setItem('hbz_custom_projects', JSON.stringify(SAMPLE_PROJECTS));
+    }
+  } catch(e) {}
+
+  if (!LIVE) {
+    window.__allProjectsCache = SAMPLE_PROJECTS;
+    return SAMPLE_PROJECTS;
+  }
   try {
     const { data, error } = await db.from('projects').select('*').eq('status','published').order('created_at',{ascending:false});
-    if (error || !data || data.length === 0) return SAMPLE_PROJECTS;
+    if (error || !data || data.length === 0) {
+      window.__allProjectsCache = SAMPLE_PROJECTS;
+      return SAMPLE_PROJECTS;
+    }
     const projectMap = new Map();
     SAMPLE_PROJECTS.forEach(p => projectMap.set(p.id, { ...p }));
     data.forEach(dbItem => {
@@ -4825,9 +5463,12 @@ async function getProjects(){
         projectMap.set(dbItem.id, dbItem);
       }
     });
-    return Array.from(projectMap.values());
+    const finalProjects = Array.from(projectMap.values());
+    window.__allProjectsCache = finalProjects;
+    return finalProjects;
   } catch (err) {
-    console.warn('Error fetching projects, falling back to 10 curated projects:', err);
+    console.warn('Error fetching projects, falling back to curated projects:', err);
+    window.__allProjectsCache = SAMPLE_PROJECTS;
     return SAMPLE_PROJECTS;
   }
 }
@@ -7890,19 +8531,21 @@ async function loadAdminTab(){
           
           <label for="pcat">Discipline Category</label>
           <select id="pcat">
-            <option value="Commercial">Commercial</option>
+            <option value="Architecture">Architecture</option>
             <option value="Residential">Residential</option>
-            <option value="Infrastructure">Infrastructure</option>
+            <option value="Commercial">Commercial</option>
+            <option value="Cultural">Cultural</option>
             <option value="Renovation">Renovation</option>
+            <option value="Interior">Interior</option>
           </select>
 
-          <label for="psum">Short Summary</label>
-          <textarea id="psum" rows="2" placeholder="Brief 1-sentence descriptor..."></textarea>
+          <label for="psum">Short Executive Summary</label>
+          <textarea id="psum" rows="2" placeholder="Brief 1-sentence descriptor shown on cards..."></textarea>
 
           <label for="pbody">Full Case Study Narrative</label>
-          <textarea id="pbody" rows="4" placeholder="Detailed engineering, client outcomes, specifications..."></textarea>
+          <textarea id="pbody" rows="4" placeholder="Detailed engineering, client outcomes, spatial philosophy..."></textarea>
 
-          <label for="pimg">Project Photography (Uploads to Media Bucket)</label>
+          <label for="pimg">Project Photography (Upload or URL)</label>
           <input id="pimg" type="file" accept="image/*">
 
           <button class="btn-talk" onclick="addProject()" style="width:100%;justify-content:center;padding:10px 14px;">
@@ -7911,14 +8554,20 @@ async function loadAdminTab(){
         </div>
 
         <div class="card">
-          <h3 class="serif" style="font-size:20px;margin-bottom:16px;">Active Schemes (${items.length})</h3>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+            <div>
+              <h3 class="serif" style="font-size:20px;margin:0;">Active Architectural Schemes (${items.length})</h3>
+              <span style="font-size:12px;color:var(--text-muted);">Curated monograph portfolio &bull; In-browser CMS editing enabled</span>
+            </div>
+          </div>
           <div style="overflow-x:auto;">
             <table>
               <thead>
                 <tr>
                   <th>Preview</th>
-                  <th>Title</th>
-                  <th>Category</th>
+                  <th>Scheme Title</th>
+                  <th>Typology</th>
+                  <th>Area / Year</th>
                   <th style="text-align:right;">Actions</th>
                 </tr>
               </thead>
@@ -7926,12 +8575,17 @@ async function loadAdminTab(){
                 ${items.map(p => `
                   <tr>
                     <td style="width:50px;">
-                      <img src="${escapeHtml(p.image_url || 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=100&q=80')}" style="width:40px;height:40px;border-radius:4px;object-fit:cover;">
+                      <img src="${escapeHtml(p.image_url || 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=100&q=80')}" style="width:44px;height:44px;border-radius:4px;object-fit:cover;">
                     </td>
-                    <td><strong>${escapeHtml(p.title)}</strong></td>
-                    <td><span class="time-pill" style="font-size:10px;">${escapeHtml(p.category)}</span></td>
-                    <td style="text-align:right;">
-                      <button class="btn-secondary" onclick="deleteProject('${p.id}')" style="padding:4px 10px;font-size:11px;">Delete</button>
+                    <td>
+                      <strong>${escapeHtml(p.title)}</strong><br>
+                      <span style="font-size:11px;color:var(--text-muted);">${escapeHtml(p.location || 'Global')}</span>
+                    </td>
+                    <td><span class="time-pill" style="font-size:10px;">${escapeHtml(p.subCategory || p.category)}</span></td>
+                    <td style="font-size:12px;color:var(--text-muted);">${escapeHtml(p.area || '—')}<br>${escapeHtml(p.year || '')}</td>
+                    <td style="text-align:right;white-space:nowrap;">
+                      <button class="btn-secondary" onclick="openProjectEditModal('${p.id}')" style="padding:4px 9px;font-size:11px;margin-right:4px;">✏️ Edit</button>
+                      <button class="btn-secondary" onclick="deleteProject('${p.id}')" style="padding:4px 9px;font-size:11px;color:#e53e3e;border-color:#feb2b2;">Delete</button>
                     </td>
                   </tr>
                 `).join('')}
@@ -8015,12 +8669,24 @@ async function loadAdminTab(){
       }
     } catch(e) {}
 
+    // Compute Pipeline Analytics Metrics
+    const totalLeads = leads.length;
+    const newLeads = leads.filter(l => (l.status || 'New') === 'New').length;
+    const activeLeads = leads.filter(l => ['Contacted', 'Meeting Booked', 'Proposal Sent'].includes(l.status || '')).length;
+
     function getLeadOrigin(lead) {
       const src = (lead.source || '').toLowerCase();
       const post = (lead.post_id || '').toLowerCase();
       const details = (lead.details || '').toLowerCase();
       const combined = `${src} ${post} ${details}`;
 
+      if (combined.includes('project brief') || combined.includes('brief wizard')) {
+        return {
+          type: 'Project Brief Wizard',
+          badge: 'background:#fbeed9;color:#8f5e1f;border:1px solid #ebd2aa;',
+          icon: '📐'
+        };
+      }
       if (combined.includes('journal') || combined.includes('briefing') || combined.includes('monograph')) {
         return {
           type: 'Journal Unlock',
@@ -8050,50 +8716,98 @@ async function loadAdminTab(){
     }
 
     el.innerHTML = `
+      <!-- Pipeline Metric Counters Strip -->
+      <div class="pipeline-metrics-grid">
+        <div class="pipeline-stat-box">
+          <div class="pipeline-stat-label">Total Inquiries</div>
+          <div class="pipeline-stat-number">${totalLeads}</div>
+        </div>
+        <div class="pipeline-stat-box" style="border-left:3px solid #2e7d32;">
+          <div class="pipeline-stat-label">New Leads</div>
+          <div class="pipeline-stat-number" style="color:#2e7d32;">${newLeads}</div>
+        </div>
+        <div class="pipeline-stat-box" style="border-left:3px solid #c3924e;">
+          <div class="pipeline-stat-label">Active Discussion</div>
+          <div class="pipeline-stat-number" style="color:#c3924e;">${activeLeads}</div>
+        </div>
+        <div class="pipeline-stat-box" style="border-left:3px solid #1976d2;">
+          <div class="pipeline-stat-label">Pipeline Status</div>
+          <div class="pipeline-stat-number" style="font-size:16px;color:#1976d2;padding-top:4px;">Lead CRM Active</div>
+        </div>
+      </div>
+
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
           <div>
-            <h3 class="serif" style="font-size:20px;margin:0;">Captured Client Leads (${leads.length})</h3>
-            <span style="font-size:12px;color:var(--text-muted);">${LIVE ? 'Live database & local inquiries recorded' : 'Demo & test inquiries recorded locally'}</span>
+            <h3 class="serif" style="font-size:20px;margin:0;">Client Inquiries &amp; Project Briefs (${leads.length})</h3>
+            <span style="font-size:12px;color:var(--text-muted);">Real-time lead status management and one-click CRM export</span>
           </div>
-          <button class="btn-secondary" onclick="resetAllLeads()" style="color:#e53e3e;border-color:#feb2b2;padding:6px 14px;font-size:12px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;">
-            <span>🗑️ Reset All Lead Test Data</span>
-          </button>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <button class="btn-talk" onclick="exportLeadsCSV()" style="padding:6px 14px;font-size:12px;cursor:pointer;">
+              <span>📥 Export Leads (.CSV)</span>
+            </button>
+            <button class="btn-secondary" onclick="resetAllLeads()" style="color:#e53e3e;border-color:#feb2b2;padding:6px 14px;font-size:12px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;">
+              <span>🗑️ Reset Test Data</span>
+            </button>
+          </div>
         </div>
         <div style="overflow-x:auto;">
           <table>
             <thead>
               <tr>
-                <th>Client Name</th>
-                <th>Contact Phone / Email</th>
-                <th>Lead Source</th>
-                <th>Inquired Item / Specifications</th>
-                <th style="text-align:right;">Date Received</th>
+                <th>Client Name &amp; Contact</th>
+                <th>Lead Origin</th>
+                <th>Pipeline Status</th>
+                <th>Project Brief / Specifications</th>
+                <th>Studio Notes</th>
+                <th style="text-align:right;">Date &amp; Actions</th>
               </tr>
             </thead>
             <tbody>
-              ${leads.map(l => {
+              ${leads.map((l, idx) => {
                 const origin = getLeadOrigin(l);
+                const status = l.status || 'New';
                 let desc = l.details || l.post_id || 'General Consultation Inquiry';
                 if (desc.startsWith('p') && desc.length <= 4) desc = 'Architectural Scheme ' + desc.toUpperCase();
+                
+                const isEmail = (l.phone || '').includes('@');
+                const contactHref = isEmail ? `mailto:${escapeHtml(l.phone)}` : `tel:${escapeHtml(l.phone)}`;
+
                 return `
                   <tr>
-                    <td><strong>${escapeHtml(l.name)}</strong></td>
-                    <td>${escapeHtml(l.phone)}</td>
+                    <td>
+                      <strong>${escapeHtml(l.name)}</strong><br>
+                      <a href="${contactHref}" style="font-size:12px;color:#c3924e;text-decoration:none;" title="Direct Contact">${escapeHtml(l.phone)}</a>
+                    </td>
                     <td>
                       <span class="pill-badge" style="${origin.badge}font-size:11px;padding:3px 9px;font-weight:600;display:inline-flex;align-items:center;gap:5px;border-radius:4px;white-space:nowrap;">
                         <span>${origin.icon}</span> <span>${origin.type}</span>
                       </span>
                     </td>
-                    <td style="max-width:340px;font-size:12px;color:var(--text-muted);line-height:1.45;">
+                    <td>
+                      <select class="lead-status-select" onchange="updateLeadStatus(${idx}, this.value)">
+                        <option value="New" ${status==='New'?'selected':''}>🟢 New</option>
+                        <option value="Contacted" ${status==='Contacted'?'selected':''}>🔵 Contacted</option>
+                        <option value="Meeting Booked" ${status==='Meeting Booked'?'selected':''}>🟡 Meeting Booked</option>
+                        <option value="Proposal Sent" ${status==='Proposal Sent'?'selected':''}>🟣 Proposal Sent</option>
+                        <option value="Archived" ${status==='Archived'?'selected':''}>⚪ Archived</option>
+                      </select>
+                    </td>
+                    <td style="max-width:300px;font-size:12px;color:var(--text-muted);line-height:1.45;">
                       ${escapeHtml(desc)}
                     </td>
+                    <td style="font-size:12px;">
+                      <span onclick="updateLeadNote(${idx})" style="cursor:pointer;color:${l.notes?'var(--text)':'#999'};border-bottom:1px dashed var(--border-strong);display:inline-block;padding-bottom:1px;" title="Click to edit notes">
+                        ${l.notes ? '📝 ' + escapeHtml(l.notes) : '<em>+ Add note</em>'}
+                      </span>
+                    </td>
                     <td style="text-align:right;white-space:nowrap;font-size:12px;color:var(--text-muted);">
-                      ${l.created_at ? new Date(l.created_at).toLocaleDateString() : 'Recent'}
+                      <div>${l.created_at ? new Date(l.created_at).toLocaleDateString() : 'Recent'}</div>
+                      <button onclick="deleteLead(${idx})" style="background:none;border:none;color:#e53e3e;font-size:11px;cursor:pointer;margin-top:4px;text-decoration:underline;">Delete</button>
                     </td>
                   </tr>
                 `;
-              }).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px;">No leads recorded yet. Submissions from calculator estimates and journal unlocks will appear here.</td></tr>'}
+              }).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:32px;">No leads recorded yet. Submissions from project brief wizard, calculator estimates and journal unlocks will appear here.</td></tr>'}
             </tbody>
           </table>
         </div>
@@ -8146,8 +8860,208 @@ async function loadAdminTab(){
   }
 }
 
+// ── Lead Management Handlers ──
+function updateLeadStatus(index, newStatus) {
+  try {
+    const raw = localStorage.getItem('hbz_leads');
+    const leads = raw ? JSON.parse(raw) : [];
+    if (leads[index]) {
+      leads[index].status = newStatus;
+      localStorage.setItem('hbz_leads', JSON.stringify(leads));
+      loadAdminTab();
+    }
+  } catch(e) {}
+}
+
+function updateLeadNote(index) {
+  try {
+    const raw = localStorage.getItem('hbz_leads');
+    const leads = raw ? JSON.parse(raw) : [];
+    if (leads[index]) {
+      const current = leads[index].notes || '';
+      const entered = prompt('Enter internal studio notes for this client inquiry:', current);
+      if (entered !== null) {
+        leads[index].notes = entered.trim();
+        localStorage.setItem('hbz_leads', JSON.stringify(leads));
+        loadAdminTab();
+      }
+    }
+  } catch(e) {}
+}
+
+function deleteLead(index) {
+  if (!confirm('Are you sure you want to delete this client inquiry?')) return;
+  try {
+    const raw = localStorage.getItem('hbz_leads');
+    const leads = raw ? JSON.parse(raw) : [];
+    leads.splice(index, 1);
+    localStorage.setItem('hbz_leads', JSON.stringify(leads));
+    loadAdminTab();
+  } catch(e) {}
+}
+
+function exportLeadsCSV() {
+  try {
+    const raw = localStorage.getItem('hbz_leads');
+    const leads = raw ? JSON.parse(raw) : [];
+    if (!leads.length) {
+      alert('No leads available to export.');
+      return;
+    }
+
+    const headers = ['Client Name', 'Phone / Email', 'Lead Origin', 'Status', 'Inquiry Details / Specs', 'Studio Internal Notes', 'Date Received'];
+    const rows = leads.map(l => {
+      const name = (l.name || '').replace(/"/g, '""');
+      const contact = (l.phone || '').replace(/"/g, '""');
+      const source = (l.source || 'Direct Consultation').replace(/"/g, '""');
+      const status = (l.status || 'New').replace(/"/g, '""');
+      const details = (l.details || l.post_id || '').replace(/"/g, '""');
+      const notes = (l.notes || '').replace(/"/g, '""');
+      const date = l.created_at ? new Date(l.created_at).toLocaleString() : 'Recent';
+      return `"${name}","${contact}","${source}","${status}","${details}","${notes}","${date}"`;
+    });
+
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `HBZ_Client_Leads_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch(err) {
+    alert('Failed to export CSV: ' + err.message);
+  }
+}
+
+// ── In-Browser Project CMS Editor Handlers ──
+function openProjectEditModal(id) {
+  const projects = window.__allProjectsCache || [];
+  const p = projects.find(x => x.id === id);
+  if (!p) return;
+
+  window.__editingProjectId = id;
+  const titleEl = document.getElementById('editPTitle');
+  if (titleEl) titleEl.value = p.title || '';
+  const catEl = document.getElementById('editPCat');
+  if (catEl) catEl.value = p.category || 'Architecture';
+  const subcatEl = document.getElementById('editPSubcat');
+  if (subcatEl) subcatEl.value = p.subCategory || '';
+  const locEl = document.getElementById('editPLoc');
+  if (locEl) locEl.value = p.location || '';
+  const yrEl = document.getElementById('editPYear');
+  if (yrEl) yrEl.value = p.year || '';
+  const areaEl = document.getElementById('editPArea');
+  if (areaEl) areaEl.value = p.area || '';
+  const clientEl = document.getElementById('editPClient');
+  if (clientEl) clientEl.value = p.client || '';
+  const matEl = document.getElementById('editPMat');
+  if (matEl) matEl.value = p.materials || '';
+  const sumEl = document.getElementById('editPSum');
+  if (sumEl) sumEl.value = p.summary || '';
+  const bodyEl = document.getElementById('editPBody');
+  if (bodyEl) bodyEl.value = p.body || '';
+  const imgEl = document.getElementById('editPImg');
+  if (imgEl) imgEl.value = p.image_url || '';
+
+  const plates = (p.images && Array.isArray(p.images)) ? p.images.map(img => typeof img === 'object' ? img.url : img).filter(Boolean) : [];
+  const platesEl = document.getElementById('editPPlates');
+  if (platesEl) platesEl.value = plates.join('\n');
+
+  const dialog = document.getElementById('projectEditDialog');
+  if (dialog && typeof dialog.showModal === 'function') {
+    dialog.showModal();
+  }
+}
+
+function closeProjectEditModal() {
+  const dialog = document.getElementById('projectEditDialog');
+  if (dialog) dialog.close();
+  window.__editingProjectId = null;
+}
+
+async function saveProjectEdit() {
+  const id = window.__editingProjectId;
+  if (!id) return;
+
+  const title = document.getElementById('editPTitle').value.trim();
+  const category = document.getElementById('editPCat').value.trim();
+  const subCategory = document.getElementById('editPSubcat').value.trim();
+  const location = document.getElementById('editPLoc').value.trim();
+  const year = document.getElementById('editPYear').value.trim();
+  const area = document.getElementById('editPArea').value.trim();
+  const client = document.getElementById('editPClient').value.trim();
+  const materials = document.getElementById('editPMat').value.trim();
+  const summary = document.getElementById('editPSum').value.trim();
+  const body = document.getElementById('editPBody').value.trim();
+  const image_url = document.getElementById('editPImg').value.trim();
+  const platesRaw = document.getElementById('editPPlates').value.trim();
+
+  if (!title) {
+    alert('Please enter a project title.');
+    return;
+  }
+
+  let plateUrls = platesRaw.split('\n').map(s => s.trim()).filter(Boolean);
+  if (!plateUrls.length && image_url) plateUrls = [image_url];
+  const images = plateUrls.map((url, idx) => ({
+    url,
+    title: `Plate ${idx + 1} • ${title}`,
+    ratio: idx === 0 ? '16/9' : (idx % 2 === 0 ? '1/1' : '3/4'),
+    orientation: idx === 0 ? 'landscape' : 'portrait',
+    dims: 'High-Res Plate'
+  }));
+
+  let projects = [];
+  try {
+    const raw = localStorage.getItem('hbz_custom_projects');
+    projects = raw ? JSON.parse(raw) : [...SAMPLE_PROJECTS];
+  } catch(e) {
+    projects = [...SAMPLE_PROJECTS];
+  }
+
+  const idx = projects.findIndex(x => x.id === id);
+  if (idx !== -1) {
+    projects[idx] = {
+      ...projects[idx],
+      title,
+      category,
+      subCategory: subCategory || category,
+      location,
+      year,
+      area,
+      client,
+      materials,
+      summary,
+      body,
+      image_url: image_url || projects[idx].image_url,
+      images: images.length ? images : projects[idx].images
+    };
+  }
+
+  try {
+    localStorage.setItem('hbz_custom_projects', JSON.stringify(projects));
+  } catch(e) {}
+
+  window.__allProjectsCache = projects;
+  if (typeof vvdState !== 'undefined' && vvdState) vvdState.allProjects = projects;
+
+  if (LIVE && db) {
+    try {
+      await db.from('projects').update({ title, category, summary, body, image_url }).eq('id', id);
+    } catch(err) {
+      console.warn('Supabase project update error:', err);
+    }
+  }
+
+  closeProjectEditModal();
+  alert('Project scheme updated successfully!');
+  loadAdminTab();
+}
+
 async function addProject(){
-  if (!LIVE) { alert('Notice: Connect Supabase to persist projects permanently.'); return; }
   const title = document.getElementById('ptitle').value.trim();
   const category = document.getElementById('pcat').value.trim();
   const summary = document.getElementById('psum').value.trim();
@@ -8155,24 +9069,82 @@ async function addProject(){
   if (!title || !category) { alert('Please provide Title and Category.'); return; }
 
   const fileInput = document.getElementById('pimg');
-  let image_url = null;
-  if (fileInput && fileInput.files && fileInput.files[0]) {
-    image_url = await uploadImage('pimg');
-    if (!image_url) return;
+  let image_url = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=85';
+  if (fileInput && fileInput.files && fileInput.files[0] && LIVE) {
+    const up = await uploadImage('pimg');
+    if (up) image_url = up;
   }
-  const { error } = await db.from('projects').insert([{ title, category, summary, body, image_url }]);
-  if (error) { alert('Failed to save project: ' + error.message); return; }
+
+  const newId = 'p' + Date.now();
+  const newProj = {
+    id: newId,
+    title,
+    category,
+    subCategory: category,
+    location: 'London, UK',
+    year: '2026',
+    area: '2,800 m²',
+    client: 'Private Commission',
+    materials: 'Cast Concrete, Basalt, Smoked Oak',
+    summary,
+    body,
+    image_url,
+    images: [{ url: image_url, title: 'Hero Plate • ' + title, ratio: '16/9', orientation: 'landscape', dims: '1800 × 1012 px' }]
+  };
+
+  let projects = [];
+  try {
+    const raw = localStorage.getItem('hbz_custom_projects');
+    projects = raw ? JSON.parse(raw) : [...SAMPLE_PROJECTS];
+  } catch(e) {
+    projects = [...SAMPLE_PROJECTS];
+  }
+  projects.unshift(newProj);
+  try {
+    localStorage.setItem('hbz_custom_projects', JSON.stringify(projects));
+  } catch(e) {}
+
+  window.__allProjectsCache = projects;
+  if (typeof vvdState !== 'undefined' && vvdState) vvdState.allProjects = projects;
+
+  if (LIVE && db) {
+    try {
+      await db.from('projects').insert([{ id: newId, title, category, summary, body, image_url }]);
+    } catch(err) {
+      console.warn('Supabase project insert error:', err);
+    }
+  }
+
   alert('Project published successfully.');
+  document.getElementById('ptitle').value = '';
+  document.getElementById('psum').value = '';
+  document.getElementById('pbody').value = '';
   loadAdminTab();
 }
 
 async function deleteProject(id){
-  if (!confirm('Are you sure you want to remove this project?')) return;
-  if (LIVE) {
-    const { error } = await db.from('projects').delete().eq('id', id);
-    if (error) alert('Failed to delete: ' + error.message);
-    loadAdminTab();
+  if (!confirm('Are you sure you want to remove this project scheme from portfolio?')) return;
+  let projects = [];
+  try {
+    const raw = localStorage.getItem('hbz_custom_projects');
+    projects = raw ? JSON.parse(raw) : [...SAMPLE_PROJECTS];
+  } catch(e) {
+    projects = [...SAMPLE_PROJECTS];
   }
+  projects = projects.filter(p => p.id !== id);
+  try {
+    localStorage.setItem('hbz_custom_projects', JSON.stringify(projects));
+  } catch(e) {}
+
+  window.__allProjectsCache = projects;
+  if (typeof vvdState !== 'undefined' && vvdState) vvdState.allProjects = projects;
+
+  if (LIVE && db) {
+    try {
+      await db.from('projects').delete().eq('id', id);
+    } catch(e) {}
+  }
+  loadAdminTab();
 }
 
 async function addPost(){
