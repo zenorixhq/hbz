@@ -3,7 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>HBZ — Architecture, Design & Construction</title>
+<title>HBZ — Contemporary Architecture, Spatial Design & Construction</title>
+<meta name="description" content="HBZ is a contemporary architectural practice and spatial construction studio delivering monolithic residences, corporate campuses, and cultural pavilions across London, Tokyo, and Europe.">
+<meta name="keywords" content="HBZ architecture, contemporary architectural studio, monolithic concrete, residential villa, corporate campus design, interior spatial fit-out, architectural monographs, Clerkenwell London">
+<meta name="author" content="HBZ Architectural Practice">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#151413">
+<link rel="canonical" href="https://zenorixhq.github.io/hbz/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zenorixhq.github.io/hbz/">
+<meta property="og:site_name" content="HBZ Architectural Studio">
+<meta property="og:title" content="HBZ — Contemporary Architecture, Spatial Design & Construction">
+<meta property="og:description" content="Contemporary architectural practice delivering monolithic residential, commercial, and cultural schemes with enduring craft and material rigor.">
+<meta property="og:image" content="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=85">
+<meta property="og:image:width" content="1800">
+<meta property="og:image:height" content="1012">
+
+<!-- Twitter Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HBZ — Contemporary Architecture, Spatial Design & Construction">
+<meta name="twitter:description" content="Contemporary architectural practice delivering monolithic residential, commercial, and cultural schemes with enduring craft.">
+<meta name="twitter:image" content="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=85">
+
+<!-- Schema.org JSON-LD Structured Data for Architectural Studio -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ArchitecturalStudio",
+  "name": "HBZ Studio Ltd",
+  "alternateName": "HBZ Architecture & Spatial Practice",
+  "url": "https://zenorixhq.github.io/hbz/",
+  "logo": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=400&q=80",
+  "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=85",
+  "description": "HBZ is a contemporary architectural practice and spatial construction studio delivering monolithic residences, corporate campuses, and cultural pavilions.",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "24 St John Street",
+    "addressLocality": "Clerkenwell, London",
+    "postalCode": "EC1V 4PH",
+    "addressCountry": "GB"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": 51.5208,
+    "longitude": -0.1009
+  },
+  "telephone": "+442079460920",
+  "email": "hello@hbzstudio.com",
+  "priceRange": "££££",
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      "opens": "09:00",
+      "closes": "18:00"
+    }
+  ],
+  "knowsAbout": [
+    "Monolithic Cast Concrete Architecture",
+    "Contemporary Spatial Design",
+    "Corporate HQ Campus Planning",
+    "Private Residential Villas",
+    "Acoustic Wall Cladding & Joinery"
+  ]
+}
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..700;1,14..32,300..700&family=Playfair+Display:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
@@ -2523,6 +2590,242 @@ dialog#projectEditDialog::backdrop {
   box-sizing: border-box;
 }
 
+/* ── Post CMS Edit Modal ── */
+dialog#postEditDialog {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  max-width: 720px;
+  width: 94%;
+  margin: auto;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+  background: var(--surface);
+  color: var(--text);
+  overflow: hidden;
+  max-height: 90vh;
+}
+dialog#postEditDialog::backdrop {
+  background: rgba(14, 13, 12, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.format-helper-bar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+.format-btn {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 4px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.15s ease;
+}
+.format-btn:hover {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+/* ── Editorial Monograph Reader Styles ── */
+.monograph-read-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: #c3924e;
+  width: 0%;
+  z-index: 999;
+  transition: width 0.1s ease-out;
+}
+.monograph-article {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.monograph-dropcap:first-letter {
+  float: left;
+  font-family: var(--font-serif);
+  font-size: 4.8rem;
+  line-height: 0.85;
+  padding-top: 4px;
+  padding-right: 14px;
+  padding-bottom: 2px;
+  color: #121110;
+  font-weight: 600;
+}
+.monograph-pullquote {
+  border-left: 3px solid #c3924e;
+  padding: 20px 28px;
+  font-family: var(--font-serif);
+  font-size: 21px;
+  line-height: 1.5;
+  font-style: italic;
+  background: rgba(195, 146, 78, 0.05);
+  margin: 36px 0;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--text);
+}
+.monograph-h2 {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  margin: 44px 0 16px;
+  color: var(--text);
+}
+.monograph-figure {
+  margin: 36px 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--bg-subtle);
+}
+.monograph-figure img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.monograph-figcaption {
+  padding: 10px 14px;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  letter-spacing: 0.02em;
+}
+.monograph-specs-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 32px 0;
+  font-size: 13px;
+}
+.monograph-specs-table th {
+  background: var(--bg-subtle);
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--border-strong);
+}
+.monograph-specs-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+.monograph-takeaway-box {
+  background: #fbf9f4;
+  border: 1px solid #ebd9c0;
+  border-radius: var(--radius-sm);
+  padding: 22px 24px;
+  margin: 40px 0;
+}
+.monograph-takeaway-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8c6020;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.monograph-takeaway-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.monograph-takeaway-list li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #3d3b36;
+}
+.monograph-takeaway-list li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: #c3924e;
+  font-weight: 700;
+}
+.monograph-author-block {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-top: 40px;
+}
+.monograph-author-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #121110;
+  color: #f7e1b5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* ── Print Optimization Stylesheet ── */
+@media print {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 12pt;
+    line-height: 1.5;
+  }
+  header.site-header,
+  .site-footer,
+  .thirdway-cta-stage,
+  .cookie-banner,
+  .mobile-menu-btn,
+  .mobile-nav-panel,
+  .back-link,
+  .btn-talk,
+  .btn-secondary,
+  .tabs,
+  dialog,
+  #wipeFixedBottomRow .btn-wipe-case,
+  .monograph-read-progress {
+    display: none !important;
+  }
+  .container {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+  a {
+    color: #000000 !important;
+    text-decoration: none !important;
+  }
+  .monograph-article,
+  .vvd-container,
+  .calc-container {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+  .monograph-figure img,
+  .vvd-detail-img {
+    max-height: 450px !important;
+    page-break-inside: avoid;
+  }
+  .card, .monograph-takeaway-box, table {
+    page-break-inside: avoid;
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+}
+
 /* ════════════════════════════════════════════════════════════════════
    JOURNAL ACCESS PASS & UNLOCK MODAL
    ════════════════════════════════════════════════════════════════════ */
@@ -4191,6 +4494,82 @@ dialog#journalUnlockModal::backdrop {
   </div>
 </dialog>
 
+<!-- Native Dialog Modal for In-Browser Monograph & Journal CMS Editor -->
+<dialog id="postEditDialog">
+  <div class="admin-modal-inner">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div>
+        <span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#c3924e;display:block;">[EDITORIAL CMS CURATION]</span>
+        <h3 class="serif" style="margin:2px 0 0;font-size:22px;">Edit Journal Monograph</h3>
+      </div>
+      <button onclick="closePostEditModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-muted);">&times;</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:12px;">
+      <div>
+        <label for="editPostTitle">Article / Monograph Title</label>
+        <input id="editPostTitle" placeholder="e.g. Acoustic Stillness in Monolithic Timber Construction">
+      </div>
+      <div>
+        <label for="editPostCat">Editorial Category</label>
+        <select id="editPostCat">
+          <option value="Technical Briefing">Technical Briefing</option>
+          <option value="Material Study">Material Study</option>
+          <option value="Field Report">Field Report</option>
+          <option value="Monograph">Monograph</option>
+          <option value="Urban Planning">Urban Planning</option>
+          <option value="Structural Engineering">Structural Engineering</option>
+          <option value="Sustainability">Sustainability</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:12px;margin-bottom:12px;">
+      <div>
+        <label for="editPostAuthor">Author &amp; Credentials</label>
+        <input id="editPostAuthor" placeholder="e.g. Soren Lindqvist • Material Research Fellow">
+      </div>
+      <div>
+        <label for="editPostDate">Date</label>
+        <input id="editPostDate" placeholder="e.g. October 2026">
+      </div>
+      <div>
+        <label for="editPostReadTime">Reading Time</label>
+        <input id="editPostReadTime" placeholder="e.g. 5 min read">
+      </div>
+    </div>
+
+    <div style="margin-bottom:12px;">
+      <label for="editPostExcerpt">Public Teaser / Lead Excerpt (Shown before gating)</label>
+      <textarea id="editPostExcerpt" rows="2" placeholder="Brief 1-2 sentence teaser shown on archive cards and preview..."></textarea>
+    </div>
+
+    <div style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <label for="editPostBody" style="margin:0;">Complete Editorial Body (Gated / Monograph)</label>
+        <div class="format-helper-bar">
+          <button type="button" class="format-btn" onclick="insertFormatHelper('## Section Heading\n\n')">+ Heading</button>
+          <button type="button" class="format-btn" onclick="insertFormatHelper('> “Architectural pull-quote emphasizing craftsmanship.”\n\n')">+ Quote</button>
+          <button type="button" class="format-btn" onclick="insertFormatHelper('- Key takeaway bullet\n')">+ Takeaway</button>
+        </div>
+      </div>
+      <textarea id="editPostBody" rows="7" placeholder="Full technical paper, engineering specs, research findings, and contractor metrics..."></textarea>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label for="editPostImg">Hero Header Photography URL</label>
+      <input id="editPostImg" placeholder="https://images.unsplash.com/photo-...">
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;">
+      <button class="btn-secondary" onclick="closePostEditModal()">Cancel</button>
+      <button class="btn-talk" onclick="savePostEdit()" style="padding:10px 20px;">
+        <span>Save Monograph Changes</span>
+      </button>
+    </div>
+  </div>
+</dialog>
+
 <!-- Native Journal Access Pass & Monograph Unlock Modal -->
 <dialog id="journalUnlockModal">
   <div class="modal-inner">
@@ -4927,10 +5306,29 @@ const SAMPLE_POSTS = [
     title: 'Structural Steel vs Post-Tensioned Concrete: Procurement Velocity & Cost in 2026',
     category: 'Technical Briefing',
     date: 'October 2026',
-    readTime: '5 min read',
+    readTime: '6 min read',
     author: 'Elena Vance • Partner, Engineering Practice',
     excerpt: 'Cost, timeline, and durability trade-offs for commercial mid-rise builds. When a client asks whether to frame in structural steel or post-tensioned concrete, the real answer hinges on craneage restrictions, site logistics, and procurement velocity.',
-    body: 'The comparative analysis across fifteen recent European commercial schemes reveals that while structural steel frames assemble on average 28% faster on tight urban sites, post-tensioned concrete slashes floor slab thickness by up to 140mm per level. This delta yields an extra usable floor within typical metropolitan height constraints. Our technical model outlines crane hire metrics, carbon accounting benchmarks, and contractual buffer thresholds for steel procurement lead times in volatile quarters.',
+    body: `The procurement dilemma on restricted metropolitan sites rarely comes down to simple material unit rates. It hinges on craneage swing clearances, municipal street closure licensing, and the contractual lead times of international steel mills in volatile global trade corridors.
+
+## Structural Efficiency & Acoustic Floor Heights
+
+Across fifteen recently delivered European commercial schemes, post-tensioned (PT) concrete consistently slashed floor slab thickness by up to 140mm per level compared to composite steel deck construction. Across eight levels, this structural delta unlocks an entire additional usable storey within municipal height ceilings—fundamentally transforming scheme feasibility for institutional owners.
+
+> “On restricted metropolitan footprints, post-tensioned floor slabs slash structural thickness by up to 140mm per level. Across eight levels, this unlocks an entire additional usable floor plate without breaching municipal height ceilings.”
+
+## Procurement Velocity & Critical Path Analysis
+
+Below six storeys with expansive column grids, structural steel delivers rapid on-site assembly. However, once buildings exceed 24 metres, the vibration damping and deflection limits required for prime corporate and luxury residential occupiers swing the balance decisively toward monolithic PT concrete.
+
+- Steel Procurement Lead Times: 18–26 weeks from mill allocation to site erection.
+- Concrete PT Cycle Speed: 7-day floor-to-floor pour cycle with re-usable formwork.
+- Slab Depth Differential: 180mm PT slab vs 320mm composite steel beam + deck.
+- Embodied Carbon Mitigation: 32% reduction achieved via 50% GGBS cement replacement.
+
+## Contractor Risk Allocation & Supply Buffer
+
+To safeguard developers against holding-cost slippage, HBZ recommends locking mill billets at Stage 3 tender while simultaneously designing PT casting tolerances to accept hybrid precast edge beams and in-situ perimeter ringbeams.`,
     image_url: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80'
   },
   {
@@ -4938,10 +5336,29 @@ const SAMPLE_POSTS = [
     title: 'Navigating Municipal Planning & Approval Timelines: The Critical Path',
     category: 'Field Report',
     date: 'September 2026',
-    readTime: '4 min read',
+    readTime: '5 min read',
     author: 'Marcus Thorne • Director of Urban Planning',
     excerpt: 'What has changed in statutory approval committees and how to sequence your submission package. Municipal bodies have accelerated digital validation benchmarks, radically reshaping pre-construction milestones.',
-    body: 'Full strategic guidance on current statutory planning board lead times categorized by building typology (heritage refurbishment vs brownfield towers). We detail sequencing techniques for environmental impact assessments, public consultation protocols, and technical discharge submissions to protect the developer against holding-cost slippage.',
+    body: `Municipal planning authorities have universally migrated to algorithmic digital validation models. The traditional sequential approach—submitting an entire scheme and awaiting committee determination—now introduces crippling holding costs for developers and institutional funds.
+
+## Critical Path Sequencing for Heritage Contexts
+
+When developing within designated conservation enclaves in London, Paris, or Tokyo, planning authorities scrutinise massing plinths and daylighting far more rigorously than interior fit-outs. Early baseline environmental testing is essential.
+
+> “The key to rapid planning clearance is early statutory alignment on daylight-sunlight envelope envelopes before architectural envelopes are frozen.”
+
+## Structured Engagement & Statutory Protocols
+
+Proactive sequencing of statutory milestones prevents costly revisions during public inquiry phases:
+
+- Pre-Application Consultation: 8-week structured engagement with conservation officers and amenity societies.
+- Microclimate & Daylight Analysis: Independent 3D daylight/sunlight BRE tests completed before public hearings.
+- Heritage Material Testing: Physical masonry and bronze sample panels erected on-site for conservation officer sign-off.
+- Section 106 & Community Infrastructure Levy: Proactive negotiation of public realm contributions to eliminate planning condition delays.
+
+## De-risking Statutory Determination
+
+By embedding environmental mitigation directly into the initial design dossier, approval velocity is accelerated by an average of 4.2 months across statutory planning boards.`,
     image_url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80'
   },
   {
@@ -4952,7 +5369,26 @@ const SAMPLE_POSTS = [
     readTime: '6 min read',
     author: 'Soren Lindqvist • Material Research Fellow',
     excerpt: 'Mass timber offers unparalleled warmth and carbon benefits, but low-frequency acoustic isolation requires meticulous decoupling. Insights from our Swiss residential tests.',
-    body: 'Field acoustic testing at our Zurich residential enclave demonstrated that traditional resilient channels fail under heavy low-frequency footfall (50–80 Hz). By developing an elastomeric granulated-cork dampening sub-screed paired with cross-laminated timber decks, we achieved sound transmission metrics surpassing luxury hospitality standards without adding wet concrete dead-load.',
+    body: `Cross-Laminated Timber (CLT) is revered for its biophilic warmth, rapid assembly velocity, and carbon sequestration. Yet, timber's inherent lightweight density presents a formidable architectural challenge: low-frequency impact sound transmission.
+
+## The Low-Frequency Acoustic Paradox
+
+Traditional resilient metal channels fail to damp footfall frequencies between 50 and 80 Hertz. True acoustic stillness in contemporary timber architecture demands complete multi-layer elastomeric mass decoupling rather than single-plane dampening.
+
+> “Traditional resilient metal channels fail to damp footfall frequencies between 50 and 80 Hertz. True acoustic silence in timber architecture demands multi-layer elastomeric mass decoupling.”
+
+## Laboratory Benchmarks: Zurich Residential Enclave
+
+During rigorous field testing across our Zurich residential enclave, our material research group developed an entirely dry acoustic buildup that surpasses luxury 5-star hospitality standards without pouring wet screed onto dry timber decks:
+
+- Dry Granulated Cork Sub-Screed: 45mm high-density mineralized cork granules providing mass without moisture.
+- Resilient Elastomeric Pads: Isolating perimeter baseplates to halt flanking transmission along vertical CLT walls.
+- Impact Sound Level (L'n,w): Measured at 39 dB (exceeding luxury standard of ≤ 44 dB).
+- Airborne Sound Insulation (R'w + Ctr): Measured at 58 dB, guaranteeing total conversational privacy.
+
+## Material Durability & Long-Term Creep
+
+Long-term testing confirms that elastomeric granulated cork exhibits less than 0.8% creep deformation over a 30-year lifecycle simulation, providing enduring acoustic isolation for high-value residential schemes.`,
     image_url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80'
   },
   {
@@ -4960,15 +5396,123 @@ const SAMPLE_POSTS = [
     title: 'The Poetics of Negative Space: Daylighting, Shading, and Thermal Permanence',
     category: 'Monograph',
     date: 'July 2026',
-    readTime: '5 min read',
+    readTime: '7 min read',
     author: 'HBZ Architectural Studio',
     excerpt: 'Architecture is not merely what is constructed, but the void left behind. A study of light penetration, micro-climatic breezeways, and thermal permanence.',
-    body: 'In our dialogue with Japanese and Nordic spatial traditions, the void functions as an active spatial instrument. Thick mineral envelopes coupled with deeply recessed apertures temper solar gain while guiding natural air currents through double-height galleries, reducing HVAC dependencies by over 34% over a calendar year.',
+    body: `In our continuous dialogue with European minimalism and Japanese spatial philosophy, negative space is never an emptiness to be filled. It is an active architectural instrument that governs natural daylight, thermal permanence, and atmospheric stillness.
+
+## The Architectural Void as an Active Instrument
+
+Light does not exist in isolation; it requires deep mineral reveals, textural shadow, and measured aperture proportions to attain tactile weight.
+
+> “Light does not exist in isolation; it requires deep mineral reveals and carefully positioned shadow to attain tactile weight.”
+
+## Thermal Permanence and Natural Breezeways
+
+By carving multi-storey void volumes and lightwells through the centre of private residences and corporate headquarters, we establish natural stack ventilation that cools interior chambers without mechanical HVAC dependencies:
+
+- Deep Recessed Reveals: 450mm exterior aperture recesses that eliminate harsh mid-day summer solar gain.
+- Micro-Climatic Courtyards: Water mirrors and shaded stone plinths that pre-cool incoming air by 3.5°C.
+- Passive Thermal Storage: Exposed basalt and board-formed concrete slabs that absorb daytime thermal energy and gently release warmth as evening temperatures drop.
+- Visual Serenity Index: 92% of occupants reported significantly lower cognitive stress levels in spaces with uncompromised axial sightlines to private courtyard gardens.
+
+## Enduring Spatial Experience
+
+When spatial volume is prioritized over decorative ornament, the building becomes a tranquil sanctuary that gracefully registers the passage of the sun and changing seasons.`,
     image_url: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1200&q=80'
   }
 ];
 
 function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s||''; return d.innerHTML; }
+
+// ── Editorial Monograph Markdown Body Parser ──
+function formatMonographBody(rawText) {
+  if (!rawText) return '';
+  const lines = rawText.split('\n');
+  let html = '';
+  let inList = false;
+  let listItems = [];
+
+  function flushList() {
+    if (inList && listItems.length) {
+      html += `
+        <div class="monograph-takeaway-box">
+          <div class="monograph-takeaway-title">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+            <span>Technical &amp; Strategic Takeaways</span>
+          </div>
+          <ul class="monograph-takeaway-list">
+            ${listItems.map(item => `<li>${item}</li>`).join('')}
+          </ul>
+        </div>
+      `;
+      listItems = [];
+      inList = false;
+    }
+  }
+
+  let paragraphIndex = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    const rawLine = lines[i].trim();
+    if (!rawLine) {
+      flushList();
+      continue;
+    }
+
+    // Heading ##
+    if (rawLine.startsWith('## ')) {
+      flushList();
+      const headingText = escapeHtml(rawLine.replace(/^##\s+/, ''));
+      html += `<h2 class="monograph-h2">${headingText}</h2>`;
+      continue;
+    }
+
+    // Pullquote >
+    if (rawLine.startsWith('> ')) {
+      flushList();
+      const quoteText = escapeHtml(rawLine.replace(/^>\s+/, ''));
+      html += `<blockquote class="monograph-pullquote">${quoteText}</blockquote>`;
+      continue;
+    }
+
+    // Bullet list - or *
+    if (rawLine.startsWith('- ') || rawLine.startsWith('* ')) {
+      inList = true;
+      let itemText = escapeHtml(rawLine.replace(/^[-*]\s+/, ''));
+      itemText = itemText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      listItems.push(itemText);
+      continue;
+    }
+
+    flushList();
+    let paraText = escapeHtml(rawLine);
+    paraText = paraText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    const isFirstPara = paragraphIndex === 0;
+    const dropCapClass = isFirstPara ? 'monograph-dropcap' : '';
+    html += `<p class="${dropCapClass}" style="margin-bottom:22px;color:var(--text);font-size:16.5px;line-height:1.8;">${paraText}</p>`;
+    paragraphIndex++;
+  }
+
+  flushList();
+  return html;
+}
+
+function insertFormatHelper(snippet) {
+  const ta = document.getElementById('editPostBody');
+  if (!ta) return;
+  const start = ta.selectionStart;
+  const end = ta.selectionEnd;
+  const text = ta.value;
+  ta.value = text.substring(0, start) + snippet + text.substring(end);
+  ta.focus();
+  ta.selectionStart = ta.selectionEnd = start + snippet.length;
+}
 
 // Image upload supporting both 'Media' and 'media' bucket names
 async function uploadImage(inputId){
@@ -5042,9 +5586,44 @@ async function getProjects(){
   }
 }
 async function getPosts(){
-  if (!LIVE) return SAMPLE_POSTS;
-  const { data, error } = await db.from('blog_posts').select('*').eq('status','published').order('created_at',{ascending:false});
-  return (error || !data || data.length === 0) ? SAMPLE_POSTS : data;
+  try {
+    const custom = localStorage.getItem('hbz_custom_posts');
+    if (custom) {
+      const parsed = JSON.parse(custom);
+      if (Array.isArray(parsed) && parsed.length) {
+        window.__allPostsCache = parsed;
+        return parsed;
+      }
+    } else {
+      localStorage.setItem('hbz_custom_posts', JSON.stringify(SAMPLE_POSTS));
+    }
+  } catch(e) {}
+
+  if (!LIVE) {
+    window.__allPostsCache = SAMPLE_POSTS;
+    return SAMPLE_POSTS;
+  }
+  try {
+    const { data, error } = await db.from('blog_posts').select('*').eq('status','published').order('created_at',{ascending:false});
+    if (error || !data || data.length === 0) {
+      window.__allPostsCache = SAMPLE_POSTS;
+      return SAMPLE_POSTS;
+    }
+    const postMap = new Map();
+    SAMPLE_POSTS.forEach(p => postMap.set(p.id, { ...p }));
+    data.forEach(dbItem => {
+      if (dbItem && dbItem.id) {
+        postMap.set(dbItem.id, dbItem);
+      }
+    });
+    const finalPosts = Array.from(postMap.values());
+    window.__allPostsCache = finalPosts;
+    return finalPosts;
+  } catch (err) {
+    console.warn('Error fetching posts, falling back to curated posts:', err);
+    window.__allPostsCache = SAMPLE_POSTS;
+    return SAMPLE_POSTS;
+  }
 }
 
 // ── Journal Access Pass & Unlock Storage ──
@@ -7213,6 +7792,7 @@ function switchVvdProject(direction) {
     setTimeout(() => {
       vvdState.currentProject = targetProject;
       vvdState.imageIndex = 0;
+      document.title = `${targetProject.title} (${targetProject.location || 'Selected Scheme'}) — HBZ Studio`;
       updateVvdProjectDOM(targetProject, nextIdx);
       history.replaceState(null, '', `#/projects/${targetProject.id}`);
 
@@ -7265,6 +7845,7 @@ async function renderProjectDetail(id){
   if (!p) p = projects[0];
   vvdState.currentProject = p;
   vvdState.imageIndex = 0;
+  document.title = `${p.title} (${p.location || 'Selected Scheme'}) — HBZ Studio`;
 
   const images = (p.images && p.images.length) ? p.images : [p.image_url];
   const typologies = ['All', 'Residential', 'Offices & HQ', 'Retail & Brand', 'Hospitality', 'Renovation', 'Cultural & Civic'];
@@ -7761,68 +8342,143 @@ async function renderBlogDetail(id){
     return;
   }
 
+  // Update dynamic document title for SEO
+  document.title = `${post.title} — HBZ Spatial Journal`;
+
   const user = getJournalUser();
   const unlocked = !!user || sessionStorage.getItem('unlocked-' + id) === '1';
   const imgUrl = post.image_url || 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80';
+  const authorName = post.author ? post.author.split('•')[0].trim() : 'HBZ Studio';
+  const authorRole = post.author && post.author.includes('•') ? post.author.split('•')[1].trim() : 'Architectural Practice';
+  const initials = authorName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() || 'HB';
+
+  // Other related posts
+  const related = posts.filter(p => p.id !== id).slice(0, 2);
 
   app.innerHTML = `
-    <div class="container" style="padding:96px 24px 60px;max-width:860px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-        <a class="back-link" href="#/blog">&larr; Back to Journal</a>
-        ${unlocked ? `<span style="font-size:12px;color:#2e7d32;font-weight:600;">✓ Pass Verified (${escapeHtml(user?.name || 'Reader')})</span>` : ''}
-      </div>
-      
-      <div class="section-tag">${escapeHtml(post.category || "Director's Briefing")}</div>
-      <h1 class="serif" style="margin-bottom:18px;">${escapeHtml(post.title)}</h1>
-      
-      <div style="display:flex;gap:16px;color:var(--text-muted);font-size:13px;margin-bottom:28px;flex-wrap:wrap;">
-        <span>${escapeHtml(post.author || 'Published by HBZ Studio')}</span>
-        <span>•</span>
-        <span>${escapeHtml(post.date || 'October 2026')}</span>
-        <span>•</span>
-        <span>${escapeHtml(post.readTime || '5 min read')}</span>
-      </div>
+    <!-- Sticky Reading Progress Bar -->
+    <div class="monograph-read-progress" id="monographProgressBar"></div>
 
-      <div style="border-radius:var(--radius-md);overflow:hidden;margin-bottom:32px;aspect-ratio:16/9;background:var(--bg-subtle);">
-        <img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(post.title)}" style="width:100%;height:100%;object-fit:cover;">
-      </div>
-
-      <div style="font-size:18px;line-height:1.65;color:var(--text);margin-bottom:24px;font-weight:450;">
-        ${escapeHtml(post.excerpt)}
-      </div>
-
-      ${unlocked ? `
-        <div style="font-size:16px;line-height:1.8;color:var(--text);border-top:1px solid var(--border);padding-top:24px;">
-          ${escapeHtml(post.body)}
-        </div>
-        <div style="margin-top:40px;padding:24px;background:var(--bg-subtle);border-radius:var(--radius-md);text-align:center;">
-          <p style="font-weight:600;margin-bottom:8px;">Have questions regarding this briefing?</p>
-          <button class="btn-talk" onclick="openContactModal()" style="margin:0 auto;">Discuss with a Specialist</button>
-        </div>
-      ` : `
-        <div class="card" style="margin-top:32px;background:var(--panel-cream);border-color:rgba(21,20,19,0.15);padding:36px;text-align:center;">
-          <div style="font-size:28px;margin-bottom:8px;">🔒</div>
-          <h3 class="serif" style="margin-bottom:8px;">Unlock the complete technical briefing</h3>
-          <p style="font-size:14px;color:var(--text-muted);max-width:44ch;margin:0 auto 20px;">Enter your name and phone number to unlock complete data breakdowns, structural specs, and contractor pricing guidelines.</p>
-          <div style="max-width:340px;margin:0 auto;text-align:left;">
-            <label for="gname">Full Name</label>
-            <input id="gname" placeholder="Eleanor Vance">
-            <label for="gphone">Phone Number / Mobile</label>
-            <input id="gphone" placeholder="+44 7911 123456">
-            <div class="err" id="gerr" style="display:none;"></div>
-            <button class="btn-talk" onclick="unlockPostInline('${post.id}')" style="width:100%;justify-content:center;padding:12px 14px;margin-top:8px;">
-              <span>Unlock Monograph Access</span>
-              <span class="arrow-circle">
-                <svg viewBox="0 0 11 8" fill="none" width="11" height="8">
-                  <path d="M11 4.007 6.887 8H4.545l3.482-3.2H0V3.215h8.027L4.529 0h2.342z" fill="#ffffff"/>
-                </svg>
-              </span>
+    <div class="container" style="padding:100px 24px 80px;">
+      <article class="monograph-article">
+        <!-- Top Nav & Pass Status -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+          <a class="back-link" href="#/blog">&larr; All Journal Monographs</a>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <button onclick="window.print()" class="btn-secondary" style="padding:4px 10px;font-size:11px;cursor:pointer;" title="Print or save as PDF">
+              <span>🖨️ Print / Save PDF</span>
             </button>
+            ${unlocked ? `<span style="font-size:12px;color:#2e7d32;font-weight:600;">✓ Pass Verified (${escapeHtml(user?.name || 'Reader')})</span>` : ''}
           </div>
         </div>
-      `}
+        
+        <!-- Monograph Header -->
+        <div style="margin-bottom:28px;">
+          <span class="pill-badge" style="background:#f4ede1;color:#7a5626;border:1px solid #e2d2bc;font-size:11px;padding:4px 10px;font-weight:600;display:inline-block;margin-bottom:12px;">
+            ${escapeHtml(post.category || "Director's Briefing")}
+          </span>
+          <h1 class="serif" style="font-size:clamp(30px, 4vw, 46px);line-height:1.2;margin-bottom:16px;letter-spacing:-0.03em;">
+            ${escapeHtml(post.title)}
+          </h1>
+          
+          <div style="display:flex;align-items:center;gap:14px;color:var(--text-muted);font-size:13px;flex-wrap:wrap;border-bottom:1px solid var(--border);padding-bottom:18px;">
+            <strong style="color:var(--text);">${escapeHtml(authorName)}</strong>
+            <span>&bull;</span>
+            <span>${escapeHtml(authorRole)}</span>
+            <span>&bull;</span>
+            <span>${escapeHtml(post.date || 'October 2026')}</span>
+            <span>&bull;</span>
+            <span>${escapeHtml(post.readTime || '5 min read')}</span>
+          </div>
+        </div>
+
+        <!-- Featured Monograph Photography -->
+        <div style="border-radius:var(--radius-sm);overflow:hidden;margin-bottom:36px;aspect-ratio:16/9;background:var(--bg-subtle);box-shadow:0 8px 30px rgba(0,0,0,0.08);">
+          <img src="${escapeHtml(imgUrl)}" alt="${escapeHtml(post.title)}" style="width:100%;height:100%;object-fit:cover;" loading="eager" fetchpriority="high">
+        </div>
+
+        <!-- Lead Teaser (Drop-cap lead) -->
+        <div style="font-size:20px;line-height:1.6;color:var(--text);margin-bottom:32px;font-weight:450;font-family:var(--font-serif);">
+          ${escapeHtml(post.excerpt)}
+        </div>
+
+        <!-- Unlocked Full Monograph vs Gated Form -->
+        ${unlocked ? `
+          <div class="monograph-body-content" style="border-top:1px solid var(--border);padding-top:32px;">
+            ${formatMonographBody(post.body)}
+          </div>
+
+          <!-- Author Credential & Sign-off Card -->
+          <div class="monograph-author-block">
+            <div class="monograph-author-avatar">${escapeHtml(initials)}</div>
+            <div style="flex:1;">
+              <h4 style="margin:0 0 4px;font-size:16px;">${escapeHtml(authorName)}</h4>
+              <p style="margin:0;font-size:13px;color:var(--text-muted);">${escapeHtml(authorRole)} &bull; HBZ Architectural Practice London</p>
+            </div>
+            <button class="btn-talk" onclick="openContactModal('Consultation: Monograph [${escapeHtml(post.id)}] - ${escapeHtml(post.title)}')" style="padding:8px 16px;font-size:12px;">
+              <span>Discuss With Author</span>
+            </button>
+          </div>
+        ` : `
+          <div class="card" style="margin-top:36px;background:var(--panel-cream);border-color:rgba(21,20,19,0.15);padding:40px 32px;text-align:center;box-shadow:0 12px 36px rgba(0,0,0,0.06);">
+            <div style="font-size:32px;margin-bottom:10px;">🔒</div>
+            <h3 class="serif" style="font-size:24px;margin-bottom:10px;">Unlock Complete Technical Paper</h3>
+            <p style="font-size:14px;color:var(--text-muted);max-width:48ch;margin:0 auto 24px;line-height:1.55;">
+              Enter your name and mobile to unlock immediate access to full structural specifications, contractor tender metrics, acoustic laboratory data, and HBZ cost breakdowns.
+            </p>
+            <div style="max-width:360px;margin:0 auto;text-align:left;">
+              <label for="gname">Full Name</label>
+              <input id="gname" placeholder="Eleanor Vance" style="margin-bottom:12px;">
+              <label for="gphone">Phone Number / Mobile</label>
+              <input id="gphone" placeholder="+44 7911 123456" style="margin-bottom:12px;">
+              <div class="err" id="gerr" style="display:none;margin-bottom:12px;"></div>
+              <button class="btn-talk" onclick="unlockPostInline('${post.id}')" style="width:100%;justify-content:center;padding:12px 14px;">
+                <span>Unlock Monograph Access</span>
+                <span class="arrow-circle">
+                  <svg viewBox="0 0 11 8" fill="none" width="11" height="8">
+                    <path d="M11 4.007 6.887 8H4.545l3.482-3.2H0V3.215h8.027L4.529 0h2.342z" fill="#ffffff"/>
+                  </svg>
+                </span>
+              </button>
+              <p style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:10px;">Strict privacy assured. Direct director correspondence only.</p>
+            </div>
+          </div>
+        `}
+
+        <!-- Related Technical Briefings -->
+        ${related.length ? `
+          <div style="margin-top:64px;border-top:1px solid var(--border);padding-top:36px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+              <h3 class="serif" style="font-size:22px;margin:0;">Related Field Briefings</h3>
+              <a href="#/blog" style="font-size:12px;font-weight:600;color:#c3924e;">View All Monographs &rarr;</a>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:20px;">
+              ${related.map(rel => `
+                <div class="card" onclick="handleJournalCardClick(event, '${rel.id}')" style="cursor:pointer;padding:18px;">
+                  <span class="pill-badge" style="font-size:10px;background:var(--bg-subtle);color:var(--text-muted);margin-bottom:8px;display:inline-block;">${escapeHtml(rel.category)}</span>
+                  <h4 class="serif" style="font-size:17px;line-height:1.3;margin-bottom:6px;">${escapeHtml(rel.title)}</h4>
+                  <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px;">${escapeHtml((rel.excerpt || '').slice(0, 95))}...</p>
+                  <span style="font-size:11.5px;font-weight:700;color:#c3924e;">Read Monograph &rarr;</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+      </article>
     </div>
   `;
+
+  // Attach reading progress listener
+  const onScroll = () => {
+    const bar = document.getElementById('monographProgressBar');
+    if (!bar) return;
+    const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+    if (totalHeight > 0) {
+      const progress = Math.min(100, Math.max(0, (window.scrollY / totalHeight) * 100));
+      bar.style.width = progress + '%';
+    }
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
 }
 
 async function unlockPostInline(id){
@@ -8188,21 +8844,38 @@ async function loadAdminTab(){
         </div>
 
         <div class="card">
-          <h3 class="serif" style="font-size:20px;margin-bottom:16px;">Published Briefings (${items.length})</h3>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+            <div>
+              <h3 class="serif" style="font-size:20px;margin:0;">Published Briefings &amp; Monographs (${items.length})</h3>
+              <span style="font-size:12px;color:var(--text-muted);">Editorial monographs &bull; In-browser CMS editing enabled</span>
+            </div>
+          </div>
           <div style="overflow-x:auto;">
             <table>
               <thead>
                 <tr>
-                  <th>Title</th>
+                  <th>Preview</th>
+                  <th>Monograph Title &amp; Author</th>
+                  <th>Category</th>
+                  <th>Date</th>
                   <th style="text-align:right;">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 ${items.map(post => `
                   <tr>
-                    <td><strong>${escapeHtml(post.title)}</strong></td>
-                    <td style="text-align:right;">
-                      <button class="btn-secondary" onclick="deletePost('${post.id}')" style="padding:4px 10px;font-size:11px;">Delete</button>
+                    <td style="width:50px;">
+                      <img src="${escapeHtml(post.image_url || 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=100&q=80')}" style="width:44px;height:44px;border-radius:4px;object-fit:cover;">
+                    </td>
+                    <td>
+                      <strong>${escapeHtml(post.title)}</strong><br>
+                      <span style="font-size:11px;color:var(--text-muted);">${escapeHtml(post.author || 'HBZ Practice')}</span>
+                    </td>
+                    <td><span class="time-pill" style="font-size:10px;">${escapeHtml(post.category || 'Briefing')}</span></td>
+                    <td style="font-size:12px;color:var(--text-muted);white-space:nowrap;">${escapeHtml(post.date || 'Recent')}</td>
+                    <td style="text-align:right;white-space:nowrap;">
+                      <button class="btn-secondary" onclick="openPostEditModal('${post.id}')" style="padding:4px 9px;font-size:11px;margin-right:4px;">✏️ Edit</button>
+                      <button class="btn-secondary" onclick="deletePost('${post.id}')" style="padding:4px 9px;font-size:11px;color:#e53e3e;border-color:#feb2b2;">Delete</button>
                     </td>
                   </tr>
                 `).join('')}
@@ -8709,32 +9382,179 @@ async function deleteProject(id){
   loadAdminTab();
 }
 
+// ── In-Browser Monograph / Journal CMS Editor Handlers ──
+function openPostEditModal(id) {
+  const posts = window.__allPostsCache || SAMPLE_POSTS;
+  const post = posts.find(x => x.id === id);
+  if (!post) return;
+
+  window.__editingPostId = id;
+  const titleEl = document.getElementById('editPostTitle');
+  if (titleEl) titleEl.value = post.title || '';
+  const catEl = document.getElementById('editPostCat');
+  if (catEl) catEl.value = post.category || 'Technical Briefing';
+  const authorEl = document.getElementById('editPostAuthor');
+  if (authorEl) authorEl.value = post.author || '';
+  const dateEl = document.getElementById('editPostDate');
+  if (dateEl) dateEl.value = post.date || '';
+  const readEl = document.getElementById('editPostReadTime');
+  if (readEl) readEl.value = post.readTime || '5 min read';
+  const excEl = document.getElementById('editPostExcerpt');
+  if (excEl) excEl.value = post.excerpt || '';
+  const bodyEl = document.getElementById('editPostBody');
+  if (bodyEl) bodyEl.value = post.body || '';
+  const imgEl = document.getElementById('editPostImg');
+  if (imgEl) imgEl.value = post.image_url || '';
+
+  const dialog = document.getElementById('postEditDialog');
+  if (dialog && typeof dialog.showModal === 'function') {
+    dialog.showModal();
+  }
+}
+
+function closePostEditModal() {
+  const dialog = document.getElementById('postEditDialog');
+  if (dialog) dialog.close();
+  window.__editingPostId = null;
+}
+
+async function savePostEdit() {
+  const id = window.__editingPostId;
+  if (!id) return;
+
+  const title = document.getElementById('editPostTitle').value.trim();
+  const category = document.getElementById('editPostCat').value.trim();
+  const author = document.getElementById('editPostAuthor').value.trim();
+  const date = document.getElementById('editPostDate').value.trim();
+  const readTime = document.getElementById('editPostReadTime').value.trim();
+  const excerpt = document.getElementById('editPostExcerpt').value.trim();
+  const body = document.getElementById('editPostBody').value.trim();
+  const image_url = document.getElementById('editPostImg').value.trim();
+
+  if (!title || !excerpt || !body) {
+    alert('Please enter Title, Excerpt, and Body.');
+    return;
+  }
+
+  let posts = [];
+  try {
+    const raw = localStorage.getItem('hbz_custom_posts');
+    posts = raw ? JSON.parse(raw) : [...SAMPLE_POSTS];
+  } catch(e) {
+    posts = [...SAMPLE_POSTS];
+  }
+
+  const idx = posts.findIndex(x => x.id === id);
+  if (idx !== -1) {
+    posts[idx] = {
+      ...posts[idx],
+      title,
+      category,
+      author: author || 'HBZ Architectural Studio',
+      date: date || 'Recent',
+      readTime: readTime || '5 min read',
+      excerpt,
+      body,
+      image_url: image_url || posts[idx].image_url
+    };
+  }
+
+  try {
+    localStorage.setItem('hbz_custom_posts', JSON.stringify(posts));
+  } catch(e) {}
+
+  window.__allPostsCache = posts;
+
+  if (LIVE && db) {
+    try {
+      await db.from('blog_posts').update({ title, category, excerpt, body, image_url }).eq('id', id);
+    } catch(err) {
+      console.warn('Supabase post update error:', err);
+    }
+  }
+
+  closePostEditModal();
+  alert('Journal monograph updated successfully!');
+  loadAdminTab();
+}
+
 async function addPost(){
-  if (!LIVE) { alert('Notice: Connect Supabase to persist posts permanently.'); return; }
   const title = document.getElementById('btitle').value.trim();
   const excerpt = document.getElementById('bexc').value.trim();
   const body = document.getElementById('bbody').value.trim();
   if (!title || !excerpt || !body) { alert('Please fill in Title, Excerpt, and Body.'); return; }
 
   const fileInput = document.getElementById('bimg');
-  let image_url = null;
-  if (fileInput && fileInput.files && fileInput.files[0]) {
-    image_url = await uploadImage('bimg');
-    if (!image_url) return;
+  let image_url = 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1200&q=80';
+  if (fileInput && fileInput.files && fileInput.files[0] && LIVE) {
+    const up = await uploadImage('bimg');
+    if (up) image_url = up;
   }
-  const { error } = await db.from('blog_posts').insert([{ title, excerpt, body, image_url }]);
-  if (error) { alert('Failed to save article: ' + error.message); return; }
+
+  const newId = 'b' + Date.now();
+  const newPost = {
+    id: newId,
+    title,
+    category: 'Technical Briefing',
+    date: 'October 2026',
+    readTime: '5 min read',
+    author: 'Partner • HBZ Engineering Practice',
+    excerpt,
+    body,
+    image_url
+  };
+
+  let posts = [];
+  try {
+    const raw = localStorage.getItem('hbz_custom_posts');
+    posts = raw ? JSON.parse(raw) : [...SAMPLE_POSTS];
+  } catch(e) {
+    posts = [...SAMPLE_POSTS];
+  }
+  posts.unshift(newPost);
+  try {
+    localStorage.setItem('hbz_custom_posts', JSON.stringify(posts));
+  } catch(e) {}
+
+  window.__allPostsCache = posts;
+
+  if (LIVE && db) {
+    try {
+      await db.from('blog_posts').insert([{ id: newId, title, excerpt, body, image_url }]);
+    } catch(err) {
+      console.warn('Supabase post insert error:', err);
+    }
+  }
+
   alert('Article published successfully.');
+  document.getElementById('btitle').value = '';
+  document.getElementById('bexc').value = '';
+  document.getElementById('bbody').value = '';
   loadAdminTab();
 }
 
 async function deletePost(id){
-  if (!confirm('Are you sure you want to remove this article?')) return;
-  if (LIVE) {
-    const { error } = await db.from('blog_posts').delete().eq('id', id);
-    if (error) alert('Failed to delete: ' + error.message);
-    loadAdminTab();
+  if (!confirm('Are you sure you want to remove this monograph from publications?')) return;
+  let posts = [];
+  try {
+    const raw = localStorage.getItem('hbz_custom_posts');
+    posts = raw ? JSON.parse(raw) : [...SAMPLE_POSTS];
+  } catch(e) {
+    posts = [...SAMPLE_POSTS];
   }
+  posts = posts.filter(p => p.id !== id);
+  try {
+    localStorage.setItem('hbz_custom_posts', JSON.stringify(posts));
+  } catch(e) {}
+
+  window.__allPostsCache = posts;
+
+  if (LIVE && db) {
+    try {
+      await db.from('blog_posts').delete().eq('id', id);
+    } catch(e) {}
+  }
+  loadAdminTab();
 }
 
 // ── Hero Scheme Switcher (Osytery, Radieuse, Rue de la) ──
@@ -9200,14 +10020,29 @@ function route(){
   cleanUpVvdListeners();
   const hash = location.hash.slice(1) || '/';
   const parts = hash.split('/').filter(Boolean);
-  if (parts.length === 0) renderHome();
-  else if (parts[0] === 'projects' && parts[1]) renderProjectDetail(parts[1]);
-  else if (parts[0] === 'projects') renderProjects();
-  else if (parts[0] === 'calculator') renderCalculator();
-  else if (parts[0] === 'blog' && parts[1]) renderBlogDetail(parts[1]);
-  else if (parts[0] === 'blog') renderBlog();
-  else if (parts[0] === 'admin') renderAdmin();
-  else renderHome();
+  if (parts.length === 0) {
+    document.title = 'HBZ — Contemporary Architecture, Spatial Design & Construction';
+    renderHome();
+  } else if (parts[0] === 'projects' && parts[1]) {
+    renderProjectDetail(parts[1]);
+  } else if (parts[0] === 'projects') {
+    document.title = 'Selected Works & Architectural Portfolio — HBZ Studio';
+    renderProjects();
+  } else if (parts[0] === 'calculator') {
+    document.title = 'Spatial Estimation Suite & Materials Calculator — HBZ Studio';
+    renderCalculator();
+  } else if (parts[0] === 'blog' && parts[1]) {
+    renderBlogDetail(parts[1]);
+  } else if (parts[0] === 'blog') {
+    document.title = 'The Spatial Journal & Technical Monographs — HBZ Studio';
+    renderBlog();
+  } else if (parts[0] === 'admin') {
+    document.title = 'Studio CMS & Lead Management — HBZ Studio';
+    renderAdmin();
+  } else {
+    document.title = 'HBZ — Contemporary Architecture, Spatial Design & Construction';
+    renderHome();
+  }
   setTimeout(updateNavbarState, 50);
   setTimeout(initParallaxEngine, 60);
 }
