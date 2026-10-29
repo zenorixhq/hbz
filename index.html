@@ -2609,6 +2609,103 @@ dialog#postEditDialog::backdrop {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
+
+/* ── Scheme Photographic Plates Studio Modal & Cards ── */
+dialog#schemePlatesDialog {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  max-width: 920px;
+  width: 95%;
+  margin: auto;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.45);
+  background: var(--surface);
+  color: var(--text);
+  overflow: hidden;
+  max-height: 90vh;
+}
+dialog#schemePlatesDialog::backdrop {
+  background: rgba(14, 13, 12, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.plates-grid-manager {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 16px;
+  margin: 16px 0 24px;
+}
+.plate-card-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+}
+.plate-card-item:hover {
+  border-color: #c3924e;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+.plate-thumb-wrap {
+  width: 100%;
+  height: 135px;
+  background: #121110;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.plate-thumb-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.plate-hero-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: #c3924e;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border-radius: 3px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+}
+.plate-ratio-badge-card {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(18, 17, 16, 0.85);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+}
+.plate-card-body {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+.plate-card-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  align-items: center;
+}
 .format-helper-bar {
   display: flex;
   gap: 6px;
@@ -4475,20 +4572,126 @@ dialog#journalUnlockModal::backdrop {
       <textarea id="editPBody" rows="4" placeholder="Detailed architectural narrative, spatial philosophy, engineering notes..."></textarea>
     </div>
 
-    <div>
-      <label for="editPImg">Main Hero Image URL</label>
-      <input id="editPImg" placeholder="https://images.unsplash.com/...">
-    </div>
+    <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+        <div>
+          <label style="margin:0;font-weight:700;display:block;">Multi-Scale Photographic Plates &amp; Imagery</label>
+          <span style="font-size:11px;color:var(--text-muted);">Manage high-res plates displayed in the side-scroller and drawer</span>
+        </div>
+        <button type="button" class="btn-secondary" onclick="openSchemePlatesModal(window.__editingProjectId)" style="padding:4px 10px;font-size:11px;color:#c3924e;border-color:#e2d2bc;font-weight:600;">
+          📷 Launch Plates Studio Manager &rarr;
+        </button>
+      </div>
 
-    <div>
-      <label for="editPPlates">Multi-Scale Architectural Plate URLs (One URL per line)</label>
-      <textarea id="editPPlates" rows="4" placeholder="Enter high-res image URLs for plates strip..."></textarea>
+      <div style="margin-bottom:10px;">
+        <label for="editPImg" style="font-size:11.5px;">Main Hero Cover Image (Upload File or URL)</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <input id="editPImgFile" type="file" accept="image/*" style="font-size:11px;">
+          <input id="editPImg" placeholder="https://images.unsplash.com/...">
+        </div>
+      </div>
+
+      <div style="margin-bottom:10px;">
+        <label for="editPPlatesFiles" style="font-size:11.5px;">Upload Additional Plate Photos (Select Multiple Files)</label>
+        <input id="editPPlatesFiles" type="file" multiple accept="image/*" style="font-size:11px;">
+      </div>
+
+      <div>
+        <label for="editPPlates" style="font-size:11.5px;">Architectural Plate URLs (One URL per line)</label>
+        <textarea id="editPPlates" rows="3" placeholder="Enter high-res image URLs for plates strip..."></textarea>
+      </div>
     </div>
 
     <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;">
       <button class="btn-secondary" onclick="closeProjectEditModal()">Cancel</button>
       <button class="btn-talk" onclick="saveProjectEdit()" style="padding:10px 20px;">
         <span>Save Scheme Changes</span>
+      </button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Native Dialog Modal for Scheme Plates & Photography Studio Manager -->
+<dialog id="schemePlatesDialog">
+  <div class="admin-modal-inner" style="max-height:88vh; overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+      <div>
+        <span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#c3924e;display:block;">[SCHEME PHOTOGRAPHIC DOSSIER]</span>
+        <h3 class="serif" id="schemePlatesTitle" style="margin:2px 0 4px;font-size:22px;">Manage Plates &amp; Photography</h3>
+        <p style="margin:0;font-size:12.5px;color:var(--text-muted);">
+          Add, reorder, or remove photographic plates for this scheme. These appear in the individual project's side-scroller, thumbnail strip, and technical monograph drawer.
+        </p>
+      </div>
+      <button onclick="closeSchemePlatesModal()" style="background:none;border:none;font-size:26px;cursor:pointer;color:var(--text-muted);">&times;</button>
+    </div>
+
+    <!-- Active Plates Count & Gallery -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:16px 0 8px;">
+      <h4 style="margin:0;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--text);">
+        Current Plates (<span id="schemePlatesCount">0</span>)
+      </h4>
+      <span style="font-size:11.5px;color:var(--text-muted);">First plate is the main scheme cover / hero</span>
+    </div>
+    
+    <div id="schemePlatesGrid" class="plates-grid-manager">
+      <!-- Populated dynamically by renderSchemePlatesGrid(projectId) -->
+    </div>
+
+    <!-- Add New Plates Section -->
+    <div class="card" style="margin-top:20px;background:var(--bg);border:1px solid var(--border);">
+      <h4 class="serif" style="font-size:16px;margin:0 0 12px;color:var(--text);">+ Add New Plates to This Scheme</h4>
+      
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <!-- Option 1: File Upload (Multi-Select) -->
+        <div style="border-right:1px solid var(--border);padding-right:20px;">
+          <label style="font-weight:700;font-size:12.5px;display:block;margin-bottom:4px;">1. Upload Image Files (Multiple)</label>
+          <p style="font-size:11.5px;color:var(--text-muted);margin:0 0 8px;">Select one or multiple photos from your device.</p>
+          <input type="file" id="schemePlatesFileInput" multiple accept="image/*" style="font-size:11px;width:100%;margin-bottom:8px;">
+          <button type="button" class="btn-talk" onclick="handleSchemePlatesUpload()" style="padding:7px 14px;font-size:11.5px;width:100%;justify-content:center;">
+            <span>Upload Selected Photos</span>
+          </button>
+        </div>
+
+        <!-- Option 2: Add by Web URL -->
+        <div>
+          <label style="font-weight:700;font-size:12.5px;display:block;margin-bottom:4px;">2. Add Single Plate by Web URL</label>
+          <input id="schemePlateAddUrl" placeholder="https://images.unsplash.com/..." style="font-size:11.5px;margin-bottom:6px;">
+          <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:8px;margin-bottom:8px;">
+            <input id="schemePlateAddTitle" placeholder="Plate Title (optional)" style="font-size:11.5px;">
+            <select id="schemePlateAddRatio" style="font-size:11px;">
+              <option value="16/9">16:9 Landscape</option>
+              <option value="3/4" selected>3:4 Portrait</option>
+              <option value="1/1">1:1 Square</option>
+              <option value="21/9">21:9 Panoramic</option>
+              <option value="2/1">2:1 Double-Square</option>
+              <option value="4/5">4:5 Vertical</option>
+            </select>
+          </div>
+          <button type="button" class="btn-secondary" onclick="handleSchemePlateUrlAdd()" style="padding:7px 14px;font-size:11.5px;width:100%;justify-content:center;">
+            <span>+ Add URL Plate</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Option 3: Bulk Paste URLs -->
+      <details style="margin-top:14px;padding-top:10px;border-top:1px dashed var(--border);">
+        <summary style="font-size:11.5px;font-weight:600;color:var(--text-muted);cursor:pointer;">Bulk Paste Multiple URLs at once...</summary>
+        <div style="margin-top:8px;">
+          <textarea id="schemePlatesBulkUrls" rows="3" placeholder="https://...&#10;https://...&#10;https://..." style="font-size:11.5px;margin-bottom:6px;"></textarea>
+          <button type="button" class="btn-secondary" onclick="handleSchemePlatesBulkAdd()" style="font-size:11px;padding:5px 12px;">
+            <span>+ Import All URLs</span>
+          </button>
+        </div>
+      </details>
+    </div>
+
+    <!-- Done / Close Buttons -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:14px;border-top:1px solid var(--border);">
+      <button type="button" class="btn-secondary" onclick="viewSchemeIndividualPage()" style="font-size:12px;">
+        <span>Open Project Individual Page &rarr;</span>
+      </button>
+      <button type="button" class="btn-talk" onclick="closeSchemePlatesModal()" style="padding:8px 22px;">
+        <span>Done / Save Scheme</span>
       </button>
     </div>
   </div>
@@ -8770,11 +8973,23 @@ async function loadAdminTab(){
           <label for="pbody">Full Case Study Narrative</label>
           <textarea id="pbody" rows="4" placeholder="Detailed engineering, client outcomes, spatial philosophy..."></textarea>
 
-          <label for="pimg">Project Photography (Upload or URL)</label>
-          <input id="pimg" type="file" accept="image/*">
+          <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:10px;">
+            <label style="font-weight:700;font-size:12px;display:block;margin-bottom:4px;">1. Primary Hero Cover Image</label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+              <input id="pimg" type="file" accept="image/*" style="font-size:11px;">
+              <input id="pimg_url" placeholder="Or paste Hero Image URL..." style="font-size:11.5px;">
+            </div>
+
+            <label style="font-weight:700;font-size:12px;display:block;margin-bottom:4px;">2. Additional Scheme Plates (Multi-Photo Gallery)</label>
+            <input id="pimg_plates_files" type="file" multiple accept="image/*" style="font-size:11px;margin-bottom:6px;">
+            <textarea id="pimg_plates_urls" rows="2" placeholder="Or paste additional plate URLs (one per line)..." style="font-size:11.5px;margin-bottom:8px;"></textarea>
+            <span style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:14px;line-height:1.4;">
+              Select multiple photo files at once. All images will be browsable in the scheme's individual side-scrolling gallery.
+            </span>
+          </div>
 
           <button class="btn-talk" onclick="addProject()" style="width:100%;justify-content:center;padding:10px 14px;">
-            <span>Publish Project</span>
+            <span>Publish Project Scheme</span>
           </button>
         </div>
 
@@ -8782,7 +8997,7 @@ async function loadAdminTab(){
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
             <div>
               <h3 class="serif" style="font-size:20px;margin:0;">Active Architectural Schemes (${items.length})</h3>
-              <span style="font-size:12px;color:var(--text-muted);">Curated monograph portfolio &bull; In-browser CMS editing enabled</span>
+              <span style="font-size:12px;color:var(--text-muted);">Curated monograph portfolio &bull; Click "📷 Plates &amp; Images" to manage multi-scale photography</span>
             </div>
           </div>
           <div style="overflow-x:auto;">
@@ -8792,12 +9007,15 @@ async function loadAdminTab(){
                   <th>Preview</th>
                   <th>Scheme Title</th>
                   <th>Typology</th>
+                  <th>Plates</th>
                   <th>Area / Year</th>
                   <th style="text-align:right;">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                ${items.map(p => `
+                ${items.map(p => {
+                  const platesCount = (p.images && Array.isArray(p.images) && p.images.length) ? p.images.length : (p.image_url ? 1 : 0);
+                  return `
                   <tr>
                     <td style="width:50px;">
                       <img src="${escapeHtml(p.image_url || 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=100&q=80')}" style="width:44px;height:44px;border-radius:4px;object-fit:cover;">
@@ -8807,13 +9025,19 @@ async function loadAdminTab(){
                       <span style="font-size:11px;color:var(--text-muted);">${escapeHtml(p.location || 'Global')}</span>
                     </td>
                     <td><span class="time-pill" style="font-size:10px;">${escapeHtml(p.subCategory || p.category)}</span></td>
+                    <td>
+                      <span class="pill-badge" style="font-size:10.5px;background:#f4ede1;color:#7a5626;border:1px solid #e2d2bc;font-weight:600;white-space:nowrap;">
+                        📷 ${platesCount} ${platesCount === 1 ? 'Plate' : 'Plates'}
+                      </span>
+                    </td>
                     <td style="font-size:12px;color:var(--text-muted);">${escapeHtml(p.area || '—')}<br>${escapeHtml(p.year || '')}</td>
                     <td style="text-align:right;white-space:nowrap;">
+                      <button class="btn-secondary" onclick="openSchemePlatesModal('${p.id}')" style="padding:4px 9px;font-size:11px;margin-right:4px;color:#c3924e;border-color:#e2d2bc;font-weight:600;" title="Upload photos or manage multi-scale plates for this scheme">📷 Plates &amp; Images (${platesCount})</button>
                       <button class="btn-secondary" onclick="openProjectEditModal('${p.id}')" style="padding:4px 9px;font-size:11px;margin-right:4px;">✏️ Edit</button>
                       <button class="btn-secondary" onclick="deleteProject('${p.id}')" style="padding:4px 9px;font-size:11px;color:#e53e3e;border-color:#feb2b2;">Delete</button>
                     </td>
                   </tr>
-                `).join('')}
+                `}).join('')}
               </tbody>
             </table>
           </div>
@@ -9171,9 +9395,478 @@ function exportLeadsCSV() {
   }
 }
 
+// ── In-Browser Project CMS & Multi-Plate Photography Handlers ──
+
+function getStoredProjects() {
+  try {
+    const raw = localStorage.getItem('hbz_custom_projects');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length) {
+        window.__allProjectsCache = parsed;
+        return parsed;
+      }
+    }
+  } catch(e) {}
+  const fallback = (window.__allProjectsCache && window.__allProjectsCache.length) ? window.__allProjectsCache : [...SAMPLE_PROJECTS];
+  try {
+    localStorage.setItem('hbz_custom_projects', JSON.stringify(fallback));
+  } catch(e) {}
+  window.__allProjectsCache = fallback;
+  return fallback;
+}
+
+function saveStoredProjects(projects) {
+  try {
+    localStorage.setItem('hbz_custom_projects', JSON.stringify(projects));
+  } catch(e) {
+    console.warn('Failed saving projects to localStorage:', e);
+  }
+  window.__allProjectsCache = projects;
+  if (typeof vvdState !== 'undefined' && vvdState) {
+    vvdState.allProjects = projects;
+    if (vvdState.currentProject) {
+      const updated = projects.find(x => x.id === vvdState.currentProject.id);
+      if (updated) vvdState.currentProject = updated;
+    }
+  }
+}
+
+async function compressImageToDataUrl(file, maxWidth = 1920, quality = 0.82) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const ratioVal = width / height;
+        let detectedRatio = '3/4';
+        if (ratioVal >= 1.9) detectedRatio = '21/9';
+        else if (ratioVal >= 1.6) detectedRatio = '16/9';
+        else if (ratioVal >= 1.35) detectedRatio = '3/2';
+        else if (ratioVal >= 0.95 && ratioVal <= 1.05) detectedRatio = '1/1';
+        else if (ratioVal >= 0.7 && ratioVal <= 0.85) detectedRatio = '3/4';
+        else if (ratioVal < 0.7) detectedRatio = '4/5';
+
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        resolve({
+          url: dataUrl,
+          ratio: detectedRatio,
+          dims: `${width} × ${height} px`
+        });
+      };
+      img.onerror = () => resolve({ url: e.target.result, ratio: '16/9', dims: 'Plate Photo' });
+      img.src = e.target.result;
+    };
+    reader.onerror = () => resolve(null);
+    reader.readAsDataURL(file);
+  });
+}
+
+function probeImageMetadata(url) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const width = img.naturalWidth || img.width;
+      const height = img.naturalHeight || img.height;
+      const ratioVal = width / height;
+      let ratio = '3/4';
+      if (ratioVal >= 1.9) ratio = '21/9';
+      else if (ratioVal >= 1.6) ratio = '16/9';
+      else if (ratioVal >= 0.95 && ratioVal <= 1.05) ratio = '1/1';
+      else if (ratioVal <= 0.85) ratio = '3/4';
+      resolve({ ratio, dims: `${width} × ${height} px` });
+    };
+    img.onerror = () => resolve({ ratio: '16/9', dims: 'High-Res Plate' });
+    img.src = url;
+  });
+}
+
+async function readOrUploadFile(file) {
+  if (!file) return null;
+  if (LIVE && db && db.storage) {
+    try {
+      const path = Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9.\-_]/g, '');
+      let bucket = 'Media';
+      let res = await db.storage.from(bucket).upload(path, file);
+      if (res.error && (res.error.message?.includes('not found') || res.error.statusCode === 404)) {
+        bucket = 'media';
+        res = await db.storage.from(bucket).upload(path, file);
+      }
+      if (!res.error) {
+        const { data } = db.storage.from(bucket).getPublicUrl(path);
+        if (data?.publicUrl) {
+          const probed = await probeImageMetadata(data.publicUrl);
+          return {
+            url: data.publicUrl,
+            ratio: probed.ratio,
+            dims: probed.dims
+          };
+        }
+      }
+    } catch(err) {
+      console.warn('Supabase storage upload error, falling back to local compressor:', err);
+    }
+  }
+  return await compressImageToDataUrl(file);
+}
+
+async function readOrUploadFiles(fileList) {
+  if (!fileList || !fileList.length) return [];
+  const results = [];
+  for (let i = 0; i < fileList.length; i++) {
+    const res = await readOrUploadFile(fileList[i]);
+    if (res) results.push(res);
+  }
+  return results;
+}
+
+// ── Scheme Photographic Plates Studio Modal Handlers ──
+function openSchemePlatesModal(id) {
+  const projects = getStoredProjects();
+  const p = projects.find(x => x.id === id);
+  if (!p) {
+    alert('Project scheme could not be found.');
+    return;
+  }
+  window.__managingPlatesProjectId = id;
+
+  if (!p.images || !Array.isArray(p.images) || !p.images.length) {
+    p.images = p.image_url ? [{
+      url: p.image_url,
+      title: 'Hero Cover • ' + p.title,
+      ratio: '16/9',
+      orientation: 'landscape',
+      dims: '1800 × 1012 px'
+    }] : [];
+  }
+
+  const titleEl = document.getElementById('schemePlatesTitle');
+  if (titleEl) titleEl.textContent = `${p.title} — Plates & Photography`;
+
+  renderSchemePlatesGrid(id);
+
+  const dialog = document.getElementById('schemePlatesDialog');
+  if (dialog && typeof dialog.showModal === 'function') {
+    dialog.showModal();
+  }
+}
+
+function closeSchemePlatesModal() {
+  const dialog = document.getElementById('schemePlatesDialog');
+  if (dialog) dialog.close();
+  window.__managingPlatesProjectId = null;
+  loadAdminTab();
+}
+
+function renderSchemePlatesGrid(id) {
+  const projects = getStoredProjects();
+  const p = projects.find(x => x.id === id);
+  if (!p) return;
+
+  const gridEl = document.getElementById('schemePlatesGrid');
+  const countEl = document.getElementById('schemePlatesCount');
+  const images = (p.images && Array.isArray(p.images)) ? p.images : [];
+
+  if (countEl) countEl.textContent = images.length;
+  if (!gridEl) return;
+
+  if (!images.length) {
+    gridEl.innerHTML = `
+      <div style="grid-column:1/-1;padding:36px;text-align:center;background:var(--bg);border:1px dashed var(--border);border-radius:var(--radius-md);">
+        <p style="margin:0 0 8px;font-weight:600;font-size:15px;color:var(--text);">No photographic plates added to this scheme yet.</p>
+        <span style="font-size:12px;color:var(--text-muted);">Use the upload tool below to add high-resolution plates from your device or via web image URLs.</span>
+      </div>
+    `;
+    return;
+  }
+
+  gridEl.innerHTML = images.map((img, idx) => {
+    const url = getImgUrl(img);
+    const ratio = getImgRatio(img);
+    const title = getImgTitle(img, `Plate ${idx + 1}`);
+    const dims = getImgDims(img);
+    const isHero = (idx === 0);
+
+    return `
+      <div class="plate-card-item">
+        <div class="plate-thumb-wrap">
+          <img src="${escapeHtml(url)}" alt="${escapeHtml(title)}" loading="lazy">
+          ${isHero ? '<span class="plate-hero-badge">Hero Cover</span>' : `<span style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.65);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:3px;">Plate #${idx + 1}</span>`}
+          <span class="plate-ratio-badge-card">${ratio.replace('/', ':')}</span>
+        </div>
+        <div class="plate-card-body">
+          <div style="font-size:11px;font-weight:600;color:var(--text-muted);display:flex;justify-content:space-between;">
+            <span>Plate Title</span>
+            <span style="color:#c3924e;font-size:10px;">${escapeHtml(dims || 'High-Res')}</span>
+          </div>
+          <input type="text" value="${escapeHtml(title)}"
+            onchange="updateSchemePlateTitle('${id}', ${idx}, this.value)"
+            placeholder="Plate descriptor..."
+            style="font-size:11.5px;padding:5px 8px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);width:100%;box-sizing:border-box;">
+          
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px;">
+            <span style="font-size:11px;color:var(--text-muted);">Aspect Ratio:</span>
+            <select onchange="updateSchemePlateRatio('${id}', ${idx}, this.value)"
+              style="font-size:11px;padding:3px 6px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);">
+              <option value="16/9" ${ratio==='16/9'?'selected':''}>16:9 Landscape</option>
+              <option value="3/4" ${ratio==='3/4'?'selected':''}>3:4 Portrait</option>
+              <option value="1/1" ${ratio==='1/1'?'selected':''}>1:1 Square</option>
+              <option value="21/9" ${ratio==='21/9'?'selected':''}>21:9 Panoramic</option>
+              <option value="2/1" ${ratio==='2/1'?'selected':''}>2:1 Double-Square</option>
+              <option value="4/5" ${ratio==='4/5'?'selected':''}>4:5 Vertical</option>
+            </select>
+          </div>
+
+          <div class="plate-card-actions">
+            ${!isHero ? `<button type="button" class="btn-secondary" onclick="setSchemeHeroPlate('${id}', ${idx})" style="font-size:10px;padding:3px 7px;color:#c3924e;border-color:#e2d2bc;" title="Set as main scheme hero cover">★ Set Hero</button>` : ''}
+            ${idx > 0 ? `<button type="button" class="btn-secondary" onclick="moveSchemePlate('${id}', ${idx}, -1)" style="font-size:10px;padding:3px 6px;" title="Move plate left / earlier">&larr;</button>` : ''}
+            ${idx < images.length - 1 ? `<button type="button" class="btn-secondary" onclick="moveSchemePlate('${id}', ${idx}, 1)" style="font-size:10px;padding:3px 6px;" title="Move plate right / later">&rarr;</button>` : ''}
+            <button type="button" class="btn-secondary" onclick="removeSchemePlate('${id}', ${idx})" style="font-size:10px;padding:3px 7px;color:#e53e3e;border-color:#feb2b2;margin-left:auto;">🗑️ Remove</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function handleSchemePlatesUpload() {
+  const id = window.__managingPlatesProjectId;
+  if (!id) return;
+  const input = document.getElementById('schemePlatesFileInput');
+  if (!input || !input.files || !input.files.length) {
+    alert('Please select one or more image files from your computer to upload.');
+    return;
+  }
+
+  const projects = getStoredProjects();
+  const p = projects.find(x => x.id === id);
+  if (!p) return;
+  if (!Array.isArray(p.images)) p.images = [];
+
+  const initialCount = p.images.length;
+  const uploadBtn = event?.currentTarget;
+  if (uploadBtn) {
+    uploadBtn.disabled = true;
+    uploadBtn.innerHTML = '<span>Processing images...</span>';
+  }
+
+  try {
+    for (let i = 0; i < input.files.length; i++) {
+      const file = input.files[i];
+      const result = await readOrUploadFile(file);
+      if (result) {
+        const url = typeof result === 'object' ? result.url : result;
+        const ratio = typeof result === 'object' ? result.ratio : '3/4';
+        const dims = typeof result === 'object' ? result.dims : 'High-Res Plate';
+        p.images.push({
+          url,
+          title: `Plate ${p.images.length + 1} • ${p.title}`,
+          ratio,
+          orientation: ratio === '16/9' || ratio === '21/9' ? 'landscape' : (ratio === '1/1' ? 'square' : 'portrait'),
+          dims
+        });
+      }
+    }
+
+    if (!p.image_url && p.images.length) {
+      p.image_url = getImgUrl(p.images[0]);
+    }
+
+    saveStoredProjects(projects);
+    renderSchemePlatesGrid(id);
+    input.value = '';
+    alert(`Successfully added ${p.images.length - initialCount} photographic plate(s) to "${p.title}"!`);
+  } catch(err) {
+    console.error('Plates upload error:', err);
+    alert('Error uploading images: ' + err.message);
+  } finally {
+    if (uploadBtn) {
+      uploadBtn.disabled = false;
+      uploadBtn.innerHTML = '<span>Upload Selected Photos</span>';
+    }
+  }
+}
+
+function handleSchemePlateUrlAdd() {
+  const id = window.__managingPlatesProjectId;
+  if (!id) return;
+  const urlInput = document.getElementById('schemePlateAddUrl');
+  const titleInput = document.getElementById('schemePlateAddTitle');
+  const ratioInput = document.getElementById('schemePlateAddRatio');
+  const url = urlInput?.value.trim();
+  if (!url) {
+    alert('Please enter an image URL.');
+    return;
+  }
+
+  const projects = getStoredProjects();
+  const p = projects.find(x => x.id === id);
+  if (!p) return;
+  if (!Array.isArray(p.images)) p.images = [];
+
+  const ratio = ratioInput?.value || '3/4';
+  const title = titleInput?.value.trim() || `Plate ${p.images.length + 1} • ${p.title}`;
+
+  p.images.push({
+    url,
+    title,
+    ratio,
+    orientation: ratio === '16/9' || ratio === '21/9' ? 'landscape' : (ratio === '1/1' ? 'square' : 'portrait'),
+    dims: 'Architectural Study'
+  });
+
+  if (!p.image_url && p.images.length) {
+    p.image_url = url;
+  }
+
+  saveStoredProjects(projects);
+  renderSchemePlatesGrid(id);
+  if (urlInput) urlInput.value = '';
+  if (titleInput) titleInput.value = '';
+}
+
+function handleSchemePlatesBulkAdd() {
+  const id = window.__managingPlatesProjectId;
+  if (!id) return;
+  const textarea = document.getElementById('schemePlatesBulkUrls');
+  const raw = textarea?.value.trim() || '';
+  if (!raw) {
+    alert('Please enter image URLs (one per line).');
+    return;
+  }
+
+  const urls = raw.split('\n').map(s => s.trim()).filter(Boolean);
+  if (!urls.length) return;
+
+  const projects = getStoredProjects();
+  const p = projects.find(x => x.id === id);
+  if (!p) return;
+  if (!Array.isArray(p.images)) p.images = [];
+
+  urls.forEach((url, i) => {
+    const ratio = (i % 2 === 0) ? '3/4' : '16/9';
+    p.images.push({
+      url,
+      title: `Plate ${p.images.length + 1} • ${p.title}`,
+      ratio,
+      orientation: ratio === '16/9' ? 'landscape' : 'portrait',
+      dims: 'Architectural Study'
+    });
+  });
+
+  if (!p.image_url && p.images.length) {
+    p.image_url = getImgUrl(p.images[0]);
+  }
+
+  saveStoredProjects(projects);
+  renderSchemePlatesGrid(id);
+  if (textarea) textarea.value = '';
+  alert(`Added ${urls.length} plate URLs to "${p.title}"!`);
+}
+
+function removeSchemePlate(id, index) {
+  const projects = getStoredProjects();
+  const p = projects.find(x => x.id === id);
+  if (!p || !Array.isArray(p.images)) return;
+
+  if (p.images.length <= 1) {
+    if (!confirm('This is the only plate in this scheme. Are you sure you want to remove it?')) return;
+  }
+
+  p.images.splice(index, 1);
+  if (index === 0 && p.images.length > 0) {
+    p.image_url = getImgUrl(p.images[0]);
+  } else if (!p.images.length) {
+    p.image_url = '';
+  }
+
+  saveStoredProjects(projects);
+  renderSchemePlatesGrid(id);
+}
+
+function setSchemeHeroPlate(id, index) {
+  const projects = getStoredProjects();
+  const p = projects.find(x => x.id === id);
+  if (!p || !Array.isArray(p.images) || index <= 0) return;
+
+  const [chosen] = p.images.splice(index, 1);
+  p.images.unshift(chosen);
+  p.image_url = getImgUrl(chosen);
+
+  saveStoredProjects(projects);
+  renderSchemePlatesGrid(id);
+}
+
+function moveSchemePlate(id, index, direction) {
+  const projects = getStoredProjects();
+  const p = projects.find(x => x.id === id);
+  if (!p || !Array.isArray(p.images)) return;
+
+  const newIdx = index + direction;
+  if (newIdx < 0 || newIdx >= p.images.length) return;
+
+  const temp = p.images[index];
+  p.images[index] = p.images[newIdx];
+  p.images[newIdx] = temp;
+
+  if (index === 0 || newIdx === 0) {
+    p.image_url = getImgUrl(p.images[0]);
+  }
+
+  saveStoredProjects(projects);
+  renderSchemePlatesGrid(id);
+}
+
+function updateSchemePlateTitle(id, index, title) {
+  const projects = getStoredProjects();
+  const p = projects.find(x => x.id === id);
+  if (!p || !Array.isArray(p.images) || !p.images[index]) return;
+
+  if (typeof p.images[index] === 'object') {
+    p.images[index].title = title;
+  } else {
+    p.images[index] = { url: p.images[index], title, ratio: '3/4' };
+  }
+  saveStoredProjects(projects);
+}
+
+function updateSchemePlateRatio(id, index, ratio) {
+  const projects = getStoredProjects();
+  const p = projects.find(x => x.id === id);
+  if (!p || !Array.isArray(p.images) || !p.images[index]) return;
+
+  if (typeof p.images[index] === 'object') {
+    p.images[index].ratio = ratio;
+    p.images[index].orientation = ratio === '16/9' || ratio === '21/9' || ratio === '2/1' ? 'landscape' : (ratio === '1/1' ? 'square' : 'portrait');
+  } else {
+    p.images[index] = { url: p.images[index], ratio, title: `Plate ${index+1}` };
+  }
+  saveStoredProjects(projects);
+}
+
+function viewSchemeIndividualPage() {
+  const id = window.__managingPlatesProjectId;
+  closeSchemePlatesModal();
+  if (id) {
+    location.hash = `#/projects/${id}`;
+  }
+}
+
 // ── In-Browser Project CMS Editor Handlers ──
 function openProjectEditModal(id) {
-  const projects = window.__allProjectsCache || [];
+  const projects = getStoredProjects();
   const p = projects.find(x => x.id === id);
   if (!p) return;
 
@@ -9200,6 +9893,11 @@ function openProjectEditModal(id) {
   if (bodyEl) bodyEl.value = p.body || '';
   const imgEl = document.getElementById('editPImg');
   if (imgEl) imgEl.value = p.image_url || '';
+
+  const heroFileEl = document.getElementById('editPImgFile');
+  if (heroFileEl) heroFileEl.value = '';
+  const platesFilesEl = document.getElementById('editPPlatesFiles');
+  if (platesFilesEl) platesFilesEl.value = '';
 
   const plates = (p.images && Array.isArray(p.images)) ? p.images.map(img => typeof img === 'object' ? img.url : img).filter(Boolean) : [];
   const platesEl = document.getElementById('editPPlates');
@@ -9231,7 +9929,7 @@ async function saveProjectEdit() {
   const materials = document.getElementById('editPMat').value.trim();
   const summary = document.getElementById('editPSum').value.trim();
   const body = document.getElementById('editPBody').value.trim();
-  const image_url = document.getElementById('editPImg').value.trim();
+  let image_url = document.getElementById('editPImg').value.trim();
   const platesRaw = document.getElementById('editPPlates').value.trim();
 
   if (!title) {
@@ -9239,53 +9937,74 @@ async function saveProjectEdit() {
     return;
   }
 
+  const heroFileEl = document.getElementById('editPImgFile');
+  if (heroFileEl && heroFileEl.files && heroFileEl.files[0]) {
+    const upHero = await readOrUploadFile(heroFileEl.files[0]);
+    if (upHero) {
+      image_url = typeof upHero === 'object' ? upHero.url : upHero;
+    }
+  }
+
+  const projects = getStoredProjects();
+  const idx = projects.findIndex(x => x.id === id);
+  if (idx === -1) return;
+
+  const existingProject = projects[idx];
   let plateUrls = platesRaw.split('\n').map(s => s.trim()).filter(Boolean);
   if (!plateUrls.length && image_url) plateUrls = [image_url];
-  const images = plateUrls.map((url, idx) => ({
-    url,
-    title: `Plate ${idx + 1} • ${title}`,
-    ratio: idx === 0 ? '16/9' : (idx % 2 === 0 ? '1/1' : '3/4'),
-    orientation: idx === 0 ? 'landscape' : 'portrait',
-    dims: 'High-Res Plate'
-  }));
 
-  let projects = [];
-  try {
-    const raw = localStorage.getItem('hbz_custom_projects');
-    projects = raw ? JSON.parse(raw) : [...SAMPLE_PROJECTS];
-  } catch(e) {
-    projects = [...SAMPLE_PROJECTS];
-  }
-
-  const idx = projects.findIndex(x => x.id === id);
-  if (idx !== -1) {
-    projects[idx] = {
-      ...projects[idx],
-      title,
-      category,
-      subCategory: subCategory || category,
-      location,
-      year,
-      area,
-      client,
-      materials,
-      summary,
-      body,
-      image_url: image_url || projects[idx].image_url,
-      images: images.length ? images : projects[idx].images
+  let images = plateUrls.map((url, i) => {
+    const existing = (existingProject.images && existingProject.images[i] && getImgUrl(existingProject.images[i]) === url) ? existingProject.images[i] : null;
+    if (existing && typeof existing === 'object') {
+      return { ...existing, url };
+    }
+    return {
+      url,
+      title: `Plate ${i + 1} • ${title}`,
+      ratio: i === 0 ? '16/9' : (i % 2 === 0 ? '1/1' : '3/4'),
+      orientation: i === 0 ? 'landscape' : 'portrait',
+      dims: 'High-Res Plate'
     };
+  });
+
+  const platesFilesEl = document.getElementById('editPPlatesFiles');
+  if (platesFilesEl && platesFilesEl.files && platesFilesEl.files.length) {
+    const uploadedPlates = await readOrUploadFiles(platesFilesEl.files);
+    uploadedPlates.forEach((res, i) => {
+      const url = typeof res === 'object' ? res.url : res;
+      const ratio = typeof res === 'object' ? res.ratio : (i % 2 === 0 ? '3/4' : '1/1');
+      const dims = typeof res === 'object' ? res.dims : 'High-Res Plate';
+      images.push({
+        url,
+        title: `Plate ${images.length + 1} • ${title}`,
+        ratio,
+        orientation: ratio === '16/9' || ratio === '21/9' ? 'landscape' : (ratio === '1/1' ? 'square' : 'portrait'),
+        dims
+      });
+    });
   }
 
-  try {
-    localStorage.setItem('hbz_custom_projects', JSON.stringify(projects));
-  } catch(e) {}
+  projects[idx] = {
+    ...existingProject,
+    title,
+    category,
+    subCategory: subCategory || category,
+    location,
+    year,
+    area,
+    client,
+    materials,
+    summary,
+    body,
+    image_url: image_url || (images[0] ? getImgUrl(images[0]) : existingProject.image_url),
+    images: images.length ? images : existingProject.images
+  };
 
-  window.__allProjectsCache = projects;
-  if (typeof vvdState !== 'undefined' && vvdState) vvdState.allProjects = projects;
+  saveStoredProjects(projects);
 
   if (LIVE && db) {
     try {
-      await db.from('projects').update({ title, category, summary, body, image_url }).eq('id', id);
+      await db.from('projects').update({ title, category, summary, body, image_url: projects[idx].image_url }).eq('id', id);
     } catch(err) {
       console.warn('Supabase project update error:', err);
     }
@@ -9303,11 +10022,54 @@ async function addProject(){
   const body = document.getElementById('pbody').value.trim();
   if (!title || !category) { alert('Please provide Title and Category.'); return; }
 
-  const fileInput = document.getElementById('pimg');
-  let image_url = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=85';
-  if (fileInput && fileInput.files && fileInput.files[0] && LIVE) {
-    const up = await uploadImage('pimg');
-    if (up) image_url = up;
+  let heroUrl = (document.getElementById('pimg_url')?.value || '').trim();
+  const heroFileInput = document.getElementById('pimg');
+  if (heroFileInput && heroFileInput.files && heroFileInput.files[0]) {
+    const up = await readOrUploadFile(heroFileInput.files[0]);
+    if (up) heroUrl = typeof up === 'object' ? up.url : up;
+  }
+  if (!heroUrl) {
+    heroUrl = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=85';
+  }
+
+  const plateImages = [];
+  plateImages.push({
+    url: heroUrl,
+    title: 'Hero Cover Plate • ' + title,
+    ratio: '16/9',
+    orientation: 'landscape',
+    dims: '1800 × 1012 px'
+  });
+
+  const platesFileInput = document.getElementById('pimg_plates_files');
+  if (platesFileInput && platesFileInput.files && platesFileInput.files.length) {
+    const uploadedPlates = await readOrUploadFiles(platesFileInput.files);
+    uploadedPlates.forEach((res, i) => {
+      const url = typeof res === 'object' ? res.url : res;
+      const ratio = typeof res === 'object' ? res.ratio : (i % 2 === 0 ? '3/4' : '1/1');
+      const dims = typeof res === 'object' ? res.dims : 'High-Res Plate';
+      plateImages.push({
+        url,
+        title: `Plate ${plateImages.length + 1} • ${title}`,
+        ratio,
+        orientation: ratio === '16/9' || ratio === '21/9' ? 'landscape' : (ratio === '1/1' ? 'square' : 'portrait'),
+        dims
+      });
+    });
+  }
+
+  const plateUrlsRaw = (document.getElementById('pimg_plates_urls')?.value || '').trim();
+  if (plateUrlsRaw) {
+    const urls = plateUrlsRaw.split('\n').map(s => s.trim()).filter(Boolean);
+    urls.forEach((url, i) => {
+      plateImages.push({
+        url,
+        title: `Plate ${plateImages.length + 1} • ${title}`,
+        ratio: (i % 2 === 0) ? '3/4' : '16/9',
+        orientation: (i % 2 === 0) ? 'portrait' : 'landscape',
+        dims: 'Architectural Study'
+      });
+    });
   }
 
   const newId = 'p' + Date.now();
@@ -9323,56 +10085,38 @@ async function addProject(){
     materials: 'Cast Concrete, Basalt, Smoked Oak',
     summary,
     body,
-    image_url,
-    images: [{ url: image_url, title: 'Hero Plate • ' + title, ratio: '16/9', orientation: 'landscape', dims: '1800 × 1012 px' }]
+    image_url: heroUrl,
+    images: plateImages
   };
 
-  let projects = [];
-  try {
-    const raw = localStorage.getItem('hbz_custom_projects');
-    projects = raw ? JSON.parse(raw) : [...SAMPLE_PROJECTS];
-  } catch(e) {
-    projects = [...SAMPLE_PROJECTS];
-  }
+  const projects = getStoredProjects();
   projects.unshift(newProj);
-  try {
-    localStorage.setItem('hbz_custom_projects', JSON.stringify(projects));
-  } catch(e) {}
-
-  window.__allProjectsCache = projects;
-  if (typeof vvdState !== 'undefined' && vvdState) vvdState.allProjects = projects;
+  saveStoredProjects(projects);
 
   if (LIVE && db) {
     try {
-      await db.from('projects').insert([{ id: newId, title, category, summary, body, image_url }]);
+      await db.from('projects').insert([{ id: newId, title, category, summary, body, image_url: heroUrl }]);
     } catch(err) {
       console.warn('Supabase project insert error:', err);
     }
   }
 
-  alert('Project published successfully.');
+  alert(`Project scheme published successfully with ${plateImages.length} photographic plate(s)!`);
   document.getElementById('ptitle').value = '';
   document.getElementById('psum').value = '';
   document.getElementById('pbody').value = '';
+  if (document.getElementById('pimg')) document.getElementById('pimg').value = '';
+  if (document.getElementById('pimg_url')) document.getElementById('pimg_url').value = '';
+  if (document.getElementById('pimg_plates_files')) document.getElementById('pimg_plates_files').value = '';
+  if (document.getElementById('pimg_plates_urls')) document.getElementById('pimg_plates_urls').value = '';
   loadAdminTab();
 }
 
 async function deleteProject(id){
   if (!confirm('Are you sure you want to remove this project scheme from portfolio?')) return;
-  let projects = [];
-  try {
-    const raw = localStorage.getItem('hbz_custom_projects');
-    projects = raw ? JSON.parse(raw) : [...SAMPLE_PROJECTS];
-  } catch(e) {
-    projects = [...SAMPLE_PROJECTS];
-  }
+  let projects = getStoredProjects();
   projects = projects.filter(p => p.id !== id);
-  try {
-    localStorage.setItem('hbz_custom_projects', JSON.stringify(projects));
-  } catch(e) {}
-
-  window.__allProjectsCache = projects;
-  if (typeof vvdState !== 'undefined' && vvdState) vvdState.allProjects = projects;
+  saveStoredProjects(projects);
 
   if (LIVE && db) {
     try {
