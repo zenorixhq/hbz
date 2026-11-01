@@ -2610,6 +2610,26 @@ dialog#postEditDialog::backdrop {
   -webkit-backdrop-filter: blur(8px);
 }
 
+/* ── Manual Client Lead CRM Modal ── */
+dialog#manualLeadDialog {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 0;
+  max-width: 580px;
+  width: 94%;
+  margin: auto;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.35);
+  background: var(--surface);
+  color: var(--text);
+  overflow: hidden;
+  max-height: 90vh;
+}
+dialog#manualLeadDialog::backdrop {
+  background: rgba(14, 13, 12, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
 /* ── Scheme Photographic Plates Studio Modal & Cards ── */
 dialog#schemePlatesDialog {
   border: 1px solid var(--border);
@@ -4773,6 +4793,77 @@ dialog#journalUnlockModal::backdrop {
   </div>
 </dialog>
 
+<!-- Native Dialog Modal for Manual Client Lead Entry -->
+<dialog id="manualLeadDialog">
+  <div class="admin-modal-inner" style="max-width:580px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div>
+        <span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#c3924e;display:block;">[CLIENT CRM]</span>
+        <h3 class="serif" style="margin:2px 0 0;font-size:22px;">Record Client Inquiry</h3>
+      </div>
+      <button onclick="closeManualLeadModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-muted);">&times;</button>
+    </div>
+    
+    <div style="margin-bottom:10px;">
+      <label for="manLeadName">Client Name</label>
+      <input id="manLeadName" placeholder="e.g. Lord Alistair Sterling">
+    </div>
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;">
+      <div>
+        <label for="manLeadContact">Phone / Email</label>
+        <input id="manLeadContact" placeholder="e.g. alistair@sterlingholding.co.uk">
+      </div>
+      <div>
+        <label for="manLeadOrigin">Inquiry Origin</label>
+        <select id="manLeadOrigin">
+          <option value="Direct Studio Consultation">Direct Studio Consultation</option>
+          <option value="Project Scheme Dossier">Project Scheme Dossier</option>
+          <option value="Calculator: Flooring &amp; Materials">Calculator: Flooring &amp; Materials</option>
+          <option value="Calculator: Wall Cladding &amp; Acoustics">Calculator: Wall Cladding</option>
+          <option value="Journal Unlock">Journal Briefing Unlock</option>
+          <option value="Telephone Call">Telephone Consultation</option>
+          <option value="Private Referral">Private Client Referral</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:10px;">
+      <div>
+        <label for="manLeadStatus">Pipeline Status</label>
+        <select id="manLeadStatus">
+          <option value="New">🟢 New</option>
+          <option value="Contacted">🔵 Contacted</option>
+          <option value="Meeting Booked">🟡 Meeting Booked</option>
+          <option value="Proposal Sent">🟣 Proposal Sent</option>
+          <option value="Archived">⚪ Archived</option>
+        </select>
+      </div>
+      <div>
+        <label for="manLeadScheme">Associated Scheme (Optional)</label>
+        <input id="manLeadScheme" placeholder="e.g. Palazzo Molteni Tokyo">
+      </div>
+    </div>
+
+    <div style="margin-bottom:10px;">
+      <label for="manLeadDetails">Inquiry Brief &amp; Spatial Specifications</label>
+      <textarea id="manLeadDetails" rows="3" placeholder="Scheme size, location, architectural typology, budget requirements..."></textarea>
+    </div>
+
+    <div style="margin-bottom:10px;">
+      <label for="manLeadNotes">Internal Studio Notes</label>
+      <textarea id="manLeadNotes" rows="2" placeholder="Next director action, meeting schedule, site visit notes..."></textarea>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:16px;">
+      <button class="btn-secondary" onclick="closeManualLeadModal()">Cancel</button>
+      <button class="btn-talk" onclick="saveManualLead()" style="padding:10px 20px;">
+        <span>Record Client Lead</span>
+      </button>
+    </div>
+  </div>
+</dialog>
+
 <!-- Native Journal Access Pass & Monograph Unlock Modal -->
 <dialog id="journalUnlockModal">
   <div class="modal-inner">
@@ -4952,6 +5043,159 @@ function closeContactModal() {
   window.__inquirySource = null;
 }
 
+// ── Curated Architectural Client Inquiry Benchmark Data ──
+const SAMPLE_LEADS = [
+  {
+    id: 'lead_001',
+    name: 'Lord Alistair Sterling',
+    phone: 'alistair.sterling@mayfairholding.co.uk',
+    source: 'Direct Studio Consultation',
+    status: 'Meeting Booked',
+    details: 'Complete 4-storey Grade II listed townhouse restoration in Belgravia, London. Seeking monolithic stone staircase and acoustic cedar courtyard.',
+    post_id: 'Belgravia Townhouse Scheme',
+    notes: 'Site inspection meeting scheduled for next Thursday 11:00 AM with studio director.',
+    created_at: new Date(Date.now() - 6 * 86400000).toISOString()
+  },
+  {
+    id: 'lead_002',
+    name: 'Dr. Marcus & Eleanor Vance',
+    phone: '+44 7911 884210',
+    source: 'Calculator: Flooring & Materials',
+    status: 'Proposal Sent',
+    details: 'Flooring Calculation: Italian Poured Terrazzo (4,200 sq.ft) with 10% wastage allowance. Total Projected Investment: £147,000.',
+    post_id: 'Calculator: Flooring Estimator',
+    notes: 'Sent formal materials schedule and terrazzo slab samples via courier.',
+    created_at: new Date(Date.now() - 4 * 86400000).toISOString()
+  },
+  {
+    id: 'lead_003',
+    name: 'Kenji Takahashi',
+    phone: 'k.takahashi@mori-developments.jp',
+    source: 'Project Scheme Dossier',
+    status: 'New',
+    details: 'Commissioning inquiry inspired by Palazzo Molteni Tokyo (Scheme 01). Retail & exhibition flagship in Minami-Aoyama (2,100 m²).',
+    post_id: 'p1',
+    notes: 'Requires preliminary zoning envelope consultation by mid-November.',
+    created_at: new Date(Date.now() - 2 * 86400000).toISOString()
+  },
+  {
+    id: 'lead_004',
+    name: 'Arch. Helena Rostova',
+    phone: 'h.rostova@atelier-rostova.ch',
+    source: 'Journal Unlock',
+    status: 'Contacted',
+    details: 'Journal Monograph Unlock: Comparative Monograph — Structural Steel Framing vs Post-Tensioned Concrete in Contemporary Residential Spans.',
+    post_id: 'post1',
+    notes: 'Discussed Zurich lakeside residential engineering collaboration.',
+    created_at: new Date(Date.now() - 1 * 86400000).toISOString()
+  },
+  {
+    id: 'lead_005',
+    name: 'Julian de Vries',
+    phone: 'julian@antwerpartfoundation.org',
+    source: 'Calculator: Wall Cladding & Acoustics',
+    status: 'New',
+    details: 'Wall Cladding & Acoustic Estimation: Slatted Acoustic Smoked Oak (3,600 sq.ft) for contemporary sculpture pavilion. Total Projected: £126,000.',
+    post_id: 'Calculator: Wall Cladding',
+    notes: '',
+    created_at: new Date(Date.now() - 12 * 3600000).toISOString()
+  }
+];
+
+window.__allLeadsCache = null;
+
+function saveStoredLeads(leads) {
+  try {
+    localStorage.setItem('hbz_leads', JSON.stringify(leads));
+  } catch(e) {
+    console.warn('Failed saving leads to localStorage:', e);
+  }
+  window.__allLeadsCache = leads;
+}
+
+async function getLeads() {
+  let leads = [];
+  try {
+    const raw = localStorage.getItem('hbz_leads');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length) {
+        leads = parsed;
+      }
+    }
+  } catch(e) {}
+
+  if (!leads.length) {
+    leads = [...SAMPLE_LEADS];
+    saveStoredLeads(leads);
+  } else {
+    window.__allLeadsCache = leads;
+  }
+
+  // Non-blocking background sync with Supabase if live & reachable
+  if (LIVE && db) {
+    try {
+      const fetchPromise = db.from('leads').select('*').order('created_at', { ascending: false });
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1200));
+      const res = await Promise.race([fetchPromise, timeoutPromise]);
+      if (res && res.data && Array.isArray(res.data) && res.data.length) {
+        let changed = false;
+        res.data.forEach(remote => {
+          if (!remote) return;
+          const exists = leads.some(l => (l.id && l.id === remote.id) || (l.phone === remote.phone && l.name === remote.name));
+          if (!exists) {
+            leads.push(remote);
+            changed = true;
+          }
+        });
+        if (changed) {
+          saveStoredLeads(leads);
+        }
+      }
+    } catch(err) {
+      // Safe fallback - no UI blocking
+    }
+  }
+
+  return leads;
+}
+
+function recordNewLead({ name, phone, source, details, post_id }) {
+  const newLead = {
+    id: 'lead_' + Date.now(),
+    name: (name || '').trim(),
+    phone: (phone || '').trim(),
+    source: source || 'Direct Studio Consultation',
+    status: 'New',
+    details: details || source || 'General Client Inquiry',
+    post_id: post_id || null,
+    notes: '',
+    created_at: new Date().toISOString()
+  };
+
+  try {
+    const raw = localStorage.getItem('hbz_leads');
+    let leads = raw ? JSON.parse(raw) : [...SAMPLE_LEADS];
+    leads.unshift(newLead);
+    saveStoredLeads(leads);
+  } catch(e) {
+    console.warn('Error recording lead:', e);
+  }
+
+  if (LIVE && db) {
+    try {
+      db.from('leads').insert([{
+        name: newLead.name,
+        phone: newLead.phone,
+        post_id: typeof post_id === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(post_id) ? post_id : null,
+        details: newLead.details
+      }]).then(() => {}).catch(() => {});
+    } catch(err) {}
+  }
+
+  return newLead;
+}
+
 async function submitInquiry() {
   const name = document.getElementById('cname').value.trim();
   const phone = document.getElementById('cphone').value.trim();
@@ -4976,31 +5220,14 @@ async function submitInquiry() {
     else source = 'Direct Studio Consultation';
   }
 
-  // Store in local storage leads list for testing/demo
-  try {
-    const raw = localStorage.getItem('hbz_leads');
-    const leads = raw ? JSON.parse(raw) : [];
-    leads.unshift({
-      id: 'lead_' + Date.now(),
-      name,
-      phone,
-      source: source,
-      status: 'New',
-      details: notes || source,
-      post_id: notes || source,
-      notes: '',
-      created_at: new Date().toISOString()
-    });
-    localStorage.setItem('hbz_leads', JSON.stringify(leads));
-  } catch(e) {}
+  recordNewLead({
+    name,
+    phone,
+    source,
+    details: notes || source,
+    post_id: notes || source
+  });
 
-  if (LIVE && db) {
-    try {
-      await db.from('leads').insert([{ name, phone, post_id: null, details: notes || source }]);
-    } catch(err) {
-      console.warn('Supabase lead insert error:', err);
-    }
-  }
   alert('Thank you, ' + name + '. Your estimate & inquiry have been received.');
   closeContactModal();
   document.getElementById('cname').value = '';
@@ -5902,33 +6129,13 @@ async function submitJournalUnlockModal() {
 
   saveJournalUser(name, phone);
 
-  try {
-    const raw = localStorage.getItem('hbz_leads');
-    const leads = raw ? JSON.parse(raw) : [];
-    leads.unshift({
-      name,
-      phone,
-      source: 'Journal Unlock',
-      details: pendingJournalTargetId ? `Journal Monograph Unlock [${pendingJournalTargetId}]` : 'Journal Access Pass Unlock',
-      post_id: pendingJournalTargetId || 'Journal Monograph Unlock',
-      created_at: new Date().toISOString()
-    });
-    localStorage.setItem('hbz_leads', JSON.stringify(leads));
-  } catch (e) {}
-
-  // If Supabase live is active, record in leads table
-  if (LIVE) {
-    try {
-      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(pendingJournalTargetId);
-      await db.from('leads').insert([{
-        name,
-        phone,
-        post_id: isUUID ? pendingJournalTargetId : null
-      }]);
-    } catch (err) {
-      console.warn('Journal lead save:', err);
-    }
-  }
+  recordNewLead({
+    name,
+    phone,
+    source: 'Journal Unlock',
+    details: pendingJournalTargetId ? `Journal Monograph Unlock [${pendingJournalTargetId}]` : 'Journal Access Pass Unlock',
+    post_id: pendingJournalTargetId || 'Journal Monograph Unlock'
+  });
 
   closeJournalUnlockModal();
   updateJournalPassUI();
@@ -8696,30 +8903,15 @@ async function unlockPostInline(id){
     return;
   }
   saveJournalUser(name, phone);
-  try {
-    const raw = localStorage.getItem('hbz_leads');
-    const leads = raw ? JSON.parse(raw) : [];
-    leads.unshift({
-      name,
-      phone,
-      source: 'Journal Unlock',
-      details: id ? `Inline Briefing Unlock [${id}]` : 'Inline Journal Monograph Unlock',
-      post_id: id || 'Inline Journal Monograph Unlock',
-      created_at: new Date().toISOString()
-    });
-    localStorage.setItem('hbz_leads', JSON.stringify(leads));
-  } catch (e) {}
 
-  if (LIVE) {
-    try {
-      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id);
-      await db.from('leads').insert([{
-        name,
-        phone,
-        post_id: isUUID ? id : null
-      }]);
-    } catch(e) {}
-  }
+  recordNewLead({
+    name,
+    phone,
+    source: 'Journal Unlock',
+    details: id ? `Inline Briefing Unlock [${id}]` : 'Inline Journal Monograph Unlock',
+    post_id: id || 'Inline Journal Monograph Unlock'
+  });
+
   renderBlogDetail(id);
 }
 
@@ -8782,26 +8974,26 @@ function resetDefaultCredentials() {
 }
 
 async function resetAllLeads() {
-  if (!confirm('Are you sure you want to permanently reset and clear all client lead test data? This will purge all recorded test leads and inquiries.')) {
+  if (!confirm('Are you sure you want to reset client lead data to studio defaults? This will restore the curated benchmark inquiries.')) {
     return;
   }
 
   try {
-    localStorage.removeItem('hbz_leads');
+    localStorage.setItem('hbz_leads', JSON.stringify(SAMPLE_LEADS));
+    window.__allLeadsCache = [...SAMPLE_LEADS];
+    window.__leadsFilterStatus = 'All';
+    window.__leadsSearchQuery = '';
     localStorage.removeItem('oboro_journal_pass');
     sessionStorage.removeItem('oboro_journal_pass');
   } catch(e) {}
 
   if (LIVE && db) {
     try {
-      const { error } = await db.from('leads').delete().neq('name', '___NON_EXISTENT_NAME_FILTER___');
-      if (error) console.warn('Supabase lead deletion error:', error);
-    } catch(err) {
-      console.warn('Supabase lead deletion:', err);
-    }
+      db.from('leads').delete().neq('name', '___NON_EXISTENT_NAME_FILTER___').then(() => {}).catch(() => {});
+    } catch(err) {}
   }
 
-  alert('All client lead test data has been successfully cleared and reset.');
+  alert('Client leads successfully reset to studio defaults.');
   loadAdminTab();
 }
 
@@ -9110,40 +9302,31 @@ async function loadAdminTab(){
       </div>
     `;
   } else if (adminTab === 'leads') {
-    let leads = [];
-    if (LIVE && db) {
-      try {
-        const { data } = await db.from('leads').select('*').order('created_at', { ascending: false });
-        if (data && data.length) leads = [...data];
-      } catch(e) {}
-    }
-    try {
-      const localRaw = localStorage.getItem('hbz_leads');
-      if (localRaw) {
-        const localLeads = JSON.parse(localRaw);
-        if (Array.isArray(localLeads)) {
-          if (!leads.length) {
-            leads = localLeads;
-          } else {
-            localLeads.forEach(loc => {
-              if (!leads.some(l => l.phone === loc.phone && l.name === loc.name)) {
-                leads.push(loc);
-              }
-            });
-          }
-        }
-      }
-    } catch(e) {}
+    const allLeads = await getLeads();
+    const filterStatus = window.__leadsFilterStatus || 'All';
+    const searchQuery = (window.__leadsSearchQuery || '').toLowerCase().trim();
 
-    // Compute Pipeline Analytics Metrics
-    const totalLeads = leads.length;
-    const newLeads = leads.filter(l => (l.status || 'New') === 'New').length;
-    const activeLeads = leads.filter(l => ['Contacted', 'Meeting Booked', 'Proposal Sent'].includes(l.status || '')).length;
+    let filteredLeads = allLeads.filter(l => {
+      const matchesStatus = (filterStatus === 'All') || (l.status === filterStatus);
+      const matchesSearch = !searchQuery ||
+        String(l.name || '').toLowerCase().includes(searchQuery) ||
+        String(l.phone || '').toLowerCase().includes(searchQuery) ||
+        String(l.details || '').toLowerCase().includes(searchQuery) ||
+        String(l.notes || '').toLowerCase().includes(searchQuery) ||
+        String(l.source || '').toLowerCase().includes(searchQuery);
+      return matchesStatus && matchesSearch;
+    });
+
+    const totalLeads = allLeads.length;
+    const newLeads = allLeads.filter(l => (l.status || 'New') === 'New').length;
+    const activeLeads = allLeads.filter(l => ['Contacted', 'Meeting Booked', 'Proposal Sent'].includes(l.status || '')).length;
+    const archivedLeads = allLeads.filter(l => l.status === 'Archived').length;
 
     function getLeadOrigin(lead) {
-      const src = (lead.source || '').toLowerCase();
-      const post = (lead.post_id || '').toLowerCase();
-      const details = (lead.details || '').toLowerCase();
+      if (!lead) return { type: 'Direct Consultation', badge: 'background:#f4f3f0;color:#55524d;border:1px solid #e0ded9;', icon: '✉️' };
+      const src = String(lead.source || '').toLowerCase();
+      const post = String(lead.post_id || '').toLowerCase();
+      const details = String(lead.details || '').toLowerCase();
       const combined = `${src} ${post} ${details}`;
 
       if (combined.includes('journal') || combined.includes('briefing') || combined.includes('monograph')) {
@@ -9189,27 +9372,50 @@ async function loadAdminTab(){
           <div class="pipeline-stat-label">Active Discussion</div>
           <div class="pipeline-stat-number" style="color:#c3924e;">${activeLeads}</div>
         </div>
-        <div class="pipeline-stat-box" style="border-left:3px solid #1976d2;">
-          <div class="pipeline-stat-label">Pipeline Status</div>
-          <div class="pipeline-stat-number" style="font-size:16px;color:#1976d2;padding-top:4px;">Lead CRM Active</div>
+        <div class="pipeline-stat-box" style="border-left:3px solid #6b7280;">
+          <div class="pipeline-stat-label">Archived / Closed</div>
+          <div class="pipeline-stat-number" style="color:#6b7280;">${archivedLeads}</div>
         </div>
       </div>
 
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
           <div>
-            <h3 class="serif" style="font-size:20px;margin:0;">Captured Client Leads (${leads.length})</h3>
-            <span style="font-size:12px;color:var(--text-muted);">Real-time lead status management and one-click CRM export</span>
+            <h3 class="serif" style="font-size:20px;margin:0;">Captured Client Leads (${filteredLeads.length}${filteredLeads.length !== totalLeads ? ` of ${totalLeads}` : ''})</h3>
+            <span style="font-size:12px;color:var(--text-muted);">Real-time lead status management, search filters, and one-click CRM export</span>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-            <button class="btn-talk" onclick="exportLeadsCSV()" style="padding:6px 14px;font-size:12px;cursor:pointer;">
-              <span>📥 Export Leads (.CSV)</span>
+            <button class="btn-talk" onclick="openManualLeadModal()" style="padding:6px 14px;font-size:12px;cursor:pointer;">
+              <span>+ Record Inquiry</span>
+            </button>
+            <button class="btn-secondary" onclick="exportLeadsCSV()" style="padding:6px 14px;font-size:12px;cursor:pointer;">
+              <span>📥 Export CSV</span>
             </button>
             <button class="btn-secondary" onclick="resetAllLeads()" style="color:#e53e3e;border-color:#feb2b2;padding:6px 14px;font-size:12px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;">
-              <span>🗑️ Reset Test Data</span>
+              <span>🗑️ Reset Defaults</span>
             </button>
           </div>
         </div>
+
+        <!-- Filter & Search Bar Strip -->
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);">
+          <div style="flex:1;min-width:240px;">
+            <input type="text" placeholder="Search leads by name, email, phone, or scheme specs..." 
+              value="${escapeHtml(window.__leadsSearchQuery || '')}"
+              oninput="handleLeadsSearch(this.value)"
+              style="margin:0;font-size:12px;padding:7px 10px;width:100%;box-sizing:border-box;">
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+            <span style="font-size:11px;font-weight:600;color:var(--text-muted);margin-right:2px;">Filter:</span>
+            ${['All', 'New', 'Contacted', 'Meeting Booked', 'Proposal Sent', 'Archived'].map(st => `
+              <button type="button" class="btn-secondary" onclick="setLeadsFilter('${st}')" 
+                style="padding:4px 9px;font-size:11px;${filterStatus === st ? 'background:#121110;color:#fff;border-color:#121110;font-weight:700;' : ''}">
+                ${st}
+              </button>
+            `).join('')}
+          </div>
+        </div>
+
         <div style="overflow-x:auto;">
           <table>
             <thead>
@@ -9223,13 +9429,13 @@ async function loadAdminTab(){
               </tr>
             </thead>
             <tbody>
-              ${leads.map((l, idx) => {
+              ${filteredLeads.map(l => {
                 const origin = getLeadOrigin(l);
                 const status = l.status || 'New';
-                let desc = l.details || l.post_id || 'General Consultation Inquiry';
+                let desc = String(l.details || l.post_id || 'General Consultation Inquiry');
                 if (desc.startsWith('p') && desc.length <= 4) desc = 'Architectural Scheme ' + desc.toUpperCase();
                 
-                const isEmail = (l.phone || '').includes('@');
+                const isEmail = String(l.phone || '').includes('@');
                 const contactHref = isEmail ? `mailto:${escapeHtml(l.phone)}` : `tel:${escapeHtml(l.phone)}`;
 
                 return `
@@ -9244,7 +9450,7 @@ async function loadAdminTab(){
                       </span>
                     </td>
                     <td>
-                      <select class="lead-status-select" onchange="updateLeadStatus(${idx}, this.value)">
+                      <select class="lead-status-select" onchange="updateLeadStatus('${l.id}', this.value)">
                         <option value="New" ${status==='New'?'selected':''}>🟢 New</option>
                         <option value="Contacted" ${status==='Contacted'?'selected':''}>🔵 Contacted</option>
                         <option value="Meeting Booked" ${status==='Meeting Booked'?'selected':''}>🟡 Meeting Booked</option>
@@ -9256,17 +9462,17 @@ async function loadAdminTab(){
                       ${escapeHtml(desc)}
                     </td>
                     <td style="font-size:12px;">
-                      <span onclick="updateLeadNote(${idx})" style="cursor:pointer;color:${l.notes?'var(--text)':'#999'};border-bottom:1px dashed var(--border-strong);display:inline-block;padding-bottom:1px;" title="Click to edit notes">
+                      <span onclick="updateLeadNote('${l.id}')" style="cursor:pointer;color:${l.notes?'var(--text)':'#999'};border-bottom:1px dashed var(--border-strong);display:inline-block;padding-bottom:1px;" title="Click to edit notes">
                         ${l.notes ? '📝 ' + escapeHtml(l.notes) : '<em>+ Add note</em>'}
                       </span>
                     </td>
                     <td style="text-align:right;white-space:nowrap;font-size:12px;color:var(--text-muted);">
                       <div>${l.created_at ? new Date(l.created_at).toLocaleDateString() : 'Recent'}</div>
-                      <button onclick="deleteLead(${idx})" style="background:none;border:none;color:#e53e3e;font-size:11px;cursor:pointer;margin-top:4px;text-decoration:underline;">Delete</button>
+                      <button onclick="deleteLead('${l.id}')" style="background:none;border:none;color:#e53e3e;font-size:11px;cursor:pointer;margin-top:4px;text-decoration:underline;">Delete</button>
                     </td>
                   </tr>
                 `;
-              }).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:32px;">No leads recorded yet. Submissions from direct inquiries, calculator estimates and journal unlocks will appear here.</td></tr>'}
+              }).join('') || `<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:32px;">No leads matching "${escapeHtml(searchQuery || filterStatus)}". <a href="javascript:void(0)" onclick="setLeadsFilter('All'); handleLeadsSearch('');" style="color:#c3924e;">Clear filters</a></td></tr>`}
             </tbody>
           </table>
         </div>
@@ -9320,49 +9526,124 @@ async function loadAdminTab(){
 }
 
 // ── Lead Management Handlers ──
-function updateLeadStatus(index, newStatus) {
+function updateLeadStatus(id, newStatus) {
   try {
     const raw = localStorage.getItem('hbz_leads');
-    const leads = raw ? JSON.parse(raw) : [];
-    if (leads[index]) {
-      leads[index].status = newStatus;
-      localStorage.setItem('hbz_leads', JSON.stringify(leads));
+    const leads = raw ? JSON.parse(raw) : [...SAMPLE_LEADS];
+    const target = leads.find(l => l.id === id);
+    if (target) {
+      target.status = newStatus;
+      saveStoredLeads(leads);
+      if (LIVE && db) {
+        db.from('leads').update({ status: newStatus }).eq('id', id).then(() => {}).catch(() => {});
+      }
       loadAdminTab();
     }
   } catch(e) {}
 }
 
-function updateLeadNote(index) {
+function updateLeadNote(id) {
   try {
     const raw = localStorage.getItem('hbz_leads');
-    const leads = raw ? JSON.parse(raw) : [];
-    if (leads[index]) {
-      const current = leads[index].notes || '';
+    const leads = raw ? JSON.parse(raw) : [...SAMPLE_LEADS];
+    const target = leads.find(l => l.id === id);
+    if (target) {
+      const current = target.notes || '';
       const entered = prompt('Enter internal studio notes for this client inquiry:', current);
       if (entered !== null) {
-        leads[index].notes = entered.trim();
-        localStorage.setItem('hbz_leads', JSON.stringify(leads));
+        target.notes = entered.trim();
+        saveStoredLeads(leads);
+        if (LIVE && db) {
+          db.from('leads').update({ notes: target.notes }).eq('id', id).then(() => {}).catch(() => {});
+        }
         loadAdminTab();
       }
     }
   } catch(e) {}
 }
 
-function deleteLead(index) {
+function deleteLead(id) {
   if (!confirm('Are you sure you want to delete this client inquiry?')) return;
   try {
     const raw = localStorage.getItem('hbz_leads');
-    const leads = raw ? JSON.parse(raw) : [];
-    leads.splice(index, 1);
-    localStorage.setItem('hbz_leads', JSON.stringify(leads));
+    let leads = raw ? JSON.parse(raw) : [...SAMPLE_LEADS];
+    leads = leads.filter(l => l.id !== id);
+    saveStoredLeads(leads);
+    if (LIVE && db) {
+      db.from('leads').delete().eq('id', id).then(() => {}).catch(() => {});
+    }
     loadAdminTab();
   } catch(e) {}
 }
 
-function exportLeadsCSV() {
+function setLeadsFilter(status) {
+  window.__leadsFilterStatus = status;
+  loadAdminTab();
+}
+
+function handleLeadsSearch(query) {
+  window.__leadsSearchQuery = query;
+  loadAdminTab();
+}
+
+function openManualLeadModal() {
+  const dialog = document.getElementById('manualLeadDialog');
+  if (dialog && typeof dialog.showModal === 'function') {
+    if (document.getElementById('manLeadName')) document.getElementById('manLeadName').value = '';
+    if (document.getElementById('manLeadContact')) document.getElementById('manLeadContact').value = '';
+    if (document.getElementById('manLeadDetails')) document.getElementById('manLeadDetails').value = '';
+    if (document.getElementById('manLeadNotes')) document.getElementById('manLeadNotes').value = '';
+    if (document.getElementById('manLeadScheme')) document.getElementById('manLeadScheme').value = '';
+    dialog.showModal();
+  }
+}
+
+function closeManualLeadModal() {
+  const dialog = document.getElementById('manualLeadDialog');
+  if (dialog) dialog.close();
+}
+
+function saveManualLead() {
+  const name = (document.getElementById('manLeadName')?.value || '').trim();
+  const contact = (document.getElementById('manLeadContact')?.value || '').trim();
+  const origin = document.getElementById('manLeadOrigin')?.value || 'Direct Studio Consultation';
+  const status = document.getElementById('manLeadStatus')?.value || 'New';
+  const scheme = (document.getElementById('manLeadScheme')?.value || '').trim();
+  const details = (document.getElementById('manLeadDetails')?.value || '').trim();
+  const notes = (document.getElementById('manLeadNotes')?.value || '').trim();
+
+  if (!name || !contact) {
+    alert('Please enter client name and contact details.');
+    return;
+  }
+
+  const newLead = {
+    id: 'lead_' + Date.now(),
+    name,
+    phone: contact,
+    source: origin,
+    status,
+    details: details || (scheme ? `Scheme Inquiry: ${scheme}` : 'Direct Client Consultation'),
+    post_id: scheme || null,
+    notes: notes || '',
+    created_at: new Date().toISOString()
+  };
+
   try {
     const raw = localStorage.getItem('hbz_leads');
-    const leads = raw ? JSON.parse(raw) : [];
+    let leads = raw ? JSON.parse(raw) : [...SAMPLE_LEADS];
+    leads.unshift(newLead);
+    saveStoredLeads(leads);
+  } catch(e) {}
+
+  closeManualLeadModal();
+  alert(`Inquiry from "${name}" recorded successfully.`);
+  loadAdminTab();
+}
+
+function exportLeadsCSV() {
+  try {
+    const leads = window.__allLeadsCache || SAMPLE_LEADS;
     if (!leads.length) {
       alert('No leads available to export.');
       return;
@@ -9370,12 +9651,12 @@ function exportLeadsCSV() {
 
     const headers = ['Client Name', 'Phone / Email', 'Lead Origin', 'Status', 'Inquiry Details / Specs', 'Studio Internal Notes', 'Date Received'];
     const rows = leads.map(l => {
-      const name = (l.name || '').replace(/"/g, '""');
-      const contact = (l.phone || '').replace(/"/g, '""');
-      const source = (l.source || 'Direct Consultation').replace(/"/g, '""');
-      const status = (l.status || 'New').replace(/"/g, '""');
-      const details = (l.details || l.post_id || '').replace(/"/g, '""');
-      const notes = (l.notes || '').replace(/"/g, '""');
+      const name = String(l.name || '').replace(/"/g, '""');
+      const contact = String(l.phone || '').replace(/"/g, '""');
+      const source = String(l.source || 'Direct Consultation').replace(/"/g, '""');
+      const status = String(l.status || 'New').replace(/"/g, '""');
+      const details = String(l.details || l.post_id || '').replace(/"/g, '""');
+      const notes = String(l.notes || '').replace(/"/g, '""');
       const date = l.created_at ? new Date(l.created_at).toLocaleString() : 'Recent';
       return `"${name}","${contact}","${source}","${status}","${details}","${notes}","${date}"`;
     });
