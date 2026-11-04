@@ -2452,6 +2452,445 @@ th { color: var(--text-muted); font-weight: 600; text-transform: uppercase; font
   border-bottom: 1px dashed var(--border);
 }
 
+/* ── Turnkey House Construction Estimator (Brick & Bolt Style) ── */
+.calc-steps-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px 24px;
+  gap: 12px;
+}
+@media (max-width: 768px) {
+  .calc-steps-nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+  }
+}
+.calc-step-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0.5;
+  transition: all 0.2s ease;
+}
+.calc-step-item.active {
+  opacity: 1;
+}
+.calc-step-item.completed {
+  opacity: 0.9;
+}
+.calc-step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.calc-step-item.active .calc-step-num {
+  background: var(--panel-dark);
+  color: var(--text-light);
+  border-color: var(--panel-dark);
+}
+.calc-step-item.completed .calc-step-num {
+  background: var(--panel-forest);
+  color: #a3e635;
+  border-color: var(--panel-forest);
+}
+.calc-step-info {
+  display: flex;
+  flex-direction: column;
+}
+.calc-step-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+.calc-step-sub {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.calc-step-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+  margin: 0 12px;
+}
+@media (max-width: 768px) {
+  .calc-step-line { display: none; }
+}
+.calc-step-line.completed {
+  background: var(--panel-forest);
+}
+
+/* Package Tier Cards */
+.pkg-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 16px 0 24px;
+}
+@media (max-width: 860px) {
+  .pkg-cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.pkg-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px 18px;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+.pkg-card:hover {
+  border-color: var(--accent-gold);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.04);
+}
+.pkg-card.active {
+  border: 2px solid var(--accent-gold);
+  background: rgba(195, 146, 78, 0.03);
+  box-shadow: 0 8px 24px rgba(195, 146, 78, 0.12);
+}
+.pkg-badge {
+  position: absolute;
+  top: -10px;
+  right: 14px;
+  background: var(--panel-dark);
+  color: var(--accent-gold);
+  border: 1px solid var(--accent-gold);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: var(--radius-full);
+}
+.pkg-header {
+  margin-bottom: 12px;
+}
+.pkg-title {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.pkg-tagline {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.pkg-price-capsule {
+  margin: 10px 0 14px;
+  padding: 8px 12px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.pkg-price-val {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+}
+.pkg-price-unit {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.pkg-warranty-pill {
+  font-size: 10px;
+  font-weight: 600;
+  color: #27592a;
+  background: #e7f2e8;
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+.pkg-features {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  flex: 1;
+}
+.pkg-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.pkg-features li span.chk {
+  color: #2e7d32;
+  font-weight: 700;
+}
+
+/* Gate Lead Card (Step 2) */
+.calc-gate-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 36px 40px;
+  max-width: 680px;
+  margin: 0 auto 36px;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.04);
+}
+@media (max-width: 640px) {
+  .calc-gate-card {
+    padding: 24px 20px;
+  }
+}
+.gate-summary-capsule {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  margin: 16px 0 24px;
+  font-size: 13px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  color: var(--text);
+}
+
+/* Full BOQ Breakdown (Step 3) */
+.breakdown-hero-card {
+  background: var(--panel-dark);
+  color: var(--text-light);
+  border-radius: var(--radius-md);
+  padding: 32px 36px;
+  margin-bottom: 32px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.12);
+}
+@media (max-width: 640px) {
+  .breakdown-hero-card {
+    padding: 24px 18px;
+  }
+}
+.breakdown-hero-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 28px;
+  align-items: center;
+}
+@media (max-width: 820px) {
+  .breakdown-hero-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.breakdown-hero-range {
+  font-family: var(--font-serif);
+  font-size: 38px;
+  font-weight: 600;
+  color: #f7e1b5;
+  line-height: 1.15;
+  margin: 8px 0;
+}
+@media (max-width: 540px) {
+  .breakdown-hero-range {
+    font-size: 28px;
+  }
+}
+.breakdown-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+}
+.breakdown-meta-item .label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+}
+.breakdown-meta-item .val {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* BOQ Component Bifurcation */
+.boq-component-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 18px 20px;
+  margin-bottom: 14px;
+  transition: all 0.2s ease;
+}
+.boq-component-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+}
+.boq-component-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.boq-component-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.boq-component-cost {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text);
+}
+.boq-bar-track {
+  width: 100%;
+  height: 8px;
+  background: var(--bg);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 8px 0;
+}
+.boq-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--accent-gold), #b8863f);
+  transition: width 0.6s ease;
+}
+.boq-component-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Floor Schedule Table */
+.floor-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-top: 12px;
+}
+.floor-table th {
+  background: var(--bg);
+  border-bottom: 2px solid var(--border);
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+.floor-table td {
+  border-bottom: 1px solid var(--border);
+  padding: 14px;
+  color: var(--text);
+}
+.floor-table tr:hover td {
+  background: var(--bg-subtle);
+}
+
+/* Milestones Grid */
+.milestones-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-top: 14px;
+}
+@media (max-width: 768px) {
+  .milestones-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.milestone-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  display: flex;
+  gap: 14px;
+}
+.milestone-phase {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  flex-shrink: 0;
+}
+.milestone-details {
+  flex: 1;
+}
+.milestone-time-badge {
+  font-size: 10px;
+  font-weight: 600;
+  color: #c3924e;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 3px;
+}
+.milestone-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.milestone-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+/* Verified Brand Badges */
+.specs-brand-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.spec-brand-pill {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 6px 14px;
+  font-size: 12px;
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.spec-brand-pill strong {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
 /* 2D Canvas Container */
 .canvas-wrapper {
   background: #fbfaf7;
@@ -6189,14 +6628,407 @@ function updateJournalPassUI() {
 }
 
 // ════════════════════════════════════════════════════════════════════
-// ── FLOORING CALCULATOR STATE & LOGIC ──
 // ════════════════════════════════════════════════════════════════════
-let activeCalcTab = 'flooring'; // 'flooring' | 'wall'
+// ── TURNKEY HOUSE CONSTRUCTION COST ESTIMATOR (BRICK & BOLT STYLE) ──
+// ════════════════════════════════════════════════════════════════════
+let activeCalcTab = 'construction'; // 'construction' | 'flooring' | 'wall'
 
 function switchCalcTab(tab) {
   activeCalcTab = tab;
   renderCalculator();
 }
+
+let houseCalcState = {
+  city: 'bengaluru',
+  builtUpArea: 2400,
+  floors: 2,          // 1: Ground, 2: G+1, 3: G+2, 4: G+3, 5: G+4
+  parkingBays: 1,     // 0, 1, 2, 3
+  balconyPct: 8,      // 0, 8, 15
+  packageTier: 'premium', // 'classic' | 'premium' | 'royale'
+  currency: '₹',      // '₹' | '$' | '£' | '€'
+  step: 'config'      // 'config' | 'form' | 'breakdown'
+};
+
+const HOUSE_CITY_CONFIG = {
+  bengaluru: { name: 'Bengaluru', baseFactor: 1.0, parkingPerBay: 220000 },
+  hyderabad: { name: 'Hyderabad', baseFactor: 0.96, parkingPerBay: 200000 },
+  mumbai:    { name: 'Mumbai / MMR', baseFactor: 1.25, parkingPerBay: 300000 },
+  delhi:     { name: 'Delhi NCR', baseFactor: 1.15, parkingPerBay: 260000 },
+  chennai:   { name: 'Chennai', baseFactor: 0.98, parkingPerBay: 210000 },
+  pune:      { name: 'Pune', baseFactor: 1.04, parkingPerBay: 230000 },
+  london:    { name: 'London (UK)', baseFactor: 4.8, parkingPerBay: 950000 },
+  global:    { name: 'International / Other', baseFactor: 1.1, parkingPerBay: 250000 }
+};
+
+const HOUSE_PACKAGES = {
+  classic: {
+    key: 'classic',
+    name: 'Classic Standard',
+    tagline: 'Reliable Turnkey Construction',
+    ratePerSqFt: 2150,
+    warranty: '5 Years Structural Warranty',
+    steel: 'Fe550 TMT Bars (Kamdhenu / Jindal)',
+    cement: 'OPC / PPC 53 Grade (Ultratech / Dalmia)',
+    flooring: 'Vitrified Tiles 2×2 ft (Kajaria / Somany)',
+    plumbing: 'Concealed CPVC/PVC (Astral / Supreme)',
+    electrical: 'Fire-Resistant Copper Wires (Anchor / Havells)',
+    paint: 'Tractor Emulsion & Ace Weatherproof',
+    features: [
+      'Standard RCC Column & SMRF Foundation (up to 5ft)',
+      'Solid Concrete Block Masonry (6" ext / 4" int)',
+      'Flush Doors with Hardwood Frame & Cylinder Lock',
+      '3-Track Powder-Coated Aluminum Sliding Windows',
+      'Sintex 1000L Overhead Tank & 4000L Sump Tank'
+    ]
+  },
+  premium: {
+    key: 'premium',
+    name: 'Premium Executive',
+    badge: 'Most Popular',
+    tagline: 'Architectural Grade Finishes & Longevity',
+    ratePerSqFt: 2750,
+    warranty: '10 Years Structural Warranty',
+    steel: 'Tata Tiscon / JSW Neosteel Fe550D',
+    cement: 'UltraTech Super / ACC Concrete Plus',
+    flooring: 'Large Format Vitrified 4×2 ft / Granite Accents',
+    plumbing: 'Jaquar / Kohler CP & Sanitaryware',
+    electrical: 'Schneider / Legrand Modular with MCB Box',
+    paint: 'Asian Paints Royale Luxury Interior & Apex Ultima',
+    features: [
+      'Teak Wood Main Door Frame & Designer Shutter',
+      'Granite Kitchen Countertop with Franke SS Sink',
+      'UPVC 3-Track Windows with Mosquito Mesh & Toughened Glass',
+      'Dual Waterproofing Treatment & Anti-Termite Guarantee',
+      'Concealed Piping for AC, Inverter & Solar Water Heater'
+    ]
+  },
+  royale: {
+    key: 'royale',
+    name: 'Royale Signature Villa',
+    badge: 'Luxury Spec',
+    tagline: 'Monolithic Architectural Masterpiece',
+    ratePerSqFt: 3850,
+    warranty: '15 Years Comprehensive Warranty',
+    steel: 'Tata Tiscon Super-Ductile Corrosion-Resistant Fe550D',
+    cement: 'UltraTech Weather Plus Hydrophobic Cement',
+    flooring: 'Imported Italian Marble / Engineered Solid Hardwood',
+    plumbing: 'Grohe / Bravat / Duravit Concealed Wall-Hung',
+    electrical: 'Legrand Arteor / Lutron Smart Home Automation',
+    paint: 'PU Polish Woodwork & Asian Paints Royale Aspira',
+    features: [
+      'Double-Height Living Glazing & Thermal-Break Systems',
+      'Custom Bespoke Teak / Accoya Joinery Throughout',
+      'Concealed VRV / Multi-Split HVAC Ducting Provisions',
+      'Rooftop Terrace Landscaping & Pergola Structure',
+      'Dedicated HBZ Senior Principal Site Architect Supervision'
+    ]
+  }
+};
+
+const HOUSE_CURRENCY_RATES = {
+  '₹': 1,
+  '$': 0.012,
+  '£': 0.0095,
+  '€': 0.011
+};
+
+function isHouseCalcUnlocked() {
+  return sessionStorage.getItem('hbz_house_calc_unlocked') === 'true';
+}
+
+function calculateHouseConstruction() {
+  const cityKey = houseCalcState.city || 'bengaluru';
+  const city = HOUSE_CITY_CONFIG[cityKey] || HOUSE_CITY_CONFIG.bengaluru;
+  const pkgKey = houseCalcState.packageTier || 'premium';
+  const pkg = HOUSE_PACKAGES[pkgKey] || HOUSE_PACKAGES.premium;
+  const cur = houseCalcState.currency || '₹';
+  const curRate = HOUSE_CURRENCY_RATES[cur] || 1;
+
+  const builtUp = Math.max(500, parseFloat(houseCalcState.builtUpArea) || 2400);
+  const floors = Math.max(1, parseInt(houseCalcState.floors) || 2);
+  const parkingBays = Math.max(0, parseInt(houseCalcState.parkingBays) || 0);
+  const balconyPct = Math.max(0, parseFloat(houseCalcState.balconyPct) || 0);
+
+  // Height multiplier: +2.5% per floor above G+1
+  const floorFactor = floors > 2 ? 1 + (floors - 2) * 0.025 : 1.0;
+
+  // Base rate per sq.ft in INR
+  const baseRateInr = pkg.ratePerSqFt * city.baseFactor * floorFactor;
+  // Converted to active currency
+  const effectiveRate = baseRateInr * (cur === '₹' ? 1 : curRate);
+
+  // Living built-up cost
+  const livingCost = builtUp * effectiveRate;
+
+  // Balconies and terraces (built at ~65% of main living rate)
+  const balconyArea = Math.round(builtUp * (balconyPct / 100));
+  const balconyCost = balconyArea * (effectiveRate * 0.65);
+
+  // Car parking (stilt / ground bay cost)
+  const parkingArea = parkingBays * 180; // sq.ft
+  const parkingCost = parkingBays * (city.parkingPerBay * (cur === '₹' ? 1 : curRate));
+
+  const totalBuiltUpArea = builtUp + balconyArea + parkingArea;
+  const totalCost = livingCost + balconyCost + parkingCost;
+  const totalCostMin = Math.round(totalCost * 0.96);
+  const totalCostMax = Math.round(totalCost * 1.05);
+
+  // BOQ Bifurcation (matching Brick & Bolt standards)
+  const boq = [
+    {
+      category: 'Civil & Structural Works',
+      pct: 48,
+      cost: Math.round(totalCost * 0.48),
+      desc: 'Earth excavation, RCC footing, columns, beams, slab casting, solid block masonry, plastering & foundation waterproofing'
+    },
+    {
+      category: 'Interior & Exterior Finishes',
+      pct: 18,
+      cost: Math.round(totalCost * 0.18),
+      desc: 'Wall putty (2 coats), premier emulsion paint, exterior weather-shield, false ceiling framing & gypsum work'
+    },
+    {
+      category: 'Flooring & Wall Tiling',
+      pct: 12,
+      cost: Math.round(totalCost * 0.12),
+      desc: 'Living/dining marble or large vitrified tiles, bedroom flooring, granite staircase & anti-skid bathroom dado'
+    },
+    {
+      category: 'Doors & Windows Joinery',
+      pct: 9,
+      cost: Math.round(totalCost * 0.09),
+      desc: 'Teak main door, flush internal doors, 3-track sliding UPVC/aluminum windows with mosquito mesh'
+    },
+    {
+      category: 'Electrical & Lighting Infrastructure',
+      pct: 7,
+      cost: Math.round(totalCost * 0.07),
+      desc: 'Concealed fire-retardant wiring, modular switches, distribution board with MCB/ELCB, earthing & inverter provisions'
+    },
+    {
+      category: 'Plumbing, Sanitation & Water Systems',
+      pct: 6,
+      cost: Math.round(totalCost * 0.06),
+      desc: 'Concealed CPVC/PVC lines, branded CP fittings & sanitaryware, overhead tank, sump waterproofing & drainage'
+    }
+  ];
+
+  // Floor-wise distribution schedule
+  const floorSchedule = [];
+  const floorNames = ['Ground Floor', 'First Floor', 'Second Floor', 'Third Floor', 'Fourth Floor'];
+  let floorPcts = [];
+  if (floors === 1) floorPcts = [1.0];
+  else if (floors === 2) floorPcts = [0.54, 0.46];
+  else if (floors === 3) floorPcts = [0.40, 0.32, 0.28];
+  else if (floors === 4) floorPcts = [0.32, 0.26, 0.22, 0.20];
+  else floorPcts = [0.28, 0.21, 0.19, 0.17, 0.15];
+
+  for (let i = 0; i < floors; i++) {
+    const floorArea = Math.round(builtUp / floors);
+    const floorCost = Math.round(totalCost * floorPcts[i]);
+    floorSchedule.push({
+      floorNumber: i + 1,
+      name: floorNames[i] || `Floor ${i+1}`,
+      area: floorArea,
+      cost: floorCost,
+      pct: Math.round(floorPcts[i] * 100),
+      highlights: i === 0
+        ? 'Foundation, Plinth, Foyer, Living Lounge, Kitchen & Car Port'
+        : (i === floors - 1 ? 'Master Suites, Terrace Balcony & Headroom' : 'Bedrooms, Family Lounge & Balconies')
+    });
+  }
+
+  // Execution milestones
+  const milestones = [
+    { phase: '01', title: 'Architectural Design & Municipal Sanctions', weeks: 'Weeks 1 – 4', desc: 'Soil testing, structural engineering drawings, 3D visualization & statutory authority approvals.' },
+    { phase: '02', title: 'Substructure, Foundation & Plinth Beam', weeks: 'Weeks 5 – 8', desc: 'Earth excavation, anti-termite treatment, PCC, isolated/raft footings & plinth beam casting.' },
+    { phase: '03', title: 'RCC Superstructure & Slab Casting', weeks: 'Weeks 9 – 18', desc: `RCC columns, shuttering, steel reinforcement & monolithic slab casting for all ${floors} levels.` },
+    { phase: '04', title: 'Masonry & Mechanical/Electrical Rough-in', weeks: 'Weeks 19 – 24', desc: 'Solid concrete blockwork, lintel beams, concealed conduit piping & plumbing chase cutting.' },
+    { phase: '05', title: 'Internal Plastering & Waterproofing', weeks: 'Weeks 25 – 28', desc: 'Double-coat sand face internal & external plastering, sunken slab waterproofing & terrace membrane.' },
+    { phase: '06', title: 'Flooring, Tiling & Joinery Installation', weeks: 'Weeks 29 – 34', desc: `${pkg.flooring}, granite steps, window installation & door frame fixing.` },
+    { phase: '07', title: 'Painting, Fixtures & Final Fitting', weeks: 'Weeks 35 – 38', desc: `${pkg.paint}, installation of switches, sanitaryware, CP brass fittings & glass railings.` },
+    { phase: '08', title: 'Quality Audit, Deep Clean & Handover', weeks: 'Week 39', desc: `Comprehensive 430-point quality checklist, site deep cleaning & ${pkg.warranty} delivery.` }
+  ];
+
+  return {
+    city,
+    pkg,
+    cur,
+    builtUp,
+    floors,
+    parkingBays,
+    parkingArea,
+    balconyPct,
+    balconyArea,
+    totalBuiltUpArea,
+    effectiveRate: Math.round(effectiveRate),
+    livingCost: Math.round(livingCost),
+    balconyCost: Math.round(balconyCost),
+    parkingCost: Math.round(parkingCost),
+    totalCost: Math.round(totalCost),
+    totalCostMin,
+    totalCostMax,
+    formattedTotal: `${cur}${Math.round(totalCost).toLocaleString()}`,
+    boq,
+    floorSchedule,
+    milestones
+  };
+}
+
+function handleCalculateClick() {
+  if (isHouseCalcUnlocked()) {
+    houseCalcState.step = 'breakdown';
+  } else {
+    houseCalcState.step = 'form';
+  }
+  renderCalculator();
+  setTimeout(() => {
+    const el = document.getElementById('houseCalcStage');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 60);
+}
+
+function editHouseCalcParams() {
+  houseCalcState.step = 'config';
+  renderCalculator();
+  setTimeout(() => {
+    const el = document.getElementById('houseCalcStage');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 60);
+}
+
+function submitHouseCalcLead(e) {
+  if (e && e.preventDefault) e.preventDefault();
+  const nameEl = document.getElementById('hcfName');
+  const phoneEl = document.getElementById('hcfPhone');
+  const emailEl = document.getElementById('hcfEmail');
+  const plotEl = document.getElementById('hcfPlot');
+  const timelineEl = document.getElementById('hcfTimeline');
+  const errEl = document.getElementById('hcfErr');
+
+  const name = nameEl ? nameEl.value.trim() : '';
+  const phone = phoneEl ? phoneEl.value.trim() : '';
+  const email = emailEl ? emailEl.value.trim() : '';
+  const plot = plotEl ? plotEl.value : '';
+  const timeline = timelineEl ? timelineEl.value : '';
+
+  if (!name || !phone || phone.length < 7) {
+    if (errEl) {
+      errEl.textContent = 'Please enter your name and a valid phone or WhatsApp number to unlock the estimate.';
+      errEl.style.display = 'block';
+    }
+    return;
+  }
+
+  const res = calculateHouseConstruction();
+  const cur = houseCalcState.currency;
+  const floorText = houseCalcState.floors === 1 ? 'Ground Only' : 'G+' + (houseCalcState.floors - 1);
+  const details = `Turnkey House Construction Cost Estimate:
+• Location: ${res.city.name}
+• Built-up Area: ${houseCalcState.builtUpArea} sq.ft (${floorText})
+• Package: ${res.pkg.name} (${cur}${res.effectiveRate}/sq.ft)
+• Car Parking: ${houseCalcState.parkingBays} Bay(s) | Balconies: ${houseCalcState.balconyPct}%
+• Estimated Cost: ${res.formattedTotal} (Range: ${cur}${res.totalCostMin.toLocaleString()} – ${cur}${res.totalCostMax.toLocaleString()})
+• Plot Status: ${plot || 'Not specified'}
+• Project Timeline: ${timeline || 'Immediate'}
+• Email: ${email || 'N/A'}`;
+
+  recordNewLead({
+    name,
+    phone,
+    source: 'Calculator: Turnkey House Construction (Brick & Bolt)',
+    details
+  });
+
+  sessionStorage.setItem('hbz_house_calc_unlocked', 'true');
+  sessionStorage.setItem('hbz_lead_name', name);
+  sessionStorage.setItem('hbz_lead_phone', phone);
+  if (email) sessionStorage.setItem('hbz_lead_email', email);
+
+  houseCalcState.step = 'breakdown';
+  renderCalculator();
+
+  setTimeout(() => {
+    const bdEl = document.getElementById('houseCalcBreakdownTop');
+    if (bdEl) bdEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+function setHouseCity(city) {
+  houseCalcState.city = city;
+  renderCalculator();
+}
+function setHouseFloors(f) {
+  houseCalcState.floors = f;
+  renderCalculator();
+}
+function setHouseParking(p) {
+  houseCalcState.parkingBays = p;
+  renderCalculator();
+}
+function setHouseBalcony(b) {
+  houseCalcState.balconyPct = b;
+  renderCalculator();
+}
+function setHousePackage(pkg) {
+  houseCalcState.packageTier = pkg;
+  renderCalculator();
+}
+function setHouseCurrency(cur) {
+  houseCalcState.currency = cur;
+  renderCalculator();
+}
+function setHouseAreaPreset(a) {
+  houseCalcState.builtUpArea = a;
+  renderCalculator();
+}
+function updateHouseArea(val) {
+  const num = parseFloat(val) || 1000;
+  houseCalcState.builtUpArea = num;
+  refreshHouseCalcPreview();
+}
+function refreshHouseCalcPreview() {
+  const res = calculateHouseConstruction();
+  const elArea = document.getElementById('hcpAreaVal');
+  const elRate = document.getElementById('hcpRateVal');
+  const elMin = document.getElementById('hcpMinVal');
+  const elMax = document.getElementById('hcpMaxVal');
+  const elTotal = document.getElementById('hcpTotalVal');
+  const elSliderVal = document.getElementById('houseAreaSliderVal');
+
+  if (elSliderVal) elSliderVal.textContent = `${res.builtUp.toLocaleString()} sq.ft`;
+  if (elArea) elArea.textContent = `${res.totalBuiltUpArea.toLocaleString()} sq.ft`;
+  if (elRate) elRate.textContent = `${res.cur}${res.effectiveRate.toLocaleString()} / sq.ft`;
+  if (elMin) elMin.textContent = `${res.cur}${res.totalCostMin.toLocaleString()}`;
+  if (elMax) elMax.textContent = `${res.cur}${res.totalCostMax.toLocaleString()}`;
+  if (elTotal) elTotal.textContent = `${res.cur}${res.totalCost.toLocaleString()}`;
+}
+function bookArchitecturalConsultation() {
+  const res = calculateHouseConstruction();
+  const floorText = res.floors === 1 ? 'Ground Only' : 'G+' + (res.floors - 1);
+  const summary = `Turnkey Construction Consultation Request:
+• City: ${res.city.name}
+• Package: ${res.pkg.name} (${res.cur}${res.effectiveRate}/sq.ft)
+• Area: ${res.builtUp} sq.ft (${floorText})
+• Total Projected Budget: ${res.formattedTotal}
+• Parking: ${res.parkingBays} Bay(s) | Balconies: ${res.balconyPct}%`;
+
+  const notesEl = document.getElementById('cnotes');
+  if (notesEl) notesEl.value = summary;
+  const nameEl = document.getElementById('cname');
+  if (nameEl && sessionStorage.getItem('hbz_lead_name')) {
+    nameEl.value = sessionStorage.getItem('hbz_lead_name');
+  }
+  const phoneEl = document.getElementById('cphone');
+  if (phoneEl && sessionStorage.getItem('hbz_lead_phone')) {
+    phoneEl.value = sessionStorage.getItem('hbz_lead_phone');
+  }
+  openContactModal('Turnkey House Construction (Brick & Bolt)');
+}
+
+// ════════════════════════════════════════════════════════════════════
+// ── FLOORING CALCULATOR STATE & LOGIC ──
+// ════════════════════════════════════════════════════════════════════
 
 let calcState = {
   shape: 'rectangle', // 'rectangle' | 'lshape' | 'multi'
@@ -7104,6 +7936,7 @@ async function renderCalculator() {
   updateActiveNav('nav-calc');
   cleanUpVvdListeners();
 
+  const hRes = calculateHouseConstruction();
   const fRes = calculateFlooring();
   const wRes = calculateWallCladding();
 
@@ -7111,19 +7944,470 @@ async function renderCalculator() {
     <div class="calc-container">
       <div style="margin-bottom:28px;">
         <div class="section-tag">Architectural Estimation Suite</div>
-        <h1 class="serif" style="margin-bottom:12px;">Spatial Estimation Tools</h1>
-        <p class="lead">Interactive calculators designed for architects, estimators, and occupiers to plan material quantities, labor costs, and spatial specifications with CAD accuracy.</p>
+        <h1 class="serif" style="margin-bottom:12px;">Spatial &amp; Construction Estimation Tools</h1>
+        <p class="lead">Interactive turnkey calculators designed for architects, estimators, and occupiers to plan structural investments, material quantities, and architectural specifications with CAD accuracy.</p>
       </div>
 
       <!-- Tab Navigation Switcher -->
       <div class="calc-tab-nav" style="display:flex;gap:10px;margin-bottom:32px;flex-wrap:wrap;border-bottom:1px solid rgba(21,20,19,0.08);padding-bottom:18px;">
+        <button class="pill-btn ${activeCalcTab==='construction'?'active':''}" onclick="switchCalcTab('construction')" style="padding:10px 22px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:8px;">
+          <span>🏗️</span> <span>01 / Turnkey House Construction Cost Estimator</span>
+        </button>
         <button class="pill-btn ${activeCalcTab==='flooring'?'active':''}" onclick="switchCalcTab('flooring')" style="padding:10px 22px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:8px;">
-          <span>📐</span> <span>01 / Flooring &amp; Tile Estimator</span>
+          <span>📐</span> <span>02 / Flooring &amp; Tile Estimator</span>
         </button>
         <button class="pill-btn ${activeCalcTab==='wall'?'active':''}" onclick="switchCalcTab('wall')" style="padding:10px 22px;font-size:13px;font-weight:600;display:inline-flex;align-items:center;gap:8px;">
-          <span>🏛️</span> <span>02 / Wall Paneling &amp; Acoustic Cladding Estimator</span>
+          <span>🏛️</span> <span>03 / Wall Paneling &amp; Acoustic Cladding Estimator</span>
         </button>
       </div>
+
+      ${activeCalcTab === 'construction' ? `
+        <!-- ── TAB 1: TURNKEY HOUSE CONSTRUCTION COST ESTIMATOR (BRICK & BOLT STYLE) ── -->
+        <div id="houseCalcStage">
+          <!-- Multi-Step Indicator -->
+          <div class="calc-steps-nav">
+            <div class="calc-step-item ${houseCalcState.step==='config'?'active':(houseCalcState.step==='form'||houseCalcState.step==='breakdown'?'completed':'')}">
+              <div class="calc-step-num">${houseCalcState.step==='form'||houseCalcState.step==='breakdown'?'✓':'01'}</div>
+              <div class="calc-step-info">
+                <div class="calc-step-title">01. Project Parameters</div>
+                <div class="calc-step-sub">Area, City, Floors &amp; Package</div>
+              </div>
+            </div>
+            <div class="calc-step-line ${houseCalcState.step==='form'||houseCalcState.step==='breakdown'?'completed':''}"></div>
+            <div class="calc-step-item ${houseCalcState.step==='form'?'active':(houseCalcState.step==='breakdown'?'completed':'')}">
+              <div class="calc-step-num">${houseCalcState.step==='breakdown'?'✓':'02'}</div>
+              <div class="calc-step-info">
+                <div class="calc-step-title">02. Project Brief &amp; Verification</div>
+                <div class="calc-step-sub">Direct Lead Capture</div>
+              </div>
+            </div>
+            <div class="calc-step-line ${houseCalcState.step==='breakdown'?'completed':''}"></div>
+            <div class="calc-step-item ${houseCalcState.step==='breakdown'?'active':''}">
+              <div class="calc-step-num">03</div>
+              <div class="calc-step-info">
+                <div class="calc-step-title">03. Full BOQ Breakdown</div>
+                <div class="calc-step-sub">Line-by-Line Cost &amp; Timeline</div>
+              </div>
+            </div>
+          </div>
+
+          ${houseCalcState.step === 'config' ? `
+            <!-- ── STEP 1: CONFIGURATION VIEW ── -->
+            <div class="calc-grid">
+              <!-- Left: Project Configuration Inputs -->
+              <div class="calc-card">
+                <!-- 1. Construction City / Region -->
+                <div class="calc-section-title">1. Construction City &amp; Region</div>
+                <div class="pill-selector">
+                  ${Object.keys(HOUSE_CITY_CONFIG).map(cKey => `
+                    <button class="pill-btn ${houseCalcState.city===cKey?'active':''}" onclick="setHouseCity('${cKey}')">
+                      ${HOUSE_CITY_CONFIG[cKey].name}
+                    </button>
+                  `).join('')}
+                </div>
+
+                <!-- 2. Built-up Area -->
+                <div class="calc-section-title">2. Total Built-up Living Area</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                  <span style="font-size:12px;color:var(--text-muted);">Living space to construct:</span>
+                  <span id="houseAreaSliderVal" style="font-family:var(--font-serif);font-size:18px;font-weight:700;color:var(--accent-gold);">${hRes.builtUp.toLocaleString()} sq.ft</span>
+                </div>
+                <div style="margin-bottom:12px;">
+                  <input type="range" min="600" max="10000" step="50" value="${hRes.builtUp}" style="width:100%;cursor:pointer;accent-color:var(--accent-gold);" oninput="updateHouseArea(this.value)">
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+                  <span style="font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;">Or Type Area:</span>
+                  <input type="number" min="500" max="30000" step="50" value="${hRes.builtUp}" style="width:120px;padding:6px 10px;font-size:13px;" oninput="updateHouseArea(this.value)">
+                  <span style="font-size:12px;color:var(--text-muted);">sq.ft</span>
+                </div>
+                <div class="pill-selector" style="margin-bottom:16px;">
+                  <button class="pill-btn ${houseCalcState.builtUpArea===1200?'active':''}" onclick="setHouseAreaPreset(1200)">1,200 sq.ft</button>
+                  <button class="pill-btn ${houseCalcState.builtUpArea===1800?'active':''}" onclick="setHouseAreaPreset(1800)">1,800 sq.ft</button>
+                  <button class="pill-btn ${houseCalcState.builtUpArea===2400?'active':''}" onclick="setHouseAreaPreset(2400)">2,400 sq.ft</button>
+                  <button class="pill-btn ${houseCalcState.builtUpArea===3600?'active':''}" onclick="setHouseAreaPreset(3600)">3,600 sq.ft</button>
+                  <button class="pill-btn ${houseCalcState.builtUpArea===5000?'active':''}" onclick="setHouseAreaPreset(5000)">5,000 sq.ft</button>
+                </div>
+
+                <!-- 3. Number of Floors -->
+                <div class="calc-section-title">3. Number of Floors</div>
+                <div class="pill-selector">
+                  <button class="pill-btn ${houseCalcState.floors===1?'active':''}" onclick="setHouseFloors(1)">Ground Only (1 Floor)</button>
+                  <button class="pill-btn ${houseCalcState.floors===2?'active':''}" onclick="setHouseFloors(2)">G + 1 (2 Floors)</button>
+                  <button class="pill-btn ${houseCalcState.floors===3?'active':''}" onclick="setHouseFloors(3)">G + 2 (3 Floors)</button>
+                  <button class="pill-btn ${houseCalcState.floors===4?'active':''}" onclick="setHouseFloors(4)">G + 3 (4 Floors)</button>
+                  <button class="pill-btn ${houseCalcState.floors===5?'active':''}" onclick="setHouseFloors(5)">G + 4 (5 Floors)</button>
+                </div>
+
+                <!-- 4. Parking & Balconies -->
+                <div class="input-row" style="margin-top:14px;">
+                  <div class="input-group">
+                    <label>Covered Car Parking</label>
+                    <div class="pill-selector" style="margin-bottom:0;">
+                      <button class="pill-btn ${houseCalcState.parkingBays===0?'active':''}" onclick="setHouseParking(0)">0 Cars</button>
+                      <button class="pill-btn ${houseCalcState.parkingBays===1?'active':''}" onclick="setHouseParking(1)">1 Car</button>
+                      <button class="pill-btn ${houseCalcState.parkingBays===2?'active':''}" onclick="setHouseParking(2)">2 Cars</button>
+                      <button class="pill-btn ${houseCalcState.parkingBays===3?'active':''}" onclick="setHouseParking(3)">3+ Cars</button>
+                    </div>
+                  </div>
+                  <div class="input-group">
+                    <label>Balcony &amp; Terrace Ratio</label>
+                    <div class="pill-selector" style="margin-bottom:0;">
+                      <button class="pill-btn ${houseCalcState.balconyPct===0?'active':''}" onclick="setHouseBalcony(0)">0% (None)</button>
+                      <button class="pill-btn ${houseCalcState.balconyPct===8?'active':''}" onclick="setHouseBalcony(8)">8% (Standard)</button>
+                      <button class="pill-btn ${houseCalcState.balconyPct===15?'active':''}" onclick="setHouseBalcony(15)">15% (Expansive)</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 5. Currency Selection -->
+                <div class="calc-section-title" style="display:flex;justify-content:space-between;align-items:center;">
+                  <span>5. Currency</span>
+                  <div class="pill-selector" style="margin:0;">
+                    <button class="pill-btn ${houseCalcState.currency==='₹'?'active':''}" onclick="setHouseCurrency('₹')">₹ INR</button>
+                    <button class="pill-btn ${houseCalcState.currency==='$'?'active':''}" onclick="setHouseCurrency('$')">$ USD</button>
+                    <button class="pill-btn ${houseCalcState.currency==='£'?'active':''}" onclick="setHouseCurrency('£')">£ GBP</button>
+                    <button class="pill-btn ${houseCalcState.currency==='€'?'active':''}" onclick="setHouseCurrency('€')">€ EUR</button>
+                  </div>
+                </div>
+
+                <!-- 6. Construction Specification Package -->
+                <div class="calc-section-title">6. Select Construction Package Tier</div>
+                <div class="pkg-cards-grid">
+                  ${Object.values(HOUSE_PACKAGES).map(pkg => {
+                    const isActive = houseCalcState.packageTier === pkg.key;
+                    const pkgRateCur = Math.round(pkg.ratePerSqFt * (hRes.city.baseFactor) * (houseCalcState.currency==='₹'?1:HOUSE_CURRENCY_RATES[houseCalcState.currency]));
+                    return `
+                      <div class="pkg-card ${isActive?'active':''}" onclick="setHousePackage('${pkg.key}')">
+                        ${pkg.badge ? `<div class="pkg-badge">${pkg.badge}</div>` : ''}
+                        <div class="pkg-header">
+                          <div class="pkg-title">${pkg.name}</div>
+                          <div class="pkg-tagline">${pkg.tagline}</div>
+                        </div>
+                        <div class="pkg-price-capsule">
+                          <div class="pkg-price-val">${houseCalcState.currency}${pkgRateCur.toLocaleString()}</div>
+                          <div class="pkg-price-unit">/ sq.ft</div>
+                        </div>
+                        <div class="pkg-warranty-pill">🛡️ ${pkg.warranty}</div>
+                        <ul class="pkg-features">
+                          ${pkg.features.map(f => `<li><span class="chk">✓</span> <span>${f}</span></li>`).join('')}
+                        </ul>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+
+              <!-- Right: Live Cost Capsule & Primary Call to Action -->
+              <div class="calc-card" style="position:sticky;top:100px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:12px;">
+                  <div>
+                    <span class="pill-badge" style="background:#e8eff8;color:#284a75;border:1px solid #cad9ee;font-size:11px;padding:3px 9px;">${hRes.city.name}</span>
+                    <span class="pill-badge" style="background:rgba(195,146,78,0.12);color:#8d6529;border:1px solid rgba(195,146,78,0.3);font-size:11px;padding:3px 9px;margin-left:4px;">${hRes.pkg.name}</span>
+                  </div>
+                  <span style="font-size:11px;color:var(--text-muted);">${houseCalcState.floors === 1 ? 'Ground Only' : 'G+' + (houseCalcState.floors - 1)}</span>
+                </div>
+
+                <!-- Total Cost Highlight -->
+                <div class="total-cost-box" style="flex-direction:column;align-items:flex-start;padding:20px;margin-bottom:16px;">
+                  <div class="cost-label" style="font-size:11px;">Estimated Turnkey Construction Cost</div>
+                  <div id="hcpTotalVal" class="cost-val" style="font-size:28px;margin:6px 0;">${hRes.formattedTotal}</div>
+                  <div style="font-size:11px;opacity:0.85;display:flex;gap:6px;align-items:center;">
+                    <span>Projected Range:</span>
+                    <strong id="hcpMinVal">${hRes.cur}${hRes.totalCostMin.toLocaleString()}</strong>
+                    <span>–</span>
+                    <strong id="hcpMaxVal">${hRes.cur}${hRes.totalCostMax.toLocaleString()}</strong>
+                  </div>
+                </div>
+
+                <!-- Rate and Area Summary -->
+                <div class="results-grid" style="grid-template-columns:1fr 1fr;margin-bottom:16px;">
+                  <div class="result-stat-box" style="padding:10px;">
+                    <div class="result-stat-label">Effective Rate</div>
+                    <div id="hcpRateVal" class="result-stat-val" style="font-size:17px;color:var(--accent-gold);">${hRes.cur}${hRes.effectiveRate.toLocaleString()} <span style="font-size:11px;font-family:var(--font-sans);color:var(--text-muted);">/ sq.ft</span></div>
+                  </div>
+                  <div class="result-stat-box" style="padding:10px;">
+                    <div class="result-stat-label">Total Built-up Area</div>
+                    <div id="hcpAreaVal" class="result-stat-val" style="font-size:17px;">${hRes.totalBuiltUpArea.toLocaleString()} <span style="font-size:11px;font-family:var(--font-sans);color:var(--text-muted);">sq.ft</span></div>
+                  </div>
+                </div>
+
+                <div style="font-size:12px;color:var(--text-muted);line-height:1.6;margin-bottom:20px;padding:12px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border);">
+                  <div style="font-weight:600;color:var(--text);margin-bottom:6px;font-size:11px;text-transform:uppercase;letter-spacing:0.06em;">What is Included:</div>
+                  <div style="display:grid;grid-template-columns:1fr;gap:4px;">
+                    <div>✓ Full Civil Substructure, Footings &amp; RCC Frame</div>
+                    <div>✓ AAC / Solid Block Masonry &amp; Internal Plastering</div>
+                    <div>✓ Complete Flooring (${hRes.pkg.flooring.split('(')[0]})</div>
+                    <div>✓ Branded Concealed Plumbing &amp; Electricals</div>
+                    <div>✓ Premium Doors, 3-Track Windows &amp; Weatherproof Paint</div>
+                    <div>✓ Dedicated Site Supervision &amp; ${hRes.pkg.warranty}</div>
+                  </div>
+                </div>
+
+                <!-- Gated Calculation CTA Button -->
+                <button class="btn-primary" onclick="handleCalculateClick()" style="width:100%;padding:18px 24px;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:12px;background:var(--accent-gold);color:#151413;border:none;border-radius:var(--radius-sm);cursor:pointer;box-shadow:0 6px 20px rgba(195,146,78,0.28);transition:all 0.2s ease;">
+                  <span>Calculate &amp; View Full Breakdown</span>
+                  <span style="font-size:18px;">&rarr;</span>
+                </button>
+                <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:12px;display:flex;align-items:center;justify-content:center;gap:6px;">
+                  <span>🔒</span> <span>Click to unlock complete line-by-line BOQ bifurcation &amp; schedule</span>
+                </div>
+              </div>
+            </div>
+          ` : ''}
+
+          ${houseCalcState.step === 'form' ? `
+            <!-- ── STEP 2: LEAD VERIFICATION & PROJECT BRIEF FORM ── -->
+            <div class="calc-gate-card">
+              <div style="text-align:center;margin-bottom:24px;">
+                <div class="section-tag">Step 02 / Project Verification</div>
+                <h2 class="serif" style="font-size:26px;margin:8px 0 10px;">Unlock Comprehensive BOQ Breakdown</h2>
+                <p style="font-size:14px;color:var(--text-muted);max-width:540px;margin:0 auto;line-height:1.55;">
+                  You are one step away from viewing the full line-by-line itemized cost bifurcation (Civil 48%, Finishes 18%, Flooring 12%, Doors/Windows 9%, Electrical 7%, Plumbing 6%), floor-wise payment milestones, and certified engineering brand matrix.
+                </p>
+              </div>
+
+              <!-- Chosen Parameters Summary Capsule -->
+              <div class="gate-summary-capsule">
+                <div style="font-weight:600;color:var(--text);">Selected Project:</div>
+                <div>📍 <strong>${hRes.city.name}</strong></div>
+                <div>📐 <strong>${hRes.builtUp.toLocaleString()} sq.ft</strong> (${houseCalcState.floors === 1 ? 'Ground Only' : 'G+' + (houseCalcState.floors - 1)})</div>
+                <div>🏛️ <strong>${hRes.pkg.name}</strong> (${hRes.cur}${hRes.effectiveRate.toLocaleString()}/sq.ft)</div>
+                <div>🚗 <strong>${houseCalcState.parkingBays} Car Bay(s)</strong></div>
+                <div>💰 Est: <strong style="color:var(--accent-gold);">${hRes.formattedTotal}</strong></div>
+              </div>
+
+              <form onsubmit="submitHouseCalcLead(event)">
+                <div class="input-row">
+                  <div class="input-group">
+                    <label for="hcfName">Your Full Name <span style="color:#d32f2f;">*</span></label>
+                    <input id="hcfName" type="text" placeholder="e.g. Rahul Sharma / Sarah Jenkins" required value="${escapeHtml(sessionStorage.getItem('hbz_lead_name') || '')}">
+                  </div>
+                  <div class="input-group">
+                    <label for="hcfPhone">Phone / WhatsApp Number <span style="color:#d32f2f;">*</span></label>
+                    <input id="hcfPhone" type="tel" placeholder="e.g. +91 98765 43210" required value="${escapeHtml(sessionStorage.getItem('hbz_lead_phone') || '')}">
+                  </div>
+                </div>
+
+                <div class="input-group">
+                  <label for="hcfEmail">Email Address (Optional)</label>
+                  <input id="hcfEmail" type="email" placeholder="e.g. rahul@example.com" value="${escapeHtml(sessionStorage.getItem('hbz_lead_email') || '')}">
+                </div>
+
+                <div class="input-row">
+                  <div class="input-group">
+                    <label for="hcfPlot">Current Plot Status</label>
+                    <select id="hcfPlot" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);font-size:13px;">
+                      <option value="Plot Owned & Ready for Construction">Plot Owned &amp; Ready for Construction</option>
+                      <option value="Plot in Acquisition / Under Negotiation">Plot in Acquisition / Under Negotiation</option>
+                      <option value="Existing House Demolition & Rebuild">Existing House Demolition &amp; Rebuild</option>
+                      <option value="Exploring Feasibility / Yet to Buy Plot">Exploring Feasibility / Yet to Buy Plot</option>
+                    </select>
+                  </div>
+                  <div class="input-group">
+                    <label for="hcfTimeline">Expected Construction Timeline</label>
+                    <select id="hcfTimeline" style="width:100%;padding:10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);font-size:13px;">
+                      <option value="Immediate (Within 1-2 months)">Immediate (Within 1–2 months)</option>
+                      <option value="In 3 to 6 months">In 3 to 6 months</option>
+                      <option value="In 6 to 12 months">In 6 to 12 months</option>
+                      <option value="Planning / Architectural Stage">Planning / Architectural Stage</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div id="hcfErr" style="display:none;color:#d32f2f;background:rgba(211,47,47,0.08);border:1px solid rgba(211,47,47,0.2);padding:10px 14px;border-radius:var(--radius-sm);font-size:13px;margin:12px 0;"></div>
+
+                <button type="submit" id="btnUnlockBreakdown" class="btn-primary" style="width:100%;padding:18px 24px;font-size:15px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:12px;background:var(--accent-gold);color:#151413;border:none;border-radius:var(--radius-sm);cursor:pointer;box-shadow:0 6px 20px rgba(195,146,78,0.28);margin-top:16px;">
+                  <span>Unlock &amp; View Full Breakdown</span>
+                  <span style="font-size:18px;">&rarr;</span>
+                </button>
+              </form>
+
+              <div style="text-align:center;margin-top:16px;">
+                <button type="button" onclick="editHouseCalcParams()" style="background:none;border:none;color:var(--text-muted);font-size:13px;cursor:pointer;text-decoration:underline;">
+                  &larr; Back to edit project parameters
+                </button>
+              </div>
+            </div>
+          ` : ''}
+
+          ${houseCalcState.step === 'breakdown' ? `
+            <!-- ── STEP 3: UNLOCKED COMPREHENSIVE BOQ BREAKDOWN ── -->
+            <div id="houseCalcBreakdownTop"></div>
+
+            <!-- Verification Success Notice -->
+            <div style="background:#e7f2e8;border:1px solid #c8e0ca;color:#27592a;border-radius:var(--radius-sm);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:10px;">
+              <div style="display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;">
+                <span style="font-size:18px;">✓</span>
+                <span>Turnkey Construction BOQ Breakdown Unlocked for ${escapeHtml(sessionStorage.getItem('hbz_lead_name') || 'Client')}. Inquiry registered with HBZ Studio Directors.</span>
+              </div>
+              <button onclick="editHouseCalcParams()" class="pill-btn" style="background:#ffffff;border-color:#c8e0ca;color:#27592a;font-size:11px;font-weight:600;">
+                ✏️ Edit Parameters
+              </button>
+            </div>
+
+            <!-- Hero Summary Card -->
+            <div class="breakdown-hero-card">
+              <div class="breakdown-hero-grid">
+                <div>
+                  <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--accent-gold);font-weight:600;">Comprehensive Architectural Cost Estimate</div>
+                  <div class="breakdown-hero-range">${hRes.cur}${hRes.totalCostMin.toLocaleString()} – ${hRes.cur}${hRes.totalCostMax.toLocaleString()}</div>
+                  <div style="font-size:14px;color:rgba(255,255,255,0.8);line-height:1.5;">
+                    Median Projected Budget: <strong style="color:#ffffff;">${hRes.formattedTotal}</strong> for a total built-up footprint of <strong>${hRes.totalBuiltUpArea.toLocaleString()} sq.ft</strong> (${hRes.city.name}).
+                  </div>
+                </div>
+                <div class="breakdown-meta-grid">
+                  <div class="breakdown-meta-item">
+                    <div class="label">Turnkey Rate</div>
+                    <div class="val" style="color:#f7e1b5;">${hRes.cur}${hRes.effectiveRate.toLocaleString()}<span style="font-size:11px;color:rgba(255,255,255,0.6);"> / sq.ft</span></div>
+                  </div>
+                  <div class="breakdown-meta-item">
+                    <div class="label">Living Area</div>
+                    <div class="val">${hRes.builtUp.toLocaleString()} sq.ft</div>
+                  </div>
+                  <div class="breakdown-meta-item">
+                    <div class="label">Floors</div>
+                    <div class="val">${houseCalcState.floors === 1 ? 'Ground Only' : 'G+' + (houseCalcState.floors - 1)} (${houseCalcState.floors} Levels)</div>
+                  </div>
+                  <div class="breakdown-meta-item">
+                    <div class="label">Warranty</div>
+                    <div class="val" style="color:#a3e635;">${hRes.pkg.warranty.split(' ')[0]} ${hRes.pkg.warranty.split(' ')[1]}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- BOQ Component Bifurcation (Brick & Bolt Standard 6 Categories) -->
+            <div style="margin-bottom:36px;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:18px;flex-wrap:wrap;gap:10px;">
+                <div>
+                  <div class="section-tag">BOQ Component Bifurcation</div>
+                  <h3 class="serif" style="font-size:22px;margin:4px 0 0;">Line-by-Line Cost Distribution</h3>
+                </div>
+                <div style="font-size:12px;color:var(--text-muted);">
+                  Standardized Architectural &amp; Civil Engineering Cost Model
+                </div>
+              </div>
+
+              ${hRes.boq.map((item, idx) => `
+                <div class="boq-component-card">
+                  <div class="boq-component-header">
+                    <div class="boq-component-title">
+                      <span style="font-size:12px;color:var(--text-muted);font-weight:700;">0${idx+1}.</span>
+                      <span>${item.category}</span>
+                      <span class="pill-badge" style="background:var(--bg);color:var(--text);border:1px solid var(--border);font-size:10px;padding:2px 8px;">${item.pct}%</span>
+                    </div>
+                    <div class="boq-component-cost">${hRes.cur}${item.cost.toLocaleString()}</div>
+                  </div>
+                  <div class="boq-bar-track">
+                    <div class="boq-bar-fill" style="width:${item.pct * 2}%;max-width:100%;"></div>
+                  </div>
+                  <div class="boq-component-desc">${item.desc}</div>
+                </div>
+              `).join('')}
+            </div>
+
+            <!-- Floor-Wise Cost & Area Distribution Table -->
+            <div class="calc-card" style="margin-bottom:36px;">
+              <div class="section-tag">Spatial Schedule</div>
+              <h3 class="serif" style="font-size:20px;margin:4px 0 16px;">Floor-by-Floor Investment Distribution</h3>
+              <div style="overflow-x:auto;">
+                <table class="floor-table">
+                  <thead>
+                    <tr>
+                      <th>Floor Level</th>
+                      <th>Built-up Area</th>
+                      <th>Share</th>
+                      <th>Estimated Cost</th>
+                      <th>Spatial Highlights &amp; Scope</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${hRes.floorSchedule.map(fl => `
+                      <tr>
+                        <td><strong>${fl.name}</strong></td>
+                        <td>${fl.area.toLocaleString()} sq.ft</td>
+                        <td><span class="pill-badge" style="background:#f4f3f0;font-size:11px;padding:2px 6px;">${fl.pct}%</span></td>
+                        <td><strong style="font-family:var(--font-serif);font-size:15px;color:var(--accent-gold);">${hRes.cur}${fl.cost.toLocaleString()}</strong></td>
+                        <td style="font-size:12px;color:var(--text-muted);">${fl.highlights}</td>
+                      </tr>
+                    `).join('')}
+                    ${hRes.parkingCost > 0 ? `
+                      <tr style="background:var(--bg);">
+                        <td><strong>Covered Stilt / Ground Parking</strong></td>
+                        <td>${hRes.parkingArea} sq.ft (${houseCalcState.parkingBays} Bay(s))</td>
+                        <td><span class="pill-badge" style="background:#f4f3f0;font-size:11px;padding:2px 6px;">Parking</span></td>
+                        <td><strong style="font-family:var(--font-serif);font-size:15px;color:var(--accent-gold);">${hRes.cur}${hRes.parkingCost.toLocaleString()}</strong></td>
+                        <td style="font-size:12px;color:var(--text-muted);">PCC flooring, vehicle clearance staging, exterior drainage &amp; security gate provision</td>
+                      </tr>
+                    ` : ''}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Execution Milestones & Delivery Schedule -->
+            <div class="calc-card" style="margin-bottom:36px;">
+              <div class="section-tag">Execution Roadmap</div>
+              <h3 class="serif" style="font-size:20px;margin:4px 0 6px;">Project Milestones &amp; Timeline</h3>
+              <p style="font-size:13px;color:var(--text-muted);margin-bottom:18px;">
+                Structured quality-controlled delivery workflow with 430+ site verification checkpoints.
+              </p>
+              <div class="milestones-grid">
+                ${hRes.milestones.map(m => `
+                  <div class="milestone-item">
+                    <div class="milestone-phase">${m.phase}</div>
+                    <div class="milestone-details">
+                      <div class="milestone-time-badge">${m.weeks}</div>
+                      <div class="milestone-title">${m.title}</div>
+                      <div class="milestone-desc">${m.desc}</div>
+                    </div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Material Brands Included in Selected Tier -->
+            <div class="calc-card" style="margin-bottom:36px;">
+              <div class="section-tag">Quality Assurance</div>
+              <h3 class="serif" style="font-size:20px;margin:4px 0 6px;">Curated Brand Specifications (${hRes.pkg.name})</h3>
+              <p style="font-size:13px;color:var(--text-muted);margin-bottom:14px;">
+                Only certified primary manufacturer materials are deployed across the turnkey build.
+              </p>
+              <div class="specs-brand-list">
+                <div class="spec-brand-pill"><strong>Structural Steel:</strong> <span>${hRes.pkg.steel}</span></div>
+                <div class="spec-brand-pill"><strong>Cement:</strong> <span>${hRes.pkg.cement}</span></div>
+                <div class="spec-brand-pill"><strong>Flooring:</strong> <span>${hRes.pkg.flooring}</span></div>
+                <div class="spec-brand-pill"><strong>Plumbing:</strong> <span>${hRes.pkg.plumbing}</span></div>
+                <div class="spec-brand-pill"><strong>Electricals:</strong> <span>${hRes.pkg.electrical}</span></div>
+                <div class="spec-brand-pill"><strong>Paints:</strong> <span>${hRes.pkg.paint}</span></div>
+                <div class="spec-brand-pill" style="border-color:#2e7d32;color:#2e7d32;background:#e7f2e8;"><strong>Warranty:</strong> <span>${hRes.pkg.warranty}</span></div>
+              </div>
+            </div>
+
+            <!-- Unlocked Action Bar -->
+            <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:space-between;align-items:center;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:0 6px 20px rgba(0,0,0,0.03);">
+              <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <button onclick="window.print()" class="btn-secondary" style="padding:14px 20px;font-size:13px;display:inline-flex;align-items:center;gap:8px;">
+                  <span>🖨️</span> <span>Print / Save PDF Quotation</span>
+                </button>
+                <button onclick="editHouseCalcParams()" class="btn-secondary" style="padding:14px 20px;font-size:13px;display:inline-flex;align-items:center;gap:8px;">
+                  <span>✏️</span> <span>Adjust Project Parameters</span>
+                </button>
+              </div>
+              <div>
+                <button onclick="bookArchitecturalConsultation()" class="btn-talk" style="padding:14px 24px;font-size:14px;">
+                  <span>Schedule Consultation with Studio Director</span>
+                  <span class="arrow-circle">
+                    <svg viewBox="0 0 11 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M11 4.007 6.887 8H4.545l3.482-3.2H0V3.215h8.027L4.529 0h2.342z" fill="currentColor"/>
+                    </svg>
+                  </span>
+                </button>
+              </div>
+            </div>
+          ` : ''}
+        </div>
+      ` : ''}
 
       ${activeCalcTab === 'flooring' ? `
         <!-- ── TAB 1: FLOORING & TILE ESTIMATOR ── -->
@@ -7575,7 +8859,7 @@ async function renderCalculator() {
   setTimeout(() => {
     if (activeCalcTab === 'flooring') {
       drawTileLayout(fRes);
-    } else {
+    } else if (activeCalcTab === 'wall') {
       drawWallLayout(wRes);
     }
   }, 50);
@@ -9458,7 +10742,7 @@ async function loadAdminTab(){
                         <option value="Archived" ${status==='Archived'?'selected':''}>⚪ Archived</option>
                       </select>
                     </td>
-                    <td style="max-width:300px;font-size:12px;color:var(--text-muted);line-height:1.45;">
+                    <td style="max-width:320px;font-size:12px;color:var(--text-muted);line-height:1.45;white-space:pre-line;">
                       ${escapeHtml(desc)}
                     </td>
                     <td style="font-size:12px;">
