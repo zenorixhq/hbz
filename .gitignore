@@ -3,3 +3,14 @@ Thumbs.db
 node_modules/
 *.log
 .env
+.env*.local
+
+# Next.js build output
+.next/
+out/
+build/
+dist/
+
+# Next.js telemetry
+.next/types/
+next-env.d.ts
